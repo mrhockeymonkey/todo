@@ -1,0 +1,49 @@
+import 'package:flutter/material.dart';
+import 'package:localstore/localstore.dart';
+
+import 'package:todo/models/routine.dart';
+
+class RoutineProvider with ChangeNotifier {
+  final String _routines = 'routines';
+  final Localstore _db = Localstore.instance;
+  final Map<String, Routine> _items = {};
+
+  List<Routine> get items {
+    var items = [..._items.values];
+    items.sort((a, b) => b.percent.compareTo(a.percent));
+    return items;
+  }
+
+  Routine getRoutineById(String id) => _items[id];
+
+  Future<void> fetch() async {
+    var fetched = await _db.collection(_routines).get();
+    fetched?.entries?.forEach((element) {
+      final item = Routine.fromMap(element.value);
+      print(element.value);
+      _items.putIfAbsent(item.id, () => item);
+    });
+    notifyListeners();
+  }
+
+  void delete(String id) async {
+    print("Deleting routine with is ${id.toString()}");
+    await _db.collection(_routines).doc(id).delete();
+    _items.remove(id);
+    notifyListeners();
+  }
+
+  void addOrUpdate(Routine routine) async {
+    if (routine.id == null) {
+      var routineMap = routine.toMap();
+      routineMap['id'] = _db.collection(_routines).doc().id;
+      routine = Routine.fromMap(routineMap);
+      print("Creating new routine with id '${routine.id}'");
+    }
+
+    await _db.collection(_routines).doc(routine.id).set(routine.toMap());
+    _items[routine.id] = routine;
+    print("Saved routine: Id '${routine.id}', Title '${routine.title}'");
+    notifyListeners();
+  }
+}
