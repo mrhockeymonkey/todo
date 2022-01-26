@@ -24,6 +24,14 @@ class TaskProvider extends ProviderBase<Task> {
 
   int get isDueCount => items.where((r) => r.isDue).length;
 
+  Future<void> clearCompletedTasks() async {
+    items.where((element) => element.isDone).forEach((task) async {
+      print("Deleting task '${task.id}': ${task.title}");
+      await this.delete(task.id, notify: false);
+    });
+    notifyListeners();
+  }
+
   // Task getRoutineById(String id) => _items[id];
 
   // Future<void> fetch() async {

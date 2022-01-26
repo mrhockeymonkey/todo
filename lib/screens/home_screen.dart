@@ -96,26 +96,31 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildNotificationBlip(int count) => new Positioned(
-        right: 0,
-        child: new Container(
-          padding: EdgeInsets.all(1),
-          decoration: new BoxDecoration(
-            color: Colors.red,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          constraints: BoxConstraints(
-            minWidth: 12,
-            minHeight: 12,
-          ),
-          child: new Text(
-            count.toString(),
-            style: new TextStyle(
-              color: Colors.white,
-              fontSize: 8,
+  Widget _buildNotificationBlip(int count) => count <= 0
+      ? SizedBox(
+          height: 1,
+          width: 1,
+        )
+      : new Positioned(
+          right: 0,
+          child: new Container(
+            padding: EdgeInsets.all(1),
+            decoration: new BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(6),
             ),
-            textAlign: TextAlign.center,
+            constraints: BoxConstraints(
+              minWidth: 12,
+              minHeight: 12,
+            ),
+            child: new Text(
+              count.toString(),
+              style: new TextStyle(
+                color: Colors.white,
+                fontSize: 8,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
-        ),
-      );
+        );
 }

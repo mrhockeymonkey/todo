@@ -52,7 +52,7 @@ class TaskListState extends State<TaskList> {
         (BuildContext context, int index) {
           Task task = tasks[index];
           return Dismissible(
-            key: Key(task.id),
+            key: UniqueKey(),
             direction: DismissDirection.startToEnd,
             onDismissed: (direction) => _handleDismiss(direction, task),
             child: TaskItem(task: task),
@@ -66,5 +66,8 @@ class TaskListState extends State<TaskList> {
   void _handleDismiss(DismissDirection direction, Task task) {
     task.done();
     Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task);
+    setState(() {
+      // trigger rebuild of the list so we can see the done task appear below
+    });
   }
 }
