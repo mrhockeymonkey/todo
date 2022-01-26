@@ -37,11 +37,13 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
     notifyListeners();
   }
 
-  void delete(String id) async {
+  void delete(String id, {bool notify: true}) async {
     print("Deleting $tableName item with id $id");
     await db.collection(tableName).doc(id).delete();
     _items.remove(id);
-    notifyListeners();
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   void addOrUpdate(T item) async {

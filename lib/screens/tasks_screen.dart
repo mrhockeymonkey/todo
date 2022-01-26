@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:todo/app_actions.dart';
 import 'package:todo/screens/settings_screen.dart';
 import 'package:todo/screens/task_detail_screen.dart';
 import 'package:todo/widgets/date_header.dart';
@@ -22,10 +23,13 @@ class _TaskScreenState extends State<TasksScreen> {
             ],
           ),
           actions: [
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(SettingsScreen.routeName),
+            PopupMenuButton(
+              onSelected: (value) =>
+                  AppActionsHelper.handleAction(value, context),
+              itemBuilder: (context) => <PopupMenuEntry>[
+                AppActionsHelper.buildAction(AppActions.ClearCompleted),
+                AppActionsHelper.buildAction(AppActions.Settings),
+              ],
             )
           ],
         ),

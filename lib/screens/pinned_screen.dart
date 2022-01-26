@@ -5,6 +5,7 @@ import 'package:todo/screens/task_detail_screen.dart';
 import 'package:todo/widgets/date_header.dart';
 import 'package:todo/widgets/pinned_list.dart';
 import 'package:todo/widgets/task_list.dart';
+import 'package:todo/app_actions.dart';
 
 class PinnedScreen extends StatefulWidget {
   @override
@@ -23,10 +24,12 @@ class _PinnedScreenState extends State<PinnedScreen> {
             ],
           ),
           actions: [
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(SettingsScreen.routeName),
+            PopupMenuButton(
+              onSelected: (value) =>
+                  AppActionsHelper.handleAction(value, context),
+              itemBuilder: (context) => <PopupMenuEntry>[
+                AppActionsHelper.buildAction(AppActions.Settings),
+              ],
             )
           ],
         ),

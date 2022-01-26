@@ -35,7 +35,8 @@ class Task extends DbItem {
         'categoryId': categoryId,
         'isDone': isDone,
         'isPinned': isPinned,
-        'dueDate': dueDate.millisecondsSinceEpoch,
+        'dueDate': dueDate?.millisecondsSinceEpoch,
+        // 'dueDate': dueDate != null ? dueDate.millisecondsSinceEpoch : null,
       };
 
   void done() {
@@ -47,7 +48,7 @@ class Task extends DbItem {
   }
 
   bool get isDue {
-    if (dueDate == null) {
+    if (dueDate == null || isDone) {
       return false;
     }
 

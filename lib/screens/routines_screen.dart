@@ -8,6 +8,7 @@ import 'dart:math';
 
 import 'package:todo/widgets/routine_list.dart';
 import 'package:todo/screens/routine_detail_screen.dart';
+import 'package:todo/app_actions.dart';
 
 class RoutinesScreen extends StatefulWidget {
   @override
@@ -31,10 +32,12 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
           ],
         ),
         actions: [
-          IconButton(
-            icon: Icon(Icons.settings),
-            onPressed: () =>
-                Navigator.of(context).pushNamed(SettingsScreen.routeName),
+          PopupMenuButton(
+            onSelected: (value) =>
+                AppActionsHelper.handleAction(value, context),
+            itemBuilder: (context) => <PopupMenuEntry>[
+              AppActionsHelper.buildAction(AppActions.Settings),
+            ],
           )
         ],
       ),
