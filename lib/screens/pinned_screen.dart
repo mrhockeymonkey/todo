@@ -42,6 +42,7 @@ class _PinnedScreenState extends State<PinnedScreen> {
       );
 
   Widget _buildBody() => CustomScrollView(
+        controller: PrimaryScrollController.of(context) ?? ScrollController(),
         slivers: [
           SliverList(delegate: SliverChildListDelegate([DateHeader()])),
           PinnedList(),

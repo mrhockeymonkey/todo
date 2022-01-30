@@ -8,6 +8,8 @@ class Task extends DbItem {
   bool isDone;
   bool isPinned;
   DateTime dueDate;
+  int pinnedDayOfWeek;
+  int pinnedOrder;
 
   Task({
     @required this.id,
@@ -16,6 +18,8 @@ class Task extends DbItem {
     this.isDone = false,
     this.isPinned = false,
     this.dueDate,
+    this.pinnedDayOfWeek = 00000000,
+    this.pinnedOrder = 1,
   });
 
   factory Task.fromMap(Map<String, dynamic> map) => Task(
@@ -27,6 +31,8 @@ class Task extends DbItem {
         dueDate: map['dueDate'] != null
             ? DateTime.fromMillisecondsSinceEpoch(map['dueDate'])
             : null,
+        pinnedDayOfWeek: map['pinnedDayOfWeek'] ?? 00000000,
+        pinnedOrder: map['pinnedOrder'] ?? 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -37,6 +43,8 @@ class Task extends DbItem {
         'isPinned': isPinned,
         'dueDate': dueDate?.millisecondsSinceEpoch,
         // 'dueDate': dueDate != null ? dueDate.millisecondsSinceEpoch : null,
+        'pinnedDayOfWeek': pinnedDayOfWeek,
+        'pinnedOrder': pinnedOrder,
       };
 
   void done() {
