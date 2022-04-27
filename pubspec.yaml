@@ -25,12 +25,13 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  localstore: ^1.2.0
+  localstore: ^1.2.3
   provider: ^4.3.3
   jiffy: ^4.1.0
   flutter_icons: ^1.1.0
   collection: ^1.15.0
   reorderables: ^0.3.2
+  uuid: ^3.0.6
 
 
   # The following adds the Cupertino Icons font to your application.

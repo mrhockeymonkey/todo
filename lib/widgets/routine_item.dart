@@ -18,14 +18,14 @@ class RoutineItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: SizedBox(
-        height: 70,
-        width: 70,
+        height: 40,
+        width: 40,
         child: AnimatedGauge(
           percent: routine.percent,
         ),
       ),
       title: Text(routine.title),
-      subtitle: Text(routine.dueWhen),
+      subtitle: Text("${routine.dueWhen} _${routine.nextDueDate}"),
       onTap: () => Navigator.of(context).pushNamed(
         RoutineDetailScreen.routeName,
         arguments: routine.id,

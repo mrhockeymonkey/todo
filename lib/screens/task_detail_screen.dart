@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
-import 'package:todo/datetim_helpers.dart';
+import 'package:todo/datetime_helper.dart';
 import 'package:todo/models/category.dart';
+import 'package:todo/models/task_detail_args.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -23,11 +24,12 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
 
   bool _isInit = false;
   bool _shouldFocusTitleField = true;
-  bool _isPinned = false;
+  bool _isPinned = true;
   String _taskId;
   String _taskTitle;
   String _categoryId;
   DateTime _selectedDate;
+  String _notesValue;
 
   @override
   void initState() {
@@ -38,17 +40,20 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   @override
   void didChangeDependencies() {
     if (!_isInit) {
-      final taskId = ModalRoute.of(context).settings.arguments as String;
+      final args = ModalRoute.of(context).settings.arguments as TaskDetailArgs;
 
-      if (taskId != null) {
+      if (args.taskId != null) {
         final task = Provider.of<TaskProvider>(context, listen: false)
-            .getItemById(taskId);
+            .getItemById(args.taskId);
         _taskId = task.id;
         _taskTitle = task.title;
         _categoryId = task.categoryId;
         _shouldFocusTitleField = false;
         _isPinned = task.isPinned;
         _selectedDate = task.dueDate;
+        _notesValue = task.notes;
+      } else {
+        _selectedDate = args.date;
       }
 
       _isInit = true;
@@ -97,6 +102,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
       categoryId: _categoryId,
       isPinned: _isPinned,
       dueDate: _selectedDate,
+      notes: _notesValue,
     );
     await Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task);
     Navigator.of(context).pop();
@@ -217,8 +223,8 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
               });
             }),
         ListTile(
-          title: Text("Snooze"),
-          leading: Icon(Icons.snooze,
+          title: Text("When"),
+          leading: Icon(Icons.today,
               color: _selectedDate != null
                   ? category.color
                   : AppColour.InactiveColor),
@@ -233,9 +239,26 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
                 )
               : null,
           subtitle: _selectedDate != null
-              ? Text("Until ${dateFmt.format(_selectedDate)}")
-              : null,
+              ? Text("${dateFmt.format(_selectedDate)}")
+              : Text("At Some Point"),
           onTap: _selectDate,
+        ),
+        ListTile(
+          title: TextFormField(
+            initialValue: _notesValue,
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            decoration: InputDecoration(
+              hintText: "Notes",
+              hintStyle: TextStyle(color: Colors.black54),
+            ),
+            onChanged: (value) => _notesValue = value,
+          ),
+          leading: Icon(
+            //Icons.subject,
+            FontAwesome5.sticky_note,
+            color: _notesValue != "" ? category.color : AppColour.InactiveColor,
+          ),
         ),
       ],
     );

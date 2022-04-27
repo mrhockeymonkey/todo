@@ -4,10 +4,16 @@ import 'package:reorderables/reorderables.dart';
 import 'package:todo/day_of_week_factory.dart';
 import 'package:todo/models/category.dart';
 import 'package:todo/models/pinnedDayOfWeek.dart';
+import 'package:todo/models/pinnedRoutine.dart';
 import 'package:todo/models/pinnedTask.dart';
-import 'package:todo/models/pinnedItem.dart';
+import 'package:todo/models/pinnedItemBase.dart';
+import 'package:todo/models/pinned_later.dart';
+import 'package:todo/models/pinned_missed.dart';
+import 'package:todo/models/routine.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/providers/category_provider.dart';
+import 'package:todo/providers/routine_provider.dart';
+import 'package:todo/datetime_extensions.dart';
 
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/widgets/task_item.dart';
@@ -23,6 +29,7 @@ class PinnedListState extends State<PinnedList> {
   @override
   void initState() {
     Provider.of<TaskProvider>(context, listen: false).fetch();
+    Provider.of<RoutineProvider>(context, listen: false).fetch();
     super.initState();
 
     // _pinnedItems = [
@@ -38,18 +45,32 @@ class PinnedListState extends State<PinnedList> {
   Widget build(BuildContext context) {
     print("Build: PinnedList");
     final taskProvider = Provider.of<TaskProvider>(context);
-    final tasks = taskProvider.pinnedItems;
-    // final List<PinnedItem> pinnedDaysOfWeek = [
-    //   new PinnedDayOfWeek(date: 20220109),
-    //   new PinnedDayOfWeek(date: 20220110),
-    // ];
-    final List<PinnedItem> pinnedDaysOfWeek =
-        PinnedDayOfWeekFactory.getPinnedDaysOfWeek(5);
-    final List<PinnedItem> pinnedTasks =
-        tasks.map((t) => new PinnedTask(task: t)).toList();
+    //final tasks = taskProvider.items;
 
-    final List<PinnedItem> pinnedItems = pinnedDaysOfWeek + pinnedTasks;
+    final routineProvider = Provider.of<RoutineProvider>(context);
+    //final routines = routineProvider.pinnedItems;
+
+    final DateTime lookAheadDate =
+        PinnedDayOfWeekFactory.getPinnedDateTimeEnd();
+    final List<PinnedItemBase> pinnedDaysOfWeek =
+        PinnedDayOfWeekFactory.getPinnedDaysOfWeek();
+
+    final List<PinnedItemBase> pinnedTasks = taskProvider.items
+        .where((task) => task.isPinnedOrUpcoming(lookAheadDate))
+        .map((t) => new PinnedTask(task: t))
+        .toList();
+
+    final List<PinnedItemBase> pinnedRoutines = routineProvider.items
+        .where(
+            (r) => r.displayOnPinned && r.nextDueDate.isBefore(lookAheadDate))
+        .map((r) => new PinnedRoutine(r))
+        .toList();
+
+    final List<PinnedItemBase> pinnedItems =
+        pinnedDaysOfWeek + pinnedTasks + pinnedRoutines;
     pinnedItems.sort((a, b) => a.listOrder.compareTo(b.listOrder));
+
+    //pinnedItems.insert(0, new PinnedMissed());
 
     // new Dismissible(
     //   key: Key("1234"),
@@ -87,47 +108,59 @@ class PinnedListState extends State<PinnedList> {
             print("dont move that");
             return;
           }
-          PinnedItem row = pinnedItems.removeAt(oldIndex);
+          PinnedItemBase row = pinnedItems.removeAt(oldIndex);
           pinnedItems.insert(newIndex, row);
 
           // reorder logic
           // loop through items
-          var currentDate = 00000000;
+          var currentDate = 0;
           var currentOrder = 1;
           pinnedItems.forEach((p) {
-            print("checking ${p.task.title}...");
+            print("checking $p...");
 
             // if (p.date > currentDate) {
             //   currentDate = p.date;
             //   currentOrder = 1;
             // }
 
-            if (p.runtimeType == PinnedDayOfWeek) {
-              print(
-                  "...${p.date}-${p.order} is a dayofweek so will not change");
+            if (currentDate == 0) {
               currentDate = p.date;
-              currentOrder = 1;
-            } else {
-              if (p.date != currentDate) {
-                print(
-                    "...setting task '${p.task.title}' date from ${p.date} -> $currentDate");
-                p.date = currentDate;
-              }
-
-              if (p.order != currentOrder) {
-                print(
-                    "...setting task '${p.task.title}' order from ${p.order} -> $currentOrder");
-                p.order = currentOrder;
-              }
-              currentOrder++;
             }
+
+            currentDate = p.getNextDate(currentDate);
+            p.date = currentDate;
+            //currentDate = nextDate;
+
+            currentOrder = p.getNextOrder(currentOrder);
+            p.order = currentOrder;
+            //currentOrder = nextOrder;
+
+            // if (p.runtimeType == PinnedDayOfWeek ||
+            //     p.runtimeType == PinnedLater) {
+            //   print(
+            //       "...${p.date}-${p.order} is a dayofweek so will not change");
+            //   currentDate = p.date;
+            //   currentOrder = 1;
+            // } else {
+            //   if (p.date != currentDate) {
+            //     print("...setting date from ${p.date} -> $currentDate");
+            //     p.date = currentDate;
+            //   }
+
+            //   if (p.order != currentOrder) {
+            //     print("...setting order from ${p.order} -> $currentOrder");
+            //     p.order = currentOrder;
+            //   }
+            //   currentOrder++;
+            // }
           });
 
           pinnedItems.forEach((p) => p.updateTask());
+
           List<Task> tasksToSave = pinnedItems
-              .map((p) => p.getTask())
-              .where((t) => t != null)
-              .toList();
+              .where((i) => i.itemType == PinnedTask.type)
+              .map((p) => p.task)
+              .toList(); // issaveable
 
           Provider.of<TaskProvider>(context, listen: false)
               .updateAll(tasksToSave);
@@ -150,20 +183,20 @@ class PinnedListState extends State<PinnedList> {
     //   },
     // );
 
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          Task task = tasks[index];
-          return Dismissible(
-            key: Key(task.id),
-            direction: DismissDirection.startToEnd,
-            onDismissed: (direction) => _handleDismiss(direction, task),
-            child: TaskItem(task: task),
-          );
-        },
-        childCount: tasks.length,
-      ),
-    );
+    // return SliverList(
+    //   delegate: SliverChildBuilderDelegate(
+    //     (BuildContext context, int index) {
+    //       Task task = tasks[index];
+    //       return Dismissible(
+    //         key: Key(task.id),
+    //         direction: DismissDirection.startToEnd,
+    //         onDismissed: (direction) => _handleDismiss(direction, task),
+    //         child: TaskItem(task: task),
+    //       );
+    //     },
+    //     childCount: tasks.length,
+    //   ),
+    // );
   }
 
   void _handleDismiss(DismissDirection direction, Task task) {

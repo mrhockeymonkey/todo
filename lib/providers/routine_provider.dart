@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:localstore/localstore.dart';
+import 'package:todo/day_of_week_factory.dart';
 
 import 'package:todo/models/routine.dart';
 import 'package:todo/providers/provider_base.dart';
@@ -17,6 +18,12 @@ class RoutineProvider extends ProviderBase<Routine> {
   }
 
   int get isDueCount => items.where((r) => r.isDue).length;
+
+  List<Routine> get pinnedItems {
+    var items = [...super.items];
+    //items.sort((a, b) => b.isDone ? -1 : 1);
+    return items.where((r) => r.displayOnPinned);
+  }
 
   // Routine getRoutineById(String id) => _items[id];
 

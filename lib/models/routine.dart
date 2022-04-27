@@ -15,6 +15,8 @@ class Routine extends DbItem {
   DateTime nextDueDate;
 
   final Color color;
+  String notes;
+  bool displayOnPinned;
   // final double percent;
 
   Routine({
@@ -25,7 +27,11 @@ class Routine extends DbItem {
     this.lastCompletedDate,
     this.nextDueDate,
     this.color = Colors.black,
-  });
+    this.notes,
+    this.displayOnPinned = false,
+  }) {
+    done();
+  }
 
   factory Routine.fromMap(Map<String, dynamic> map) {
     return Routine(
@@ -36,6 +42,8 @@ class Routine extends DbItem {
       lastCompletedDate:
           DateTime.fromMillisecondsSinceEpoch(map['lastCompletedDate'] ?? 0),
       nextDueDate: DateTime.fromMillisecondsSinceEpoch(map['nextDueDate'] ?? 0),
+      notes: map['notes'] ?? "",
+      displayOnPinned: map['displayOnPinned'] ?? false,
     );
   }
 
@@ -50,6 +58,8 @@ class Routine extends DbItem {
           : 0,
       'nextDueDate':
           nextDueDate != null ? nextDueDate.millisecondsSinceEpoch : 0,
+      'notes': this.notes,
+      'displayOnPinned': this.displayOnPinned ?? false,
     };
   }
 
@@ -74,11 +84,17 @@ class Routine extends DbItem {
     var next = now.clone();
 
     switch (recurLen) {
+      case 'minutes':
+        next.add(minutes: recurNum);
+        break;
       case 'hours':
         next.add(hours: recurNum);
         break;
       case 'days':
         next.add(days: recurNum);
+        break;
+      case 'weeks':
+        next.add(weeks: recurNum);
         break;
       case 'months':
         next.add(months: recurNum);

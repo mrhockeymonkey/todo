@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:todo/datetime_helper.dart';
 import 'task.dart';
-import 'pinnedItem.dart';
+import 'pinnedItemBase.dart';
 import '../widgets/task_item.dart';
 import 'package:todo/providers/task_provider.dart';
 import 'package:provider/provider.dart';
 
-class PinnedTask extends PinnedItem {
-  final Task task;
-  int date;
-  int order;
-
+class PinnedTask extends PinnedItemBase {
   PinnedTask({
-    @required this.task,
-  }) {
-    date = task.pinnedDayOfWeek;
-    order = task.pinnedOrder;
-  }
+    @required Task task,
+  }) : super(
+          task,
+          DateTimeHelper.toSortableDate(task.dueDate),
+          task.pinnedOrder,
+          type,
+        );
 
-  //Widget build() => TaskItem(task: task);
+  static String get type => "task";
 
   Widget build(BuildContext context) => Dismissible(
         key: Key(task.id),
@@ -34,10 +33,19 @@ class PinnedTask extends PinnedItem {
 
   @override
   void updateTask() {
-    task.pinnedDayOfWeek = date;
+    task.dueDate = DateTimeHelper.toDateTime(date);
     task.pinnedOrder = order;
   }
 
   @override
+  int getNextDate(int currentDate) => currentDate;
+
+  @override
+  int getNextOrder(int currentOrder) => currentOrder + 1;
+
+  @override
   Task getTask() => task;
+
+  @override
+  String toString() => "PinnedTask: ${task.title}";
 }
