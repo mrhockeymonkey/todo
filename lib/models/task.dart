@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:todo/datetime_helper.dart';
 import 'package:todo/providers/db_item.dart';
 
 class Task extends DbItem {

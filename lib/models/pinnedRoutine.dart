@@ -1,10 +1,11 @@
 import 'package:provider/provider.dart';
-import 'package:todo/datetime_helper.dart';
+import 'package:todo/int_extensions.dart';
 import 'package:todo/models/pinnedItemBase.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/models/routine.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/widgets/task_item.dart';
+import 'package:todo/datetime_extensions.dart';
 import 'package:uuid/uuid.dart';
 
 import '../providers/routine_provider.dart';
@@ -17,7 +18,7 @@ class PinnedRoutine extends PinnedItemBase {
       : this.routine = routine,
         super(
           new Task(id: "id", title: routine.title), // TODO this sucks
-          DateTimeHelper.toSortableDate(routine.nextDueDate),
+          routine.nextDueDate.asSortableInt(),
           0,
           type,
         );
@@ -48,7 +49,7 @@ class PinnedRoutine extends PinnedItemBase {
 
   @override
   void updateTask() {
-    routine.nextDueDate = DateTimeHelper.toDateTime(date);
+    routine.nextDueDate = date.asDateTime();
     // include pinned order??
   }
 

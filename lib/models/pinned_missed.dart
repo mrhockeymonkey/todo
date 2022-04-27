@@ -1,5 +1,5 @@
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:todo/datetime_helper.dart';
+import 'package:todo/int_extensions.dart';
 import 'package:todo/models/pinnedItemBase.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/widgets/text_header.dart';

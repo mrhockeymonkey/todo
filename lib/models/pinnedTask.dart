@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todo/datetime_helper.dart';
+import 'package:todo/datetime_extensions.dart';
+import 'package:todo/int_extensions.dart';
 import 'task.dart';
 import 'pinnedItemBase.dart';
 import '../widgets/task_item.dart';
@@ -11,7 +12,7 @@ class PinnedTask extends PinnedItemBase {
     @required Task task,
   }) : super(
           task,
-          DateTimeHelper.toSortableDate(task.dueDate),
+          task.dueDate.asSortableInt(),
           task.pinnedOrder,
           type,
         );
@@ -33,7 +34,7 @@ class PinnedTask extends PinnedItemBase {
 
   @override
   void updateTask() {
-    task.dueDate = DateTimeHelper.toDateTime(date);
+    task.dueDate = date.asDateTime();
     task.pinnedOrder = order;
   }
 

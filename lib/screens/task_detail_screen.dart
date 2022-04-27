@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
-import 'package:todo/datetime_helper.dart';
 import 'package:todo/models/category.dart';
 import 'package:todo/models/task_detail_args.dart';
 import 'package:todo/providers/category_provider.dart';

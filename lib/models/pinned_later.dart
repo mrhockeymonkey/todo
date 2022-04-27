@@ -1,11 +1,13 @@
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:todo/datetime_helper.dart';
+import 'package:todo/app_constants.dart';
+import 'package:todo/datetime_extensions.dart';
+import 'package:todo/int_extensions.dart';
 import 'package:todo/models/pinnedItemBase.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/widgets/text_header.dart';
 
 class PinnedLater extends PinnedItemBase {
-  PinnedLater() : super(null, DateTimeHelper.LaterDate, 1, "");
+  PinnedLater() : super(null, AppConstants.Later, 1, "");
 
   set date(int newDate) => print("wont set date for PinnedLater item");
 
