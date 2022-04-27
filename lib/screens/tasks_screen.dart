@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:todo/app_actions.dart';
+import 'package:todo/models/task_detail_args.dart';
 import 'package:todo/screens/settings_screen.dart';
 import 'package:todo/screens/task_detail_screen.dart';
 import 'package:todo/widgets/date_header.dart';
@@ -36,8 +37,9 @@ class _TaskScreenState extends State<TasksScreen> {
         body: _buildBody(),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-          onPressed: () =>
-              Navigator.of(context).pushNamed(TaskDetailScreen.routeName),
+          onPressed: () => Navigator.of(context).pushNamed(
+              TaskDetailScreen.routeName,
+              arguments: TaskDetailArgs(null, null)),
         ),
       );
 

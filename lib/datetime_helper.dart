@@ -1,7 +1,10 @@
 import 'package:intl/intl.dart';
 
-class DateTimeConvert {
+class DateTimeHelper {
+  static const int LaterDate = 99999999;
+
   static int toSortableDate(DateTime date) {
+    // make extension method
     DateFormat formatter = new DateFormat('yyyyMMdd');
     String sortableStr = formatter.format(date);
     int sortableInt = int.parse(sortableStr);

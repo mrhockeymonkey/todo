@@ -5,8 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
 import 'package:todo/models/category.dart';
 import 'package:intl/intl.dart';
+import 'package:todo/models/pinnedDayOfWeek.dart';
 
 import 'package:todo/models/task.dart';
+import 'package:todo/models/task_detail_args.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/screens/task_detail_screen.dart';
@@ -32,6 +34,7 @@ class TaskItem extends StatelessWidget {
         new DateFormat.yMMMMd(Localizations.localeOf(context).toLanguageTag());
 
     return ListTile(
+      key: ValueKey(task),
       title: Text(task.title),
       subtitle: task.dueDate != null
           ? Row(
@@ -42,13 +45,14 @@ class TaskItem extends StatelessWidget {
                   color: task.isDue ? category.color : Colors.grey,
                 ),
                 Text(" ${dateFmt.format(task.dueDate)}"),
+                Text(" _order-${task.pinnedOrder} "),
               ],
             )
-          : null,
+          : Text("${task.dueDate}-${task.pinnedOrder} "),
       leading: Icon(category.icon, color: category.color),
       onTap: () => Navigator.of(context).pushNamed(
         TaskDetailScreen.routeName,
-        arguments: task.id,
+        arguments: TaskDetailArgs(task.id, DateTime.now()),
       ),
       trailing: IconButton(
         icon: Icon(
@@ -66,6 +70,7 @@ class TaskItem extends StatelessWidget {
   }
 
   Widget _buildDoneTaskItem(BuildContext context) => ListTile(
+        key: ValueKey(0),
         title: Text(
           task.title,
           style: TextStyle(

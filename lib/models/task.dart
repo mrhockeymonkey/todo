@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo/datetime_helper.dart';
 import 'package:todo/providers/db_item.dart';
 
 class Task extends DbItem {
@@ -8,6 +9,8 @@ class Task extends DbItem {
   bool isDone;
   bool isPinned;
   DateTime dueDate;
+  int pinnedOrder;
+  String notes;
 
   Task({
     @required this.id,
@@ -16,6 +19,8 @@ class Task extends DbItem {
     this.isDone = false,
     this.isPinned = false,
     this.dueDate,
+    this.pinnedOrder = 1,
+    this.notes = "",
   });
 
   factory Task.fromMap(Map<String, dynamic> map) => Task(
@@ -27,6 +32,8 @@ class Task extends DbItem {
         dueDate: map['dueDate'] != null
             ? DateTime.fromMillisecondsSinceEpoch(map['dueDate'])
             : null,
+        pinnedOrder: map['pinnedOrder'] ?? 0,
+        notes: map['notes'] ?? "",
       );
 
   Map<String, dynamic> toMap() => {
@@ -36,7 +43,8 @@ class Task extends DbItem {
         'isDone': isDone,
         'isPinned': isPinned,
         'dueDate': dueDate?.millisecondsSinceEpoch,
-        // 'dueDate': dueDate != null ? dueDate.millisecondsSinceEpoch : null,
+        'pinnedOrder': pinnedOrder,
+        'notes': notes,
       };
 
   void done() {
@@ -53,6 +61,22 @@ class Task extends DbItem {
     }
 
     return dueDate.isBefore(DateTime.now()) ? true : false;
+  }
+
+  bool isPinnedOrUpcoming(DateTime lookAheadDate) {
+    if (isDone) {
+      return false;
+    }
+
+    if (isPinned) {
+      return true;
+    }
+
+    if (dueDate != null && dueDate.isBefore(lookAheadDate)) {
+      return true;
+    }
+
+    return false;
   }
 
   String toString() => "Task = {id: '$id', title: '$title', isDone: '$isDone'}";

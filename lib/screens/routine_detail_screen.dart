@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 
 import 'package:todo/models/routine.dart';
@@ -22,7 +23,9 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
   String _routineId;
   String _routineTitle;
   int _routineRecurNum = 1;
-  String _routineRecurLen = "hours";
+  String _routineRecurLen = "days";
+  String _notesValue;
+  bool _displayOnPinned = false;
 
   @override
   void initState() {
@@ -42,6 +45,8 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
         _routineRecurNum = routine.recurNum;
         _routineRecurLen = routine.recurLen;
         _shouldFocusTitleField = false;
+        _notesValue = routine.notes;
+        _displayOnPinned = routine.displayOnPinned;
       }
 
       _isInit = true;
@@ -89,6 +94,8 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
       title: _routineTitle,
       recurNum: _routineRecurNum,
       recurLen: _routineRecurLen,
+      notes: _notesValue,
+      displayOnPinned: _displayOnPinned,
     );
     await Provider.of<RoutineProvider>(context, listen: false)
         .addOrUpdate(routine);
@@ -115,21 +122,21 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
         return AlertDialog(
           content: RepeatPicker(_updateRecurValues),
           actions: <Widget>[
-            TextButton(
-              child: Text('CANCEL'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
+            // TextButton(
+            //   child: Text('CANCEL'),
+            //   onPressed: () {
+            //     Navigator.of(context).pop();
+            //   },
+            // ),
             TextButton(
               child: Text('OK'),
               onPressed: () {
-                setState(() {
-                  print("repeatNum: " +
-                      _routineRecurNum.toString() +
-                      " repeatLen: " +
-                      _routineRecurLen);
-                });
+                // setState(() {
+                //   print("repeatNum: " +
+                //       _routineRecurNum.toString() +
+                //       " repeatLen: " +
+                //       _routineRecurLen);
+                // });
                 Navigator.of(context).pop();
               },
             )
@@ -173,7 +180,40 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
           subtitle:
               Text("Every ${_routineRecurNum.toString()} $_routineRecurLen"),
           onTap: _selectSchedule,
-        )
+        ),
+        ListTile(
+            title: Text("Pin"),
+            leading: Icon(
+              Entypo.pin,
+              color: _displayOnPinned
+                  ? AppColour.pinActiveColor
+                  : AppColour.InactiveColor,
+            ),
+            subtitle: Text("Pin this routine when due"),
+            onTap: () {
+              setState(() {
+                _displayOnPinned = !_displayOnPinned;
+              });
+            }),
+        ListTile(
+          title: TextFormField(
+            initialValue: _notesValue,
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            decoration: InputDecoration(
+              hintText: "Notes",
+              hintStyle: TextStyle(color: Colors.black54),
+            ),
+            onChanged: (value) => _notesValue = value,
+          ),
+          leading: Icon(
+            //Icons.subject,
+            FontAwesome5.sticky_note,
+            color: _notesValue != ""
+                ? AppColour.colorCustom
+                : AppColour.InactiveColor,
+          ),
+        ),
       ],
     );
   }

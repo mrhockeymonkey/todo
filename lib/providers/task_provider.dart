@@ -16,12 +16,6 @@ class TaskProvider extends ProviderBase<Task> {
     return items;
   }
 
-  List<Task> get pinnedItems {
-    var items = [...super.items];
-    //items.sort((a, b) => b.isDone ? -1 : 1);
-    return items.where((task) => task.isPinned && !task.isDone).toList();
-  }
-
   int get isDueCount => items.where((r) => r.isDue).length;
 
   Future<void> clearCompletedTasks() async {

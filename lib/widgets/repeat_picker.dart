@@ -22,7 +22,7 @@ class _RepeatPickerState extends State<RepeatPicker> {
     'months'
   ];
   String repeatAmmountValue = repeatAmmountChoice[0];
-  String repeatDenominationValue = repeatDenominationChoice[0];
+  String repeatDenominationValue = repeatDenominationChoice[2];
 
   @override
   void initState() {
