@@ -23,7 +23,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
 
   bool _isInit = false;
   bool _shouldFocusTitleField = true;
-  bool _isPinned = true;
+  bool _isPinned = false;
   String _taskId;
   String _taskTitle;
   String _categoryId;

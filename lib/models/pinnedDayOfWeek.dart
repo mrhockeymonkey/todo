@@ -12,9 +12,9 @@ class PinnedDayOfWeek extends PinnedItemBase {
   }) : super(null, date, 0, "");
 
   factory PinnedDayOfWeek.fromDateTime(DateTime dateTime) =>
-      PinnedDayOfWeek(date: dateTime.asSortableInt());
+      PinnedDayOfWeek(date: dateTime.asSortableIntDate());
 
-  factory PinnedDayOfWeek.later() => PinnedDayOfWeek(date: 99999999);
+  // factory PinnedDayOfWeek.later() => PinnedDayOfWeek(date: 99999999);
 
   set date(int newDate) => print("wont set date for PinnedDayOfWeek item");
 

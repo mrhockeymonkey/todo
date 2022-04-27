@@ -7,7 +7,9 @@ import 'package:todo/models/task.dart';
 import 'package:todo/widgets/text_header.dart';
 
 class PinnedLater extends PinnedItemBase {
-  PinnedLater() : super(null, AppConstants.Later, 1, "");
+  PinnedLater({
+    @required int date,
+  }) : super(null, date, -1, "");
 
   set date(int newDate) => print("wont set date for PinnedLater item");
 

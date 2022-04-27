@@ -18,7 +18,7 @@ class PinnedRoutine extends PinnedItemBase {
       : this.routine = routine,
         super(
           new Task(id: "id", title: routine.title), // TODO this sucks
-          routine.nextDueDate.asSortableInt(),
+          routine.nextDueDate.asSortableIntDate(),
           0,
           type,
         );

@@ -12,7 +12,7 @@ class PinnedTask extends PinnedItemBase {
     @required Task task,
   }) : super(
           task,
-          task.dueDate.asSortableInt(),
+          task.dueDate.asSortableIntDate(),
           task.pinnedOrder,
           type,
         );
@@ -34,7 +34,10 @@ class PinnedTask extends PinnedItemBase {
 
   @override
   void updateTask() {
-    task.dueDate = date.asDateTime();
+    // dont add dates where previously there was none
+    if (task.dueDate != null) {
+      task.dueDate = date.asDateTime();
+    }
     task.pinnedOrder = order;
   }
 
