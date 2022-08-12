@@ -45,10 +45,7 @@ class PinnedListState extends State<PinnedList> {
   Widget build(BuildContext context) {
     print("Build: PinnedList");
     final taskProvider = Provider.of<TaskProvider>(context);
-    //final tasks = taskProvider.items;
-
     final routineProvider = Provider.of<RoutineProvider>(context);
-    //final routines = routineProvider.pinnedItems;
 
     final DateTime lookAheadDate =
         PinnedDayOfWeekFactory.getPinnedDateTimeEnd();
@@ -89,12 +86,7 @@ class PinnedListState extends State<PinnedList> {
       delegate: ReorderableSliverChildBuilderDelegate(
         (BuildContext context, int index) {
           var item = pinnedItems[index];
-
           return item.build(context);
-          return ListTile(
-            title: Text(item.task.title),
-            subtitle: Text("date: ${item.date}, order: ${item.order}"),
-          );
         },
         childCount: pinnedItems.length,
       ),

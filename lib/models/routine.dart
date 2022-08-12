@@ -30,7 +30,15 @@ class Routine extends DbItem {
     this.notes,
     this.displayOnPinned = false,
   }) {
-    done();
+    if (lastCompletedDate == null ||
+        lastCompletedDate == DateTime.fromMillisecondsSinceEpoch(0)) {
+      lastCompletedDate = Jiffy().dateTime;
+    }
+
+    if (nextDueDate == null ||
+        nextDueDate == DateTime.fromMillisecondsSinceEpoch(0)) {
+      nextDueDate = _calculateNextDueDate(Jiffy()).dateTime;
+    }
   }
 
   factory Routine.fromMap(Map<String, dynamic> map) {
@@ -81,30 +89,52 @@ class Routine extends DbItem {
 
   void done() {
     var now = Jiffy();
-    var next = now.clone();
+    // var next = now.clone();
 
-    switch (recurLen) {
-      case 'minutes':
-        next.add(minutes: recurNum);
-        break;
-      case 'hours':
-        next.add(hours: recurNum);
-        break;
-      case 'days':
-        next.add(days: recurNum);
-        break;
-      case 'weeks':
-        next.add(weeks: recurNum);
-        break;
-      case 'months':
-        next.add(months: recurNum);
-        break;
-      default: // minutes
-        next.add(minutes: recurNum);
-    }
+    // switch (recurLen) {
+    //   case 'minutes':
+    //     next.add(minutes: recurNum);
+    //     break;
+    //   case 'hours':
+    //     next.add(hours: recurNum);
+    //     break;
+    //   case 'days':
+    //     next.add(days: recurNum);
+    //     break;
+    //   case 'weeks':
+    //     next.add(weeks: recurNum);
+    //     break;
+    //   case 'months':
+    //     next.add(months: recurNum);
+    //     break;
+    //   default: // minutes
+    //     next.add(minutes: recurNum);
+    // }
     lastCompletedDate = now.dateTime;
-    nextDueDate = next.dateTime;
+    nextDueDate = _calculateNextDueDate(now).dateTime;
     print(
         "Routine: '$title', Completed: '${lastCompletedDate.toIso8601String()}', NextDue: '${nextDueDate.toIso8601String()}'");
+  }
+
+  Jiffy _calculateNextDueDate(Jiffy lastCompleted) {
+    switch (recurLen) {
+      case 'minutes':
+        return lastCompleted.add(minutes: recurNum);
+        break;
+      case 'hours':
+        return lastCompleted.add(hours: recurNum);
+        break;
+      case 'days':
+        return lastCompleted.add(days: recurNum);
+        break;
+      case 'weeks':
+        return lastCompleted.add(weeks: recurNum);
+        break;
+      case 'months':
+        return lastCompleted.add(months: recurNum);
+        break;
+      default: // minutes
+        return lastCompleted.add(minutes: recurNum);
+    }
   }
 }

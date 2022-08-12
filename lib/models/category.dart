@@ -13,6 +13,8 @@ class Category extends DbItem {
   IconData get icon => icons[iconName];
   String get title => name ?? "<name>";
 
+  static IconData get defaultIcon => icons["pin"];
+
   static final Map<String, IconData> icons = {
     "flag": Entypo.flag,
     "game_controller": Entypo.game_controller,
@@ -48,7 +50,7 @@ class Category extends DbItem {
   const Category({
     @required this.id,
     @required this.name,
-    this.iconName = "flag",
+    this.iconName = "pin",
     this.color = AppColour.colorCustom,
     this.order = 0,
   });
