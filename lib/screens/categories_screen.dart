@@ -79,24 +79,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         });
       },
     );
-
-    return ListView.builder(
-        itemCount: categories.length,
-        itemBuilder: (context, index) {
-          var category = categories[index];
-          return ListTile(
-            title: Text(category.title),
-            subtitle: Text(category.id),
-            leading: Icon(
-              Category.icons[category.iconName],
-              color: category.color,
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () => _displayDialog(context, category.id),
-            ),
-          );
-        });
   }
 
   // TODO this could be a stateful widget
@@ -109,7 +91,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     } else {
       thisCategory = Category();
     }
-    String currentCategoryName = thisCategory.name;
+    String currentCategoryName = thisCategory.name ?? "New Category";
     String currentIconName = thisCategory.iconName;
     Color currentColor = thisCategory.color;
     bool isDefaultCategory = false;
@@ -185,7 +167,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         Navigator.of(context).pop();
                       },
                     )
-                  : null,
+                  : Container(),
               new TextButton(
                 child: new Text('OK'),
                 onPressed: () {

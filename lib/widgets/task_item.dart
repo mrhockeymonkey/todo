@@ -23,7 +23,7 @@ class TaskItem extends StatelessWidget {
   Widget build(BuildContext context) {
     category =
         Provider.of<CategoryProvider>(context).getItemById(task.categoryId) ??
-            new Category(id: null, name: "foo cat");
+            new Category(id: null, name: "");
     return task.isDone
         ? _buildDoneTaskItem(context)
         : _buildToDoTaskItem(context);
@@ -36,36 +36,45 @@ class TaskItem extends StatelessWidget {
     return ListTile(
       key: ValueKey(task),
       title: Text(task.title),
-      subtitle: task.dueDate != null
-          ? Row(
-              children: [
-                Icon(
-                  Icons.today,
-                  size: 15.0,
-                  color: task.isDue ? category.color : Colors.grey,
-                ),
-                Text(" ${dateFmt.format(task.dueDate)}"),
-                Text(" _order-${task.pinnedOrder} "),
-              ],
-            )
-          : Text("${task.dueDate}-${task.pinnedOrder} "),
-      leading: Icon(category.icon, color: category.color),
+      subtitle: Row(
+        children: [
+          category.id != null
+              ? Icon(
+                  category.icon,
+                  size: 15,
+                  color: category.color,
+                )
+              : Container(),
+          Text(" ${category.name}")
+        ],
+      ),
+      // subtitle: task.isPinned
+      //     ? Container(
+      //         alignment: AlignmentDirectional.centerStart,
+      //         child: Icon(
+      //           Entypo.pin,
+      //           size: 15,
+      //           color: AppColour.pinActiveColor,
+      //         ),
+      //       )
+      //     : null,
+      leading: Icon(Category.defaultIcon, color: AppColour.colorCustom),
       onTap: () => Navigator.of(context).pushNamed(
         TaskDetailScreen.routeName,
         arguments: TaskDetailArgs(task.id, DateTime.now()),
       ),
-      trailing: IconButton(
-        icon: Icon(
-          Entypo.pin,
-          color: task.isPinned
-              ? AppColour.pinActiveColor
-              : AppColour.InactiveColor,
-        ),
-        onPressed: () {
-          task.isPinned = !task.isPinned;
-          Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task);
-        },
-      ),
+      // trailing: IconButton(
+      //   icon: Icon(
+      //     Entypo.pin,
+      //     color: task.isPinned
+      //         ? AppColour.pinActiveColor
+      //         : AppColour.InactiveColor,
+      //   ),
+      // onPressed: () {
+      //   task.isPinned = !task.isPinned;
+      //   Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task);
+      // },
+      // ),
     );
   }
 
