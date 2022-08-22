@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/providers/task_provider.dart';
+import 'package:todo/screens/daily_screen.dart';
 import 'package:todo/screens/pinned_screen.dart';
 import 'package:todo/screens/routines_screen.dart';
 import 'package:todo/screens/tasks_screen.dart';
@@ -25,6 +26,10 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       'page': PinnedScreen(),
       'title': 'Pinned',
+    },
+    {
+      'page': DailyScreen(),
+      'title': 'Daily',
     },
     {
       'page': RoutinesScreen(),
@@ -54,11 +59,15 @@ class _HomeScreenState extends State<HomeScreen> {
         items: [
           BottomNavigationBarItem(
             label: '',
-            icon: Icon(Entypo.list),
+            icon: Icon(Entypo.list, color: Colors.amber),
           ),
           BottomNavigationBarItem(
             label: '',
-            icon: Icon(Entypo.pin),
+            icon: Icon(Entypo.pin, color: Colors.amber),
+          ),
+          BottomNavigationBarItem(
+            label: '',
+            icon: Icon(Entypo.air, color: Colors.amber),
           ),
           BottomNavigationBarItem(
               label: '',
@@ -66,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Transform(
                   transform: Matrix4.rotationY(pi),
                   alignment: Alignment.center,
-                  child: Icon(Entypo.circular_graph),
+                  child: Icon(Entypo.circular_graph, color: Colors.amber),
                 ),
                 badgeCount: Provider.of<RoutineProvider>(context).isDueCount,
               )),
