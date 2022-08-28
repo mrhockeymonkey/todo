@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:todo/providers/db_item.dart';
 
+import '../date.dart';
+
 class Task extends DbItem {
   final String id;
-  String title;
-  String categoryId;
-  bool isDone;
-  bool isPinned;
-  DateTime dueDate;
-  int pinnedOrder;
-  String notes;
+  final String title;
+  final String categoryId;
+  final bool isDone;
+  final bool isPinned;
+  final Date dueDate;
+  final int order;
+  final String notes;
 
-  Task({
+  const Task({
     @required this.id,
     @required this.title,
     this.categoryId,
     this.isDone = false,
     this.isPinned = false,
     this.dueDate,
-    this.pinnedOrder = 1,
+    this.order = 0,
     this.notes = "",
   });
 
@@ -29,9 +31,9 @@ class Task extends DbItem {
         isDone: map['isDone'] ?? false,
         isPinned: map['isPinned'] ?? false,
         dueDate: map['dueDate'] != null
-            ? DateTime.fromMillisecondsSinceEpoch(map['dueDate'])
+            ? Date.fromMillisecondsSinceEpoch(map['dueDate'])
             : null,
-        pinnedOrder: map['pinnedOrder'] ?? 0,
+        order: map['order'] ?? 0,
         notes: map['notes'] ?? "",
       );
 
@@ -42,24 +44,32 @@ class Task extends DbItem {
         'isDone': isDone,
         'isPinned': isPinned,
         'dueDate': dueDate?.millisecondsSinceEpoch,
-        'pinnedOrder': pinnedOrder,
+        'order': order,
         'notes': notes,
       };
 
-  void done() {
-    isDone = true;
-  }
-
-  void toDo() {
-    isDone = false;
-  }
+  Task copyWith({
+    String title,
+    bool isDone,
+    int order,
+  }) =>
+      Task(
+        id: this.id,
+        title: title ?? this.title,
+        categoryId: this.categoryId,
+        isDone: isDone ?? this.isDone,
+        isPinned: this.isPinned,
+        dueDate: this.dueDate,
+        order: order ?? this.order,
+        notes: this.notes,
+      );
 
   bool get isDue {
     if (dueDate == null || isDone) {
       return false;
     }
 
-    return dueDate.isBefore(DateTime.now()) ? true : false;
+    return dueDate.dateTime.isBefore(DateTime.now()) ? true : false;
   }
 
   bool isPinnedOrUpcoming(DateTime lookAheadDate) {
@@ -71,7 +81,7 @@ class Task extends DbItem {
       return true;
     }
 
-    if (dueDate != null && dueDate.isBefore(lookAheadDate)) {
+    if (dueDate != null && dueDate.dateTime.isBefore(lookAheadDate)) {
       return true;
     }
 

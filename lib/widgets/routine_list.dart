@@ -14,7 +14,7 @@ class RoutineList extends StatefulWidget {
 class RoutineListState extends State<RoutineList> {
   @override
   void initState() {
-    Provider.of<RoutineProvider>(context, listen: false).fetch();
+    //Provider.of<RoutineProvider>(context, listen: false).fetch();
     super.initState();
   }
 
@@ -41,7 +41,7 @@ class RoutineListState extends State<RoutineList> {
   }
 
   void _handleDismiss(DismissDirection direction, Routine routine) {
-    routine.done();
-    Provider.of<RoutineProvider>(context, listen: false).addOrUpdate(routine);
+    Provider.of<RoutineProvider>(context, listen: false)
+        .addOrUpdate(routine.copyAsDone());
   }
 }

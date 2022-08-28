@@ -1,12 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:localstore/localstore.dart';
-
-import 'package:todo/models/task.dart';
 import 'package:todo/providers/provider_base.dart';
 
+import '../date.dart';
 import '../models/throw_away_task.dart';
 
 class ThrowAwayTaskProvider extends ProviderBase<ThrowAwayTask> {
+  Map<String, ThrowAwayTask> _stash = {};
+
   ThrowAwayTaskProvider({String tableName}) : super(tableName: tableName);
 
   @override
@@ -18,40 +17,26 @@ class ThrowAwayTaskProvider extends ProviderBase<ThrowAwayTask> {
     return items;
   }
 
-  List<ThrowAwayTask> getByDate(DateTime dateTime) {
-    DO THIS NEXT
+  List<ThrowAwayTask> getByDate(Date date) =>
+      items.where((i) => i.date.isAtSameMomentAs(date)).toList();
+
+  void stash(ThrowAwayTask task) {
+    _stash.update(
+      task.id,
+      (_) => task,
+      ifAbsent: () => task,
+    );
   }
 
-  // Task getRoutineById(String id) => _items[id];
+  Future saveStashed() async {
+    await super.updateAll(_stash.values.toList());
+    _stash.clear();
+  }
 
-  // Future<void> fetch() async {
-  //   var fetched = await _db.collection(_tasks).get();
-  //   fetched?.entries?.forEach((element) {
-  //     final item = Task.fromMap(element.value);
-  //     print(element.value);
-  //     _items.putIfAbsent(item.id, () => item);
-  //   });
-  //   notifyListeners();
-  // }
-
-  // void delete(String id) async {
-  //   print("[Deleted] '$id'");
-  //   await _db.collection(_tasks).doc(id).delete();
-  //   _items.remove(id);
-  //   notifyListeners();
-  // }
-
-  // void addOrUpdate(Task task) async {
-  //   if (task.id == null) {
-  //     var taskMap = task.toMap();
-  //     taskMap['id'] = _db.collection(_tasks).doc().id;
-  //     task = Task.fromMap(taskMap);
-  //     print("[New] '${task.toString()}'");
-  //   }
-
-  //   await _db.collection(_tasks).doc(task.id).set(task.toMap());
-  //   _items[task.id] = task;
-  //   print("[Saved] '${task.toString()}'");
-  //   notifyListeners();
-  // }
+  @override
+  Future addOrUpdate(ThrowAwayTask item) async {
+    await super.updateAll(_stash.values.toList(), notify: false);
+    _stash.clear();
+    await super.addOrUpdate(item);
+  }
 }

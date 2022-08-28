@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:todo/models/category.dart';
 import 'package:todo/providers/provider_base.dart';
 

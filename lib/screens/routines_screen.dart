@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:todo/screens/settings_screen.dart';
 import 'package:todo/widgets/date_header.dart';
-import 'package:provider/provider.dart';
-import 'package:todo/providers/routine_provider.dart';
 import 'dart:math';
 
 import 'package:todo/widgets/routine_list.dart';

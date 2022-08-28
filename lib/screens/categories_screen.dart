@@ -18,7 +18,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
   @override
   void initState() {
-    Provider.of<CategoryProvider>(context, listen: false).fetch();
+    //Provider.of<CategoryProvider>(context, listen: false).fetch();
     super.initState();
   }
 
@@ -71,7 +71,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           final reordered = categories
               .asMap()
               .map((index, category) =>
-                  MapEntry(index, Category.Reordered(category, index)))
+                  MapEntry(index, category.copyWith(index)))
               .values
               .toList();
           Provider.of<CategoryProvider>(context, listen: false)

@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:localstore/localstore.dart';
-
 import 'package:todo/models/task.dart';
 import 'package:todo/providers/provider_base.dart';
 

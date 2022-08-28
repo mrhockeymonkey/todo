@@ -1,6 +1,8 @@
+import 'package:todo/date.dart';
+
 class TaskDetailArgs {
   final String taskId;
-  final DateTime date;
+  final Date date;
 
   TaskDetailArgs(
     this.taskId,

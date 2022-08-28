@@ -1,12 +1,10 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/providers/category_provider.dart';
-import 'package:todo/providers/day_plan_provider.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/providers/task_provider.dart';
+import 'package:todo/providers/test_provider.dart';
 import 'package:todo/providers/throw_away_task_provider.dart';
 import 'package:todo/screens/categories_screen.dart';
 import 'package:todo/screens/home_screen.dart';
@@ -14,7 +12,6 @@ import 'package:todo/screens/routine_detail_screen.dart';
 import 'package:todo/screens/settings_screen.dart';
 import 'package:todo/screens/task_detail_screen.dart';
 import 'app_colour.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
@@ -43,10 +40,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (_) => CategoryProvider(tableName: "categories")),
         ChangeNotifierProvider(
-            create: (_) => ThrowAwayTaskProvider(tableName: "dayplantasks")),
+            create: (_) => ThrowAwayTaskProvider(tableName: "dayplantasks"))
       ],
       child: MaterialApp(
-        title: 'Flutter Demo', // TODO
+        title: 'Flutter Demo', // TODO rename/ rebrand
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
@@ -61,7 +58,7 @@ class MyApp extends StatelessWidget {
           appBarTheme: AppBarTheme(
             elevation: 0.0,
             backgroundColor: AppColour.colorCustom,
-            brightness: Brightness.dark,
+            systemOverlayStyle: SystemUiOverlayStyle.light,
           ),
           floatingActionButtonTheme: FloatingActionButtonThemeData(
             backgroundColor: AppColour.colorCustom,
