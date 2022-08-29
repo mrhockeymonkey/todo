@@ -48,12 +48,19 @@ class Category extends DbItem {
   ];
 
   const Category({
-    @required this.id,
-    @required this.name,
+    this.id,
+    this.name,
     this.iconName = "pin",
     this.color = AppColour.colorCustom,
     this.order = 0,
   });
+
+  Category.defaultCategory()
+      : this.id = null,
+        this.name = "Default",
+        this.order = 99999,
+        this.iconName = "pin",
+        this.color = AppColour.colorCustom;
 
   factory Category.fromMap(Map<String, dynamic> map) => Category(
         id: map['id'],
@@ -63,18 +70,12 @@ class Category extends DbItem {
         order: map['order'] ?? 0,
       );
 
-  factory Category.Reordered(Category category, int newOrder) => Category(
-        id: category.id,
-        name: category.name,
-        iconName: category.iconName,
-        color: category.color,
-        order: newOrder,
-      );
-
-  factory Category.defaultCategory() => Category(
-        id: null,
-        name: "Default",
-        order: 9223372036854775807,
+  Category copyWith(int order) => Category(
+        id: this.id,
+        name: this.name,
+        iconName: this.iconName,
+        color: this.color,
+        order: order ?? this.order,
       );
 
   Map<String, dynamic> toMap() => {

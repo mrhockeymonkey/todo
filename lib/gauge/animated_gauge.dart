@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
-import 'package:todo/gauge/gauge_driver.dart';
 import 'package:todo/gauge/gauge_painter.dart';
 
 class AnimatedGauge extends StatefulWidget {
@@ -41,11 +40,11 @@ class GaugeState extends State<AnimatedGauge>
   //       end = x;
   //     });
 
-  final TextStyle _style = TextStyle(
-    color: Colors.black?.withOpacity(0.9),
-    fontSize: 32,
-    fontWeight: FontWeight.w200,
-  );
+  // final TextStyle _style = TextStyle(
+  //   color: Colors.black?.withOpacity(0.9),
+  //   fontSize: 32,
+  //   fontWeight: FontWeight.w200,
+  // );
 
   @override
   Widget build(BuildContext context) {

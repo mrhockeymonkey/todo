@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:todo/models/category.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/providers/category_provider.dart';
-import 'package:collection/collection.dart';
 
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/widgets/task_item.dart';
@@ -16,8 +15,8 @@ class TaskList extends StatefulWidget {
 class TaskListState extends State<TaskList> {
   @override
   void initState() {
-    Provider.of<TaskProvider>(context, listen: false).fetch();
-    Provider.of<CategoryProvider>(context, listen: false).fetch();
+    //Provider.of<TaskProvider>(context, listen: false).fetch();
+    //Provider.of<CategoryProvider>(context, listen: false).fetch();
     super.initState();
   }
 
@@ -63,11 +62,7 @@ class TaskListState extends State<TaskList> {
     );
   }
 
-  void _handleDismiss(DismissDirection direction, Task task) {
-    task.done();
-    Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task);
-    setState(() {
-      // trigger rebuild of the list so we can see the done task appear below
-    });
-  }
+  void _handleDismiss(DismissDirection direction, Task task) =>
+      Provider.of<TaskProvider>(context, listen: false)
+          .addOrUpdate(task.copyWith(isDone: true));
 }

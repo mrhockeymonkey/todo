@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
+import 'package:todo/date.dart';
 import 'package:todo/models/category.dart';
 import 'package:todo/models/task_detail_args.dart';
 import 'package:todo/providers/category_provider.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 
 import 'package:todo/providers/task_provider.dart';
@@ -27,13 +27,13 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   String _taskId;
   String _taskTitle;
   String _categoryId;
-  DateTime _selectedDate;
+  Date _selectedDate;
   String _notesValue;
 
   @override
   void initState() {
     super.initState();
-    Provider.of<CategoryProvider>(context, listen: false).fetch();
+    //Provider.of<CategoryProvider>(context, listen: false).fetch();
   }
 
   @override
@@ -238,7 +238,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
                 )
               : null,
           subtitle: _selectedDate != null
-              ? Text("${dateFmt.format(_selectedDate)}")
+              ? Text("${dateFmt.format(_selectedDate.dateTime)}")
               : Text("At Some Point"),
           onTap: _selectDate,
         ),
@@ -272,7 +272,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
         lastDate: DateTime.now().add(Duration(days: 365 * 2)));
     if (picked != null) {
       setState(() {
-        _selectedDate = picked;
+        _selectedDate = new Date(picked);
       });
     }
   }

@@ -1,11 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
 import 'package:todo/models/category.dart';
-import 'package:intl/intl.dart';
-import 'package:todo/models/pinnedDayOfWeek.dart';
 
 import 'package:todo/models/task.dart';
 import 'package:todo/models/task_detail_args.dart';
@@ -13,26 +9,24 @@ import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/screens/task_detail_screen.dart';
 
+import '../date.dart';
+
 class TaskItem extends StatelessWidget {
   final Task task;
-  Category category;
 
   TaskItem({@required this.task});
 
   @override
   Widget build(BuildContext context) {
-    category =
+    var category =
         Provider.of<CategoryProvider>(context).getItemById(task.categoryId) ??
             new Category(id: null, name: "");
     return task.isDone
-        ? _buildDoneTaskItem(context)
-        : _buildToDoTaskItem(context);
+        ? _buildDoneTaskItem(context, category)
+        : _buildToDoTaskItem(context, category);
   }
 
-  Widget _buildToDoTaskItem(BuildContext context) {
-    var dateFmt =
-        new DateFormat.yMMMMd(Localizations.localeOf(context).toLanguageTag());
-
+  Widget _buildToDoTaskItem(BuildContext context, Category category) {
     return ListTile(
       key: ValueKey(task),
       title: Text(task.title),
@@ -59,9 +53,10 @@ class TaskItem extends StatelessWidget {
       //       )
       //     : null,
       leading: Icon(Category.defaultIcon, color: AppColour.colorCustom),
+      trailing: Text(task.order.toString()),
       onTap: () => Navigator.of(context).pushNamed(
         TaskDetailScreen.routeName,
-        arguments: TaskDetailArgs(task.id, DateTime.now()),
+        arguments: TaskDetailArgs(task.id, new Date(DateTime.now())),
       ),
       // trailing: IconButton(
       //   icon: Icon(
@@ -78,7 +73,8 @@ class TaskItem extends StatelessWidget {
     );
   }
 
-  Widget _buildDoneTaskItem(BuildContext context) => ListTile(
+  Widget _buildDoneTaskItem(BuildContext context, Category category) =>
+      ListTile(
         key: ValueKey(0),
         title: Text(
           task.title,
@@ -91,8 +87,8 @@ class TaskItem extends StatelessWidget {
         trailing: IconButton(
           icon: Icon(Icons.undo),
           onPressed: () {
-            task.toDo();
-            Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task);
+            Provider.of<TaskProvider>(context, listen: false)
+                .addOrUpdate(task.copyWith(isDone: false));
           },
         ),
       );

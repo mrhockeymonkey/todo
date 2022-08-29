@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:todo/app_actions.dart';
 import 'package:todo/models/task_detail_args.dart';
-import 'package:todo/screens/settings_screen.dart';
 import 'package:todo/screens/task_detail_screen.dart';
 import 'package:todo/widgets/date_header.dart';
 import 'package:todo/widgets/task_list.dart';

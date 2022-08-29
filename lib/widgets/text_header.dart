@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jiffy/jiffy.dart';
 
 class TextHeader extends StatelessWidget {
-  String text;
+  final String text;
 
   TextHeader({
     @required this.text,

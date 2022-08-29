@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:localstore/localstore.dart';
-import 'package:todo/models/category.dart';
 
-import 'package:todo/models/routine.dart';
 import 'package:todo/providers/db_item.dart';
 
 abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
@@ -12,21 +10,21 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
 
   ProviderBase({
     this.tableName,
-  });
+  }) {
+    _fetch();
+  }
 
   List<T> get items {
     var items = [..._items.values];
     return items;
   }
 
-  Localstore get _myDb => db;
-
   T getItemById(String id) => _items[id];
 
   // extending class must provide a way to convert json to T
   T parse(Map<String, dynamic> json);
 
-  Future<void> fetch() async {
+  Future _fetch() async {
     print("fetching data from '$tableName' table");
     var fetched = await db.collection(tableName).get();
     fetched?.entries?.forEach((element) {
@@ -37,7 +35,7 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
     notifyListeners();
   }
 
-  void delete(String id, {bool notify: true}) async {
+  Future delete(String id, {bool notify: true}) async {
     print("Deleting $tableName item with id $id");
     await db.collection(tableName).doc(id).delete();
     _items.remove(id);
@@ -46,7 +44,7 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
     }
   }
 
-  void addOrUpdate(T item) async {
+  Future addOrUpdate(T item) async {
     if (item.id == null) {
       var itemMap = item.toMap();
       itemMap['id'] = db.collection(tableName).doc().id;
@@ -61,12 +59,14 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateAll(List<T> items) async {
-    items.forEach((item) {
-      db.collection(tableName).doc(item.id).set(item.toMap());
+  Future updateAll(List<T> items, {bool notify = true}) async {
+    items.forEach((item) async {
+      await db.collection(tableName).doc(item.id).set(item.toMap());
       _items[item.id] = item;
     });
 
-    notifyListeners();
+    if (notify) {
+      notifyListeners();
+    }
   }
 }
