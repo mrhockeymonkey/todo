@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
-import 'package:todo/app_actions.dart';
-import 'package:todo/models/task_detail_args.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:todo/screens/task_detail_screen.dart';
 import 'package:todo/widgets/date_header.dart';
 import 'package:todo/widgets/task_list.dart';
@@ -23,22 +21,22 @@ class _TaskScreenState extends State<TasksScreen> {
             ],
           ),
           actions: [
-            PopupMenuButton(
-              onSelected: (value) =>
-                  AppActionsHelper.handleAction(value, context),
-              itemBuilder: (context) => <PopupMenuEntry>[
-                AppActionsHelper.buildAction(AppActions.ClearCompleted),
-                AppActionsHelper.buildAction(AppActions.Settings),
-              ],
-            )
+            // TODO
+            // PopupMenuButton(
+            //   onSelected: (value) =>
+            //       AppActionsHelper.handleAction(value, context),
+            //   itemBuilder: (context) => <PopupMenuEntry>[
+            //     AppActionsHelper.buildAction(AppActions.ClearCompleted),
+            //     AppActionsHelper.buildAction(AppActions.Settings),
+            //   ],
+            // )
           ],
         ),
         body: _buildBody(),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-          onPressed: () => Navigator.of(context).pushNamed(
-              TaskDetailScreen.routeName,
-              arguments: TaskDetailArgs(null, null)),
+          onPressed: () => Navigator.of(context)
+              .pushNamed(TaskDetailScreen.routeName, arguments: null),
         ),
       );
 

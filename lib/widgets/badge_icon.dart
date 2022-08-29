@@ -5,8 +5,8 @@ class BadgeIcon extends StatelessWidget {
   final int badgeCount;
 
   BadgeIcon({
-    this.icon,
-    this.badgeCount,
+    required this.icon,
+    required this.badgeCount,
   });
 
   @override

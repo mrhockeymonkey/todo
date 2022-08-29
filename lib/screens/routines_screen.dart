@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:todo/widgets/date_header.dart';
 import 'dart:math';
 
@@ -29,13 +29,14 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
           ],
         ),
         actions: [
-          PopupMenuButton(
-            onSelected: (value) =>
-                AppActionsHelper.handleAction(value, context),
-            itemBuilder: (context) => <PopupMenuEntry>[
-              AppActionsHelper.buildAction(AppActions.Settings),
-            ],
-          )
+          // TODO popup menu
+          // PopupMenuButton(
+          //   onSelected: (value) =>
+          //       AppActionsHelper.handleAction(value, context),
+          //   itemBuilder: (context) => <PopupMenuEntry>[
+          //     AppActionsHelper.buildAction(AppActions.Settings),
+          //   ],
+          // )
         ],
       ),
       body: _buildBody(),

@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/throw_away_task.dart';
@@ -44,6 +44,12 @@ class _DailyScreenState extends State<DailyScreen> {
         // ),
       );
 
+  void _newThrowAwayTask(Date date) =>
+      Provider.of<ThrowAwayTaskProvider>(context, listen: false)
+        ..saveStashed()
+        ..addOrUpdate(new ThrowAwayTask(
+            id: null, title: "", done: false, date: date, order: 99999));
+
   Widget _buildBody() {
     var today = DateTime.now();
     var tomorrow = DateTime.now().add(new Duration(days: 1));
@@ -60,15 +66,7 @@ class _DailyScreenState extends State<DailyScreen> {
           child: Row(
             children: [
               IconButton(
-                  onPressed: () => Provider.of<ThrowAwayTaskProvider>(
-                        context,
-                        listen: false,
-                      ).addOrUpdate(new ThrowAwayTask(
-                          id: null,
-                          title: "",
-                          done: false,
-                          date: new Date(today),
-                          order: 99999)),
+                  onPressed: () => _newThrowAwayTask(Date(today)),
                   icon: Icon(Icons.add)),
             ],
           ),
@@ -85,15 +83,7 @@ class _DailyScreenState extends State<DailyScreen> {
           child: Row(
             children: [
               IconButton(
-                  onPressed: () => Provider.of<ThrowAwayTaskProvider>(
-                        context,
-                        listen: false,
-                      ).addOrUpdate(new ThrowAwayTask(
-                          id: null,
-                          title: "",
-                          done: false,
-                          date: new Date(tomorrow),
-                          order: 99999)),
+                  onPressed: () => _newThrowAwayTask(Date(tomorrow)),
                   icon: Icon(Icons.add)),
             ],
           ),
@@ -109,17 +99,7 @@ class _DailyScreenState extends State<DailyScreen> {
           child: Row(
             children: [
               IconButton(
-                  onPressed: () => Provider.of<ThrowAwayTaskProvider>(
-                        context,
-                        listen: false,
-                      ).addOrUpdate(
-                        new ThrowAwayTask(
-                            id: null,
-                            title: "",
-                            done: false,
-                            date: new Date(dayAfterNext),
-                            order: 99999),
-                      ),
+                  onPressed: () => _newThrowAwayTask(Date(dayAfterNext)),
                   icon: Icon(Icons.add)),
             ],
           ),

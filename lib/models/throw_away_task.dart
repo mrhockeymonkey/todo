@@ -4,18 +4,18 @@ import 'package:todo/providers/db_item.dart';
 
 import '../date.dart';
 
-class ThrowAwayTask extends DbItem {
-  final String id;
+class ThrowAwayTask implements DbItem {
+  final String? id;
   final String title;
   final bool done;
   final Date date;
   final int order;
 
   const ThrowAwayTask({
-    @required this.id,
-    @required this.title,
-    @required this.done,
-    @required this.date,
+    required this.id,
+    required this.title,
+    required this.done,
+    required this.date,
     this.order = 0,
   });
 
@@ -34,7 +34,12 @@ class ThrowAwayTask extends DbItem {
         'order': order,
       };
 
-  ThrowAwayTask copyWith({String title, bool done, Date date, int order}) =>
+  ThrowAwayTask copyWith({
+    String? title,
+    bool? done,
+    Date? date,
+    int? order,
+  }) =>
       ThrowAwayTask(
         id: this.id,
         title: title ?? this.title,

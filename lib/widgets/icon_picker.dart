@@ -32,9 +32,9 @@ class _IconPickerState extends State<IconPicker> {
             child: Icon(Category.icons[iconName]),
           );
         }).toList(),
-        onChanged: (String newValue) {
+        onChanged: (String? newValue) {
           setState(() {
-            currentIconName = newValue;
+            currentIconName = newValue ?? currentIconName;
             widget.updateIconValue(newValue);
           });
         },

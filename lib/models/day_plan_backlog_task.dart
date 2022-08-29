@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/task.dart';
-import 'package:todo/models/task_detail_args.dart';
 import 'package:uuid/uuid.dart';
 
 import '../app_colour.dart';
 import '../app_constants.dart';
-import '../date.dart';
 import '../providers/task_provider.dart';
 import '../screens/task_detail_screen.dart';
 import 'category.dart';
@@ -16,7 +14,7 @@ import 'category.dart';
 class DayPlanBacklogTask extends DayPlanBase<Task> {
   final Task task;
 
-  DayPlanBacklogTask({@required this.task});
+  DayPlanBacklogTask({required this.task});
 
   @override
   Widget build(BuildContext context) => Dismissible(
@@ -39,10 +37,8 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
               : Icon(Category.defaultIcon, color: AppColour.colorCustom),
           trailing: Icon(AppConstants.DragIndicator),
           isThreeLine: false,
-          onTap: () => Navigator.of(context).pushNamed(
-            TaskDetailScreen.routeName,
-            arguments: TaskDetailArgs(task.id, new Date(DateTime.now())),
-          ),
+          onTap: () => Navigator.of(context)
+              .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
         ),
       );
 

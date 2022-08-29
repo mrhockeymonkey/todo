@@ -3,19 +3,19 @@ import 'package:todo/providers/db_item.dart';
 
 import '../date.dart';
 
-class Task extends DbItem {
-  final String id;
+class Task implements DbItem {
+  final String? id;
   final String title;
-  final String categoryId;
+  final String? categoryId;
   final bool isDone;
   final bool isPinned;
-  final Date dueDate;
+  final Date? dueDate; // TODO replace with null object for Date?
   final int order;
   final String notes;
 
   const Task({
-    @required this.id,
-    @required this.title,
+    this.id,
+    required this.title,
     this.categoryId,
     this.isDone = false,
     this.isPinned = false,
@@ -49,9 +49,9 @@ class Task extends DbItem {
       };
 
   Task copyWith({
-    String title,
-    bool isDone,
-    int order,
+    String? title,
+    bool? isDone,
+    int? order,
   }) =>
       Task(
         id: this.id,
@@ -69,24 +69,24 @@ class Task extends DbItem {
       return false;
     }
 
-    return dueDate.dateTime.isBefore(DateTime.now()) ? true : false;
+    return dueDate!.dateTime.isBefore(DateTime.now()) ? true : false;
   }
 
-  bool isPinnedOrUpcoming(DateTime lookAheadDate) {
-    if (isDone) {
-      return false;
-    }
+  // bool isPinnedOrUpcoming(DateTime lookAheadDate) {
+  //   if (isDone) {
+  //     return false;
+  //   }
 
-    if (isPinned) {
-      return true;
-    }
+  //   if (isPinned) {
+  //     return true;
+  //   }
 
-    if (dueDate != null && dueDate.dateTime.isBefore(lookAheadDate)) {
-      return true;
-    }
+  //   if (dueDate != null && dueDate.dateTime.isBefore(lookAheadDate)) {
+  //     return true;
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
   String toString() => "Task = {id: '$id', title: '$title', isDone: '$isDone'}";
 }

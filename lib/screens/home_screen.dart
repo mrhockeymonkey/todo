@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/screens/day_plan_screen.dart';
@@ -15,20 +15,25 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 1;
-  final List<Map<String, Object>> _pages = [
-    {
-      'page': TasksScreen(),
-      'title': '',
-    },
-    {
-      'page': DailyScreen(),
-      'title': '',
-    },
-    {
-      'page': RoutinesScreen(),
-      'title': '',
-    },
+  final List<Widget> _pages = [
+    TasksScreen(),
+    DailyScreen(),
+    RoutinesScreen(),
   ];
+  // final List<Map<String, Object>> _pages = [
+  //   {
+  //     'page': TasksScreen(),
+  //     'title': '',
+  //   },
+  //   {
+  //     'page': DailyScreen(),
+  //     'title': '',
+  //   },
+  //   {
+  //     'page': RoutinesScreen(),
+  //     'title': '',
+  //   },
+  // ];
 
   void _selectScreen(int index) {
     setState(() {
@@ -41,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        body: _pages[_selectedIndex]['page'],
+        body: _pages[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _selectScreen,

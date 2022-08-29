@@ -13,7 +13,7 @@ import '../widgets/routine_icon.dart';
 class DayPlanRoutine extends DayPlanBase<Routine> {
   final Routine routine;
 
-  DayPlanRoutine({@required this.routine});
+  DayPlanRoutine({required this.routine});
 
   @override
   Widget build(BuildContext context) => Dismissible(

@@ -1,12 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 class RoutineIcon extends StatelessWidget {
-  final Color color;
+  final Color? color;
 
-  RoutineIcon({this.color});
+  RoutineIcon({
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) => Transform(
@@ -14,7 +16,7 @@ class RoutineIcon extends StatelessWidget {
         alignment: Alignment.center,
         child: Icon(
           Entypo.circular_graph,
-          color: this.color,
+          color: color != null ? color : null,
         ),
       );
 }

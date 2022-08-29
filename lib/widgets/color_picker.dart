@@ -38,9 +38,9 @@ class _ColorPickerState extends State<ColorPicker> {
             ),
           );
         }).toList(),
-        onChanged: (Color newValue) {
+        onChanged: (Color? newValue) {
           setState(() {
-            currentColor = newValue;
+            currentColor = newValue ?? currentColor;
             widget.updateIconValue(newValue);
           });
         },

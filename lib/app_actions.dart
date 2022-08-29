@@ -14,18 +14,23 @@ class AppAction {
   final String friendlyName;
   final IconData iconData;
   AppAction({
-    @required this.friendlyName,
-    @required this.iconData,
+    required this.friendlyName,
+    required this.iconData,
   });
 }
 
 class AppActionsHelper {
-  static Map<AppActions, AppAction> actions = {
-    AppActions.ClearCompleted:
-        new AppAction(friendlyName: "Clear Completed", iconData: Icons.delete),
-    AppActions.Settings:
-        new AppAction(friendlyName: "Settings", iconData: Icons.settings),
-  };
+  static AppAction _getAction(AppActions action) {
+    switch (action) {
+      case AppActions.Settings:
+        return AppAction(friendlyName: "Settings", iconData: Icons.settings);
+      case AppActions.ClearCompleted:
+        return AppAction(
+            friendlyName: "Clear Completed", iconData: Icons.delete);
+      default:
+        throw "Unknown action!";
+    }
+  }
 
   static void handleAction(AppActions value, BuildContext context) async {
     switch (value) {
@@ -37,15 +42,18 @@ class AppActionsHelper {
         Navigator.of(context).pushNamed(SettingsScreen.routeName);
         break;
       default:
-        log("unknown");
+        throw "Unknown action!";
     }
   }
 
-  static Widget buildAction(AppActions action) => PopupMenuItem(
-        value: action,
-        child: ListTile(
-          title: Text(actions[action].friendlyName),
-          leading: Icon(actions[action].iconData),
-        ),
-      );
+  static PopupMenuItem buildAction(AppActions actionChoice) {
+    var action = _getAction(actionChoice);
+    return PopupMenuItem(
+      value: action,
+      child: ListTile(
+        title: Text(action.friendlyName),
+        leading: Icon(action.iconData),
+      ),
+    );
+  }
 }

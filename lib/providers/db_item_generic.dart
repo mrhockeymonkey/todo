@@ -2,11 +2,11 @@ abstract class DbItem<T> {
   final String id;
 
   const DbItem({
-    this.id,
+    required this.id,
   });
 
   Map<String, dynamic> toMap();
 
- // not possible??
+  // not possible??
   // factory T.fromMap(Map<String, dynamic> map);
 }
