@@ -5,7 +5,7 @@ class RecurEvery {
   String recurLen;
 
   RecurEvery({
-    @required this.recurNum,
-    @required this.recurLen,
+    required this.recurNum,
+    required this.recurLen,
   });
 }

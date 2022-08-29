@@ -1,8 +1,12 @@
 import 'package:todo/models/task.dart';
 import 'package:todo/providers/provider_base.dart';
 
+import '../date.dart';
+
 class TaskProvider extends ProviderBase<Task> {
-  TaskProvider({String tableName}) : super(tableName: tableName);
+  TaskProvider({
+    required String tableName,
+  }) : super(tableName: tableName);
 
   @override
   Task parse(Map<String, dynamic> json) => Task.fromMap(json);
@@ -18,7 +22,7 @@ class TaskProvider extends ProviderBase<Task> {
   Future<void> clearCompletedTasks() async {
     items.where((element) => element.isDone).forEach((task) async {
       print("Deleting task '${task.id}': ${task.title}");
-      await this.delete(task.id, notify: false);
+      await this.delete(task.id!, notify: false); // TODO dont like !
     });
     notifyListeners();
   }

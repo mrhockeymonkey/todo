@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:todo/app_colour.dart';
 import 'package:todo/providers/db_item.dart';
 
-class Category extends DbItem {
-  final String id;
+class Category implements DbItem {
+  final String? id;
   final String name;
   final String iconName;
   final Color color;
   final int order;
 
-  IconData get icon => icons[iconName];
-  String get title => name ?? "<name>";
+  IconData get icon => icons[iconName] ?? defaultIcon;
+  String get title => name;
 
-  static IconData get defaultIcon => icons["pin"];
+  static IconData get defaultIcon => Entypo.pin;
 
   static final Map<String, IconData> icons = {
     "flag": Entypo.flag,
@@ -49,7 +49,7 @@ class Category extends DbItem {
 
   const Category({
     this.id,
-    this.name,
+    required this.name,
     this.iconName = "pin",
     this.color = AppColour.colorCustom,
     this.order = 0,
@@ -70,7 +70,7 @@ class Category extends DbItem {
         order: map['order'] ?? 0,
       );
 
-  Category copyWith(int order) => Category(
+  Category copyWith({int? order}) => Category(
         id: this.id,
         name: this.name,
         iconName: this.iconName,

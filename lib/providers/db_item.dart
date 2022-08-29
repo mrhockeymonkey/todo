@@ -1,11 +1,9 @@
-class DbItem {
-  final String id;
+abstract class DbItem {
+  String? get id;
 
-  const DbItem({
-    this.id,
-  });
+  // const DbItem({
+  //   this.id, // TODO ?? inherit? make abstract?
+  // });
 
-  Map<String, dynamic> toMap() => {
-        'id': id,
-      };
+  Map<String, dynamic> toMap();
 }

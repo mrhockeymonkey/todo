@@ -71,7 +71,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           final reordered = categories
               .asMap()
               .map((index, category) =>
-                  MapEntry(index, category.copyWith(index)))
+                  MapEntry(index, category.copyWith(order: index)))
               .values
               .toList();
           Provider.of<CategoryProvider>(context, listen: false)
@@ -82,16 +82,16 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   // TODO this could be a stateful widget
-  _displayDialog(BuildContext context, String categoryId) async {
+  _displayDialog(BuildContext context, String? categoryId) async {
     _textFieldController.clear();
     Category thisCategory;
     if (categoryId != null) {
       thisCategory = Provider.of<CategoryProvider>(context, listen: false)
           .getItemById(categoryId);
     } else {
-      thisCategory = Category();
+      thisCategory = Category.defaultCategory();
     }
-    String currentCategoryName = thisCategory.name ?? "New Category";
+    String currentCategoryName = thisCategory.name;
     String currentIconName = thisCategory.iconName;
     Color currentColor = thisCategory.color;
     bool isDefaultCategory = false;

@@ -5,8 +5,8 @@ import 'dart:math';
 
 import 'package:todo/providers/db_item.dart';
 
-class Routine extends DbItem {
-  final String id;
+class Routine implements DbItem {
+  final String? id;
   final String title;
 
   final int recurNum;
@@ -20,14 +20,14 @@ class Routine extends DbItem {
   final int order;
 
   Routine({
-    @required this.id,
-    @required this.title,
+    this.id,
+    required this.title,
     this.recurNum = 5,
     this.recurLen = "minutes",
     lastCompletedDate,
     nextDueDateTime,
     this.color = Colors.black,
-    this.notes,
+    this.notes = "",
     this.displayOnPinned = false,
     this.order = 0,
   })  : this.lastCompletedDate = lastCompletedDate == null ||
@@ -38,36 +38,6 @@ class Routine extends DbItem {
                 nextDueDateTime == DateTime.fromMillisecondsSinceEpoch(0)
             ? calculateNextDueDate(Jiffy(), recurLen, recurNum).dateTime
             : nextDueDateTime;
-
-  //        {
-  //             if (_nextDueDateTime == null ||
-  //   _nextDueDateTime == DateTime.fromMillisecondsSinceEpoch(0)) {
-  // _nextDueDateTime = _calculateNextDueDate(Jiffy()).dateTime;
-  //       }
-
-  // Routine({
-  //   @required this.id,
-  //   @required this.title,
-  //   this.recurNum = 5,
-  //   this.recurLen = "minutes",
-  //   this.lastCompletedDate,
-  //   nextDueDateTime,
-  //   this.color = Colors.black,
-  //   this.notes,
-  //   this.displayOnPinned = false,
-  //   this.order = 0,
-  // }) {
-  //   if (lastCompletedDate == null ||
-  //       lastCompletedDate == DateTime.fromMillisecondsSinceEpoch(0)) {
-  //     lastCompletedDate = Jiffy().dateTime;
-  //   }
-
-  //   _nextDueDateTime = nextDueDateTime;
-  //   if (_nextDueDateTime == null ||
-  //       _nextDueDateTime == DateTime.fromMillisecondsSinceEpoch(0)) {
-  //     _nextDueDateTime = _calculateNextDueDate(Jiffy()).dateTime;
-  //   }
-  // }
 
   factory Routine.fromMap(Map<String, dynamic> map) {
     return Routine(
@@ -98,16 +68,17 @@ class Routine extends DbItem {
           ? _nextDueDateTime.millisecondsSinceEpoch
           : 0,
       'notes': this.notes,
-      'displayOnPinned': this.displayOnPinned ?? false,
+      'displayOnPinned': this.displayOnPinned,
       'order': this.order,
     };
   }
 
-  Routine copyWith(
-          {String title,
-          int order,
-          DateTime lastCompletedDate,
-          DateTime nextDueDateTime}) =>
+  Routine copyWith({
+    String? title,
+    int? order,
+    DateTime? lastCompletedDate,
+    DateTime? nextDueDateTime,
+  }) =>
       Routine(
         id: this.id,
         title: title ?? this.title,

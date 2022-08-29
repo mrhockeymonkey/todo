@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
 import 'package:todo/models/day_plan_base.dart';
@@ -11,7 +11,7 @@ import '../providers/throw_away_task_provider.dart';
 class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
   ThrowAwayTask todo;
 
-  DayPlanToDo({@required this.todo});
+  DayPlanToDo({required this.todo});
 
   @override
   Widget build(BuildContext context) => Dismissible(

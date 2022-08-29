@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:todo/gauge/gauge_painter.dart';
 
 class AnimatedGauge extends StatefulWidget {
-  //const AnimatedGauge({Key key, @required this.driver}) : super(key: key);
-  const AnimatedGauge({Key key, @required this.percent}) : super(key: key);
+  final double percent;
+
+  // const AnimatedGauge({Key key, required this.percent}) : super(key: key);
+  const AnimatedGauge({required this.percent}); //: super(key: key);
 
   //final GaugeDriver driver;
-  final double percent;
 
   @override
   GaugeState createState() => GaugeState();
@@ -15,14 +16,13 @@ class AnimatedGauge extends StatefulWidget {
 
 class GaugeState extends State<AnimatedGauge>
     with SingleTickerProviderStateMixin {
-  Animation<double> _animation;
-  AnimationController _controller;
+  late final AnimationController _controller;
 
   // String get _readout =>
   //     ((_animation?.value ?? 0) * 100).toStringAsFixed(0) + '%';
 
-  double begin;
-  double end;
+  // double begin;
+  // double end = widget.percent;
 
   @override
   void initState() {
@@ -48,13 +48,13 @@ class GaugeState extends State<AnimatedGauge>
 
   @override
   Widget build(BuildContext context) {
-    begin = 0.0;
-    end = widget.percent;
-    _animation = Tween<double>(begin: begin, end: end).animate(_controller);
+    var begin = 0.0;
+    var end = widget.percent;
+    var animation = Tween<double>(begin: begin, end: end).animate(_controller);
     final double _diameter = (MediaQuery.of(context).size.width / 1.616);
 
     _controller.reset();
-    _animation.addStatusListener((status) {
+    animation.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         begin = end;
       }
@@ -63,10 +63,10 @@ class GaugeState extends State<AnimatedGauge>
     _controller.forward();
 
     return AnimatedBuilder(
-        animation: _animation,
+        animation: animation,
         builder: (context, widget) {
           return CustomPaint(
-            foregroundPainter: GaugePainter(percent: _animation.value),
+            foregroundPainter: GaugePainter(percent: animation.value),
             child: Container(
                 constraints: BoxConstraints.expand(
                   height: _diameter,

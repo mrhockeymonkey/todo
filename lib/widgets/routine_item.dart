@@ -8,7 +8,7 @@ class RoutineItem extends StatelessWidget {
   final Routine routine;
 
   RoutineItem({
-    @required this.routine,
+    required this.routine,
   });
 
   @override

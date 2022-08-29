@@ -43,9 +43,9 @@ class _RepeatPickerState extends State<RepeatPicker> {
               child: new Text(value),
             );
           }).toList(),
-          onChanged: (String newValue) {
+          onChanged: (String? newValue) {
             setState(() {
-              repeatAmmountValue = newValue;
+              repeatAmmountValue = newValue ?? repeatAmmountValue;
               widget.updateRepeatValues(
                   repeatAmmountValue, repeatDenominationValue);
             });
@@ -59,9 +59,9 @@ class _RepeatPickerState extends State<RepeatPicker> {
               child: new Text(value),
             );
           }).toList(),
-          onChanged: (String newValue) {
+          onChanged: (String? newValue) {
             setState(() {
-              repeatDenominationValue = newValue;
+              repeatDenominationValue = newValue ?? repeatDenominationValue;
               widget.updateRepeatValues(
                   repeatAmmountValue, repeatDenominationValue);
             });

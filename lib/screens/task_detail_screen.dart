@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
 import 'package:todo/date.dart';
 import 'package:todo/models/category.dart';
-import 'package:todo/models/task_detail_args.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:intl/intl.dart';
 
@@ -24,26 +23,23 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   bool _isInit = false;
   bool _shouldFocusTitleField = true;
   bool _isPinned = false;
-  String _taskId;
-  String _taskTitle;
-  String _categoryId;
-  Date _selectedDate;
-  String _notesValue;
-
-  @override
-  void initState() {
-    super.initState();
-    //Provider.of<CategoryProvider>(context, listen: false).fetch();
-  }
+  String? _taskId;
+  String? _taskTitle;
+  String? _categoryId;
+  Date? _selectedDate;
+  String? _notesValue;
 
   @override
   void didChangeDependencies() {
+    super.didChangeDependencies();
+    // TODO remove isinit?
     if (!_isInit) {
-      final args = ModalRoute.of(context).settings.arguments as TaskDetailArgs;
+      var taskId = ModalRoute.of(context)?.settings.arguments;
 
-      if (args.taskId != null) {
+      if (taskId is String) {
         final task = Provider.of<TaskProvider>(context, listen: false)
-            .getItemById(args.taskId);
+            .getItemById(taskId);
+
         _taskId = task.id;
         _taskTitle = task.title;
         _categoryId = task.categoryId;
@@ -51,13 +47,10 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
         _isPinned = task.isPinned;
         _selectedDate = task.dueDate;
         _notesValue = task.notes;
-      } else {
-        _selectedDate = args.date;
       }
 
       _isInit = true;
     }
-    super.didChangeDependencies();
   }
 
   @override
@@ -88,27 +81,29 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
 
   void _save() async {
     // validate and save the form data
-    final isValid = _form.currentState.validate();
+    final isValid = _form.currentState?.validate() ?? false;
     if (!isValid) {
       return;
     }
-    _form.currentState.save();
+    _form.currentState?.save();
 
     // save item via provider and pop
     final task = Task(
       id: _taskId,
-      title: _taskTitle,
+      title: _taskTitle ?? "foo", // TODO loosing the will a bit now
       categoryId: _categoryId,
       isPinned: _isPinned,
       dueDate: _selectedDate,
-      notes: _notesValue,
+      notes: _notesValue ?? "",
     );
     await Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task);
     Navigator.of(context).pop();
   }
 
   void _delete() async {
-    await Provider.of<TaskProvider>(context, listen: false).delete(_taskId);
+    if (_taskId != null) {
+      await Provider.of<TaskProvider>(context, listen: false).delete(_taskId!);
+    }
     Navigator.of(context).pop();
   }
 
@@ -118,7 +113,6 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
         Provider.of<CategoryProvider>(context, listen: false).items;
     print(categories.length);
     List<Widget> options = [];
-    int picked;
 
     for (var i = 0; i < categories.length; i++) {
       options.add(
@@ -148,7 +142,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
       );
     }
 
-    picked = await showDialog(
+    var picked = await showDialog<int>(
       context: context,
       builder: (BuildContext context) {
         return SimpleDialog(
@@ -157,7 +151,6 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
       },
     );
 
-    print(picked);
     if (picked != null)
       setState(() {
         _categoryId = categories[picked].id;
@@ -175,7 +168,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
             textCapitalization: TextCapitalization.words,
             initialValue: _taskTitle,
             autofocus: _shouldFocusTitleField,
-            onSaved: (String value) {
+            onSaved: (String? value) {
               _taskTitle = value;
             },
             decoration: InputDecoration(
@@ -189,9 +182,9 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
       );
 
   Widget _buildOptionsList() {
-    Category category =
-        Provider.of<CategoryProvider>(context).getItemById(_categoryId) ??
-            Category.defaultCategory();
+    Category category = _categoryId == null
+        ? Category.defaultCategory()
+        : Provider.of<CategoryProvider>(context).getItemById(_categoryId!);
     DateFormat dateFmt =
         new DateFormat.yMMMMd(Localizations.localeOf(context).toLanguageTag());
 
@@ -238,7 +231,8 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
                 )
               : null,
           subtitle: _selectedDate != null
-              ? Text("${dateFmt.format(_selectedDate.dateTime)}")
+              // ? Text("${dateFmt.format(_selectedDate?.dateTime)}")
+              ? Text("Foo") // TODO Date format
               : Text("At Some Point"),
           onTap: _selectDate,
         ),
@@ -255,7 +249,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
           ),
           leading: Icon(
             //Icons.subject,
-            FontAwesome5.sticky_note,
+            FontAwesome.sticky_note,
             color: _notesValue != "" ? category.color : AppColour.InactiveColor,
           ),
         ),
@@ -265,7 +259,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
 
   //---------- datepicker popup
   Future _selectDate() async {
-    DateTime picked = await showDatePicker(
+    DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime.now().subtract(Duration(days: 365)),

@@ -4,23 +4,22 @@ import 'package:todo/app_colour.dart';
 import 'package:todo/models/category.dart';
 
 import 'package:todo/models/task.dart';
-import 'package:todo/models/task_detail_args.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/screens/task_detail_screen.dart';
 
-import '../date.dart';
-
 class TaskItem extends StatelessWidget {
   final Task task;
 
-  TaskItem({@required this.task});
+  TaskItem({required this.task});
 
   @override
   Widget build(BuildContext context) {
-    var category =
-        Provider.of<CategoryProvider>(context).getItemById(task.categoryId) ??
-            new Category(id: null, name: "");
+    var categoryId = task.categoryId;
+    var category = categoryId == null
+        ? Category.defaultCategory()
+        : Provider.of<CategoryProvider>(context).getItemById(categoryId);
+
     return task.isDone
         ? _buildDoneTaskItem(context, category)
         : _buildToDoTaskItem(context, category);
@@ -54,10 +53,9 @@ class TaskItem extends StatelessWidget {
       //     : null,
       leading: Icon(Category.defaultIcon, color: AppColour.colorCustom),
       trailing: Text(task.order.toString()),
-      onTap: () => Navigator.of(context).pushNamed(
-        TaskDetailScreen.routeName,
-        arguments: TaskDetailArgs(task.id, new Date(DateTime.now())),
-      ),
+      onTap: () => Navigator.of(context)
+          .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
+
       // trailing: IconButton(
       //   icon: Icon(
       //     Entypo.pin,

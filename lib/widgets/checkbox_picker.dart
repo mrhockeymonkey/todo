@@ -5,8 +5,8 @@ class CheckboxPicker extends StatefulWidget {
   final bool initialValue;
 
   CheckboxPicker({
-    @required this.updateValue,
-    @required this.initialValue,
+    required this.updateValue,
+    required this.initialValue,
   });
 
   @override
@@ -16,7 +16,7 @@ class CheckboxPicker extends StatefulWidget {
 }
 
 class _CheckboxPickerState extends State<CheckboxPicker> {
-  bool currentValue;
+  late final bool currentValue;
 
   @override
   void initState() {
@@ -28,9 +28,9 @@ class _CheckboxPickerState extends State<CheckboxPicker> {
   Widget build(BuildContext context) {
     return Checkbox(
       value: currentValue,
-      onChanged: (bool newValue) {
+      onChanged: (bool? newValue) {
         setState(() {
-          currentValue = newValue;
+          currentValue = newValue ?? currentValue;
           widget.updateValue(newValue);
         });
       },

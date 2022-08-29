@@ -2,17 +2,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class GaugePainter extends CustomPainter {
-  GaugePainter({@required this.percent}) : super();
+  GaugePainter({required this.percent}) : super();
 
   final double percent;
 
   @override
   void paint(Canvas canvas, Size size) {
-    Color color = Color.lerp(Colors.green, Colors.red, percent);
+    Color color = Color.lerp(Colors.green, Colors.red, percent)!; // TODO ?? !
 
     Paint circleBrush = new Paint()
       ..strokeWidth = 2.0
-      ..color = Colors.indigo[400].withOpacity(0.4)
+      ..color = Colors.indigo[400]!.withOpacity(0.4)
       ..style = PaintingStyle.stroke;
 
     Paint elapsedBrush = new Paint()

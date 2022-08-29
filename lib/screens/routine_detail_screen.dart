@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_icons/flutter_icons.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 
 import 'package:todo/models/routine.dart';
@@ -20,11 +20,11 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
 
   bool _isInit = false;
   bool _shouldFocusTitleField = true;
-  String _routineId;
-  String _routineTitle;
+  String? _routineId;
+  String? _routineTitle;
   int _routineRecurNum = 1;
   String _routineRecurLen = "days";
-  String _notesValue;
+  String? _notesValue;
   bool _displayOnPinned = false;
 
   @override
@@ -35,9 +35,9 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
   @override
   void didChangeDependencies() {
     if (!_isInit) {
-      final routineId = ModalRoute.of(context).settings.arguments as String;
+      var routineId = ModalRoute.of(context)?.settings.arguments;
 
-      if (routineId != null) {
+      if (routineId is String) {
         final routine = Provider.of<RoutineProvider>(context, listen: false)
             .getItemById(routineId);
         _routineId = routine.id;
@@ -48,6 +48,18 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
         _notesValue = routine.notes;
         _displayOnPinned = routine.displayOnPinned;
       }
+
+      // if (routineId != null) {
+      //   final routine = Provider.of<RoutineProvider>(context, listen: false)
+      //       .getItemById(routineId);
+      //   _routineId = routine.id;
+      //   _routineTitle = routine.title;
+      //   _routineRecurNum = routine.recurNum;
+      //   _routineRecurLen = routine.recurLen;
+      //   _shouldFocusTitleField = false;
+      //   _notesValue = routine.notes;
+      //   _displayOnPinned = routine.displayOnPinned;
+      // }
 
       _isInit = true;
     }
@@ -82,19 +94,19 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
 
   void _save() async {
     // validate and save the form data
-    final isValid = _form.currentState.validate();
+    final isValid = _form.currentState?.validate() ?? false;
     if (!isValid) {
       return;
     }
-    _form.currentState.save();
+    _form.currentState?.save();
 
     // save item via provider and pop
     final routine = Routine(
       id: _routineId,
-      title: _routineTitle,
+      title: _routineTitle ?? "bar", // TODO again
       recurNum: _routineRecurNum,
       recurLen: _routineRecurLen,
-      notes: _notesValue,
+      notes: _notesValue ?? "",
       displayOnPinned: _displayOnPinned,
     );
     await Provider.of<RoutineProvider>(context, listen: false)
@@ -103,8 +115,10 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
   }
 
   void _delete() async {
-    await Provider.of<RoutineProvider>(context, listen: false)
-        .delete(_routineId);
+    if (_routineId != null) {
+      await Provider.of<RoutineProvider>(context, listen: false)
+          .delete(_routineId!);
+    }
     Navigator.of(context).pop();
   }
 
@@ -157,7 +171,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
             textCapitalization: TextCapitalization.words,
             initialValue: _routineTitle,
             autofocus: _shouldFocusTitleField,
-            onSaved: (String value) {
+            onSaved: (String? value) {
               _routineTitle = value;
             },
             decoration: InputDecoration(
@@ -208,7 +222,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
           ),
           leading: Icon(
             //Icons.subject,
-            FontAwesome5.sticky_note,
+            FontAwesome.sticky_note,
             color: _notesValue != ""
                 ? AppColour.colorCustom
                 : AppColour.InactiveColor,

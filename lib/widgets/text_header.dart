@@ -4,7 +4,7 @@ class TextHeader extends StatelessWidget {
   final String text;
 
   TextHeader({
-    @required this.text,
+    required this.text,
   });
 
   @override

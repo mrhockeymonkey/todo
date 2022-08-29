@@ -18,7 +18,7 @@ class DayPlanList extends StatefulWidget {
   final Date date;
 
   DayPlanList({
-    @required this.date,
+    required this.date,
   });
 
   @override
@@ -27,10 +27,10 @@ class DayPlanList extends StatefulWidget {
 
 class DayPlanListState extends State<DayPlanList> {
   bool _includePastItems = false;
-  List<DayPlanToDo> _dayPlanToDos;
-  List<DayPlanBacklogTask> _dayPlanTasks;
-  List<DayPlanRoutine> _dayPlanRoutines;
-  List<DayPlanBase> _dayPlanItems;
+  List<DayPlanToDo> _dayPlanToDos = [];
+  List<DayPlanBacklogTask> _dayPlanTasks = [];
+  List<DayPlanRoutine> _dayPlanRoutines = [];
+  List<DayPlanBase> _dayPlanItems = [];
 
   @override
   void didChangeDependencies() {
@@ -51,9 +51,10 @@ class DayPlanListState extends State<DayPlanList> {
         .toList();
 
     _dayPlanTasks = backlogTaskProvider.items
+        .where((t) => t.dueDate != null)
         .where((t) =>
-            t.dueDate.isAtSameMomentAs(widget.date) ||
-            (_includePastItems && t.dueDate.isBefore(widget.date)))
+            t.dueDate!.isAtSameMomentAs(widget.date) ||
+            (_includePastItems && t.dueDate!.isBefore(widget.date)))
         .map((e) => new DayPlanBacklogTask(task: e))
         .toList();
 

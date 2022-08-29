@@ -28,10 +28,8 @@ class TaskListState extends State<TaskList> {
     print(tasks.length);
 
     tasks.sort((a, b) {
-      final ac = categoryProvider.getItemById(a.categoryId) ??
-          Category.defaultCategory();
-      final bc = categoryProvider.getItemById(b.categoryId) ??
-          Category.defaultCategory();
+      final ac = categoryProvider.getCategoryOrDefault(a.categoryId);
+      final bc = categoryProvider.getCategoryOrDefault(a.categoryId);
       return ac.order.compareTo(bc.order);
     });
 
