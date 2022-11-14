@@ -7,6 +7,7 @@ import 'package:todo/providers/task_provider.dart';
 import 'package:todo/providers/test_provider.dart';
 import 'package:todo/providers/throw_away_task_provider.dart';
 import 'package:todo/screens/categories_screen.dart';
+import 'package:todo/screens/category_detail_screen.dart';
 import 'package:todo/screens/home_screen.dart';
 import 'package:todo/screens/routine_detail_screen.dart';
 import 'package:todo/screens/settings_screen.dart';
@@ -75,10 +76,11 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (ctx) => HomeScreen(),
-          RoutineDetailScreen.routeName: (ctx) => RoutineDetailScreen(),
-          TaskDetailScreen.routeName: (ctx) => TaskDetailScreen(),
-          SettingsScreen.routeName: (ctx) => SettingsScreen(),
-          CategoriesScreen.routeName: (ctx) => CategoriesScreen(),
+          RoutineDetailScreen.routeName: (context) => RoutineDetailScreen(),
+          TaskDetailScreen.routeName: (context) => TaskDetailScreen(),
+          SettingsScreen.routeName: (context) => SettingsScreen(),
+          CategoriesScreen.routeName: (context) => CategoriesScreen(),
+          CategoryDetailScreen.routeName: (context) => CategoryDetailScreen(),
         },
       ),
     );

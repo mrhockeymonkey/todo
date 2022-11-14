@@ -26,7 +26,7 @@ class DayPlanList extends StatefulWidget {
 }
 
 class DayPlanListState extends State<DayPlanList> {
-  bool _includePastItems = false;
+  bool _includeOutstanding = false;
   List<DayPlanToDo> _dayPlanToDos = [];
   List<DayPlanBacklogTask> _dayPlanTasks = [];
   List<DayPlanRoutine> _dayPlanRoutines = [];
@@ -38,7 +38,7 @@ class DayPlanListState extends State<DayPlanList> {
     super.didChangeDependencies();
 
     if (widget.date == Date.now()) {
-      _includePastItems = true;
+      _includeOutstanding = true;
     }
 
     final throwAwayTaskProvider = Provider.of<ThrowAwayTaskProvider>(context);
@@ -50,18 +50,15 @@ class DayPlanListState extends State<DayPlanList> {
         .map((e) => new DayPlanToDo(todo: e))
         .toList();
 
-    _dayPlanTasks = backlogTaskProvider.items
-        .where((t) => t.dueDate != null)
-        .where((t) =>
-            t.dueDate!.isAtSameMomentAs(widget.date) ||
-            (_includePastItems && t.dueDate!.isBefore(widget.date)))
+    _dayPlanTasks = backlogTaskProvider
+        .getByDate(widget.date, includeOutstanding: _includeOutstanding)
         .map((e) => new DayPlanBacklogTask(task: e))
         .toList();
 
     _dayPlanRoutines = routineProvider.items
         .where((r) =>
             r.dueDate.isAtSameMomentAs(widget.date) ||
-            (_includePastItems && r.dueDate.isBefore(widget.date)))
+            (_includeOutstanding && r.dueDate.isBefore(widget.date)))
         .map((e) => new DayPlanRoutine(routine: e))
         .toList();
 
@@ -138,5 +135,5 @@ class DayPlanListState extends State<DayPlanList> {
   }
 
   String _toStringCustom() =>
-      "${this.runtimeType} (${widget.date.toString()}) ${_includePastItems ? "(Today)" : ""}";
+      "${this.runtimeType} (${widget.date.toString()}) ${_includeOutstanding ? "(Today)" : ""}";
 }

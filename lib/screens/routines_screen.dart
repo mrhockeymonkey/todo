@@ -28,15 +28,14 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
             Text("Routines"),
           ],
         ),
-        actions: [
-          // TODO popup menu
-          // PopupMenuButton(
-          //   onSelected: (value) =>
-          //       AppActionsHelper.handleAction(value, context),
-          //   itemBuilder: (context) => <PopupMenuEntry>[
-          //     AppActionsHelper.buildAction(AppActions.Settings),
-          //   ],
-          // )
+        actions: <Widget>[
+          PopupMenuButton<AppActions>(
+            onSelected: (AppActions value) =>
+                AppActionsHelper.handleAction(value, context),
+            itemBuilder: (context) => <PopupMenuEntry<AppActions>>[
+              AppActionsHelper.buildAction(AppActions.Settings),
+            ],
+          )
         ],
       ),
       body: _buildBody(),

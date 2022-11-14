@@ -36,6 +36,9 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
               ? Icon(Entypo.pin, color: Colors.grey[350])
               : Icon(Category.defaultIcon, color: AppColour.colorCustom),
           trailing: Icon(AppConstants.DragIndicator),
+          subtitle: Row(
+            children: [IconButton(onPressed: () {}, icon: Icon(Icons.edit))],
+          ),
           isThreeLine: false,
           onTap: () => Navigator.of(context)
               .pushNamed(TaskDetailScreen.routeName, arguments: task.id),

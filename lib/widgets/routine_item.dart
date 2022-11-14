@@ -22,8 +22,7 @@ class RoutineItem extends StatelessWidget {
         ),
       ),
       title: Text(routine.title),
-      subtitle: Text("${routine.dueWhen} _${routine.dueDate}"),
-      trailing: Text(routine.order.toString()),
+      subtitle: Text("${routine.dueWhen}"),
       onTap: () => Navigator.of(context).pushNamed(
         RoutineDetailScreen.routeName,
         arguments: routine.id,

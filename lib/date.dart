@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Date {
   final DateTime _dateTime;
 
@@ -46,4 +48,6 @@ class Date {
 
   @override
   int get hashCode => super.hashCode;
+
+  String yMMMd() => new DateFormat.yMMMMd('en_GB').format(_dateTime);
 }

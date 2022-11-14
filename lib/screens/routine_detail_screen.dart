@@ -24,7 +24,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
   String? _routineTitle;
   int _routineRecurNum = 1;
   String _routineRecurLen = "days";
-  String? _notesValue;
+  String _notesValue = "";
   bool _displayOnPinned = false;
 
   @override
@@ -106,7 +106,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
       title: _routineTitle ?? "bar", // TODO again
       recurNum: _routineRecurNum,
       recurLen: _routineRecurLen,
-      notes: _notesValue ?? "",
+      notes: _notesValue,
       displayOnPinned: _displayOnPinned,
     );
     await Provider.of<RoutineProvider>(context, listen: false)
@@ -134,6 +134,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          title: Text("Every"),
           content: RepeatPicker(_updateRecurValues),
           actions: <Widget>[
             // TextButton(
@@ -189,21 +190,22 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
       shrinkWrap: true, // constrain listview within remaining column space
       children: [
         ListTile(
-          leading: Icon(Icons.repeat),
-          title: Text("Schedule"),
+          leading: Icon(
+            Icons.repeat,
+            color: AppColour.colorCustom,
+          ),
+          title: Text("Repeats"),
           subtitle:
               Text("Every ${_routineRecurNum.toString()} $_routineRecurLen"),
           onTap: _selectSchedule,
         ),
         ListTile(
-            title: Text("Pin"),
+            title: Text("Scheduled"),
             leading: Icon(
-              Entypo.pin,
-              color: _displayOnPinned
-                  ? AppColour.pinActiveColor
-                  : AppColour.InactiveColor,
+              Entypo.calendar,
+              color: AppColour.InactiveColor,
             ),
-            subtitle: Text("Pin this routine when due"),
+            subtitle: Text("Coming Soon"),
             onTap: () {
               setState(() {
                 _displayOnPinned = !_displayOnPinned;
@@ -218,7 +220,14 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
               hintText: "Notes",
               hintStyle: TextStyle(color: Colors.black54),
             ),
-            onChanged: (value) => _notesValue = value,
+            cursorColor: Colors.black,
+            onChanged: (value) {
+              var oldValue = _notesValue;
+              _notesValue = value;
+
+              if (oldValue == "" && value != "") setState(() {});
+              if (oldValue != "" && value == "") setState(() {});
+            },
           ),
           leading: Icon(
             //Icons.subject,

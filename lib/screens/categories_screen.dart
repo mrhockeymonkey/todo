@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/category.dart';
 import 'package:todo/providers/category_provider.dart';
+import 'package:todo/screens/category_detail_screen.dart';
 import 'package:todo/widgets/checkbox_picker.dart';
 import 'package:todo/widgets/icon_picker.dart';
 import 'package:todo/widgets/color_picker.dart';
@@ -31,7 +32,9 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       body: _buildCategoryList(context),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () => _displayDialog(context, null),
+        onPressed: () => Navigator.of(context).pushNamed(
+          CategoryDetailScreen.routeName,
+        ),
       ),
     );
   }
@@ -44,18 +47,17 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final builder = (context, index) {
       var category = categories[index];
       return ListTile(
-        key: ValueKey(index),
-        title: Text(category.title),
-        subtitle: Text("id: ${category.id}, index: $index"),
-        leading: Icon(
-          Category.icons[category.iconName],
-          color: category.color,
-        ),
-        trailing: IconButton(
-          icon: Icon(Icons.edit),
-          onPressed: () => _displayDialog(context, category.id),
-        ),
-      );
+          key: ValueKey(index),
+          title: Text(category.title),
+          //subtitle: Text("id: ${category.id}, index: $index"),
+          leading: Icon(
+            Category.icons[category.iconName],
+            color: category.color,
+          ),
+          onTap: () => Navigator.of(context).pushNamed(
+              CategoryDetailScreen.routeName,
+              arguments: category.id),
+          trailing: Icon(Icons.drag_indicator));
     };
 
     return ReorderableListView.builder(
@@ -139,18 +141,6 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ColorPicker((Color newColor) => currentColor = newColor),
                 Container(
                   height: 20,
-                ),
-                Row(
-                  children: [
-                    Text("Default:"),
-                    FittedBox(),
-                  ],
-                ),
-                CheckboxPicker(
-                  initialValue: isDefaultCategory,
-                  updateValue: (bool newValue) {
-                    isDefaultCategory = newValue;
-                  },
                 ),
               ],
             ),

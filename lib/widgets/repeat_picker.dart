@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wheel_chooser/wheel_chooser.dart';
 
 class RepeatPicker extends StatefulWidget {
   final Function updateRepeatValues;
@@ -34,38 +35,53 @@ class _RepeatPickerState extends State<RepeatPicker> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        Text("Every "),
-        DropdownButton<String>(
-          value: repeatAmmountValue,
-          items: repeatAmmountChoice.map((String value) {
-            return new DropdownMenuItem<String>(
-              value: value,
-              child: new Text(value),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              repeatAmmountValue = newValue ?? repeatAmmountValue;
-              widget.updateRepeatValues(
-                  repeatAmmountValue, repeatDenominationValue);
-            });
-          },
+        Container(
+          width: 60,
+          height: 140,
+          child: WheelChooser.custom(
+            startPosition: repeatAmmountChoice.indexOf(repeatAmmountValue),
+            children: repeatAmmountChoice
+                .map((e) => Text(
+                      e,
+                      style: TextStyle(
+                          color: repeatAmmountValue == e
+                              ? Colors.black
+                              : Colors.grey),
+                    ))
+                .toList(),
+            onValueChanged: (index) {
+              setState(() {
+                repeatAmmountValue = repeatAmmountChoice.elementAt(index);
+                widget.updateRepeatValues(
+                    repeatAmmountValue, repeatDenominationValue);
+              });
+            },
+          ),
         ),
-        DropdownButton<String>(
-          value: repeatDenominationValue,
-          items: repeatDenominationChoice.map((String value) {
-            return new DropdownMenuItem<String>(
-              value: value,
-              child: new Text(value),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              repeatDenominationValue = newValue ?? repeatDenominationValue;
-              widget.updateRepeatValues(
-                  repeatAmmountValue, repeatDenominationValue);
-            });
-          },
+        Container(
+          width: 90,
+          height: 140,
+          child: WheelChooser.custom(
+            startPosition:
+                repeatDenominationChoice.indexOf(repeatDenominationValue),
+            children: repeatDenominationChoice
+                .map((e) => Text(
+                      e,
+                      style: TextStyle(
+                          color: repeatDenominationValue == e
+                              ? Colors.black
+                              : Colors.grey),
+                    ))
+                .toList(),
+            onValueChanged: (index) {
+              setState(() {
+                repeatDenominationValue =
+                    repeatDenominationChoice.elementAt(index);
+                widget.updateRepeatValues(
+                    repeatAmmountValue, repeatDenominationValue);
+              });
+            },
+          ),
         ),
       ],
     );

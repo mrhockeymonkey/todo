@@ -46,10 +46,10 @@ class AppActionsHelper {
     }
   }
 
-  static PopupMenuItem buildAction(AppActions actionChoice) {
+  static PopupMenuItem<AppActions> buildAction(AppActions actionChoice) {
     var action = _getAction(actionChoice);
-    return PopupMenuItem(
-      value: action,
+    return PopupMenuItem<AppActions>(
+      value: actionChoice,
       child: ListTile(
         title: Text(action.friendlyName),
         leading: Icon(action.iconData),

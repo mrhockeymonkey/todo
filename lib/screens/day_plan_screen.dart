@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:todo/models/throw_away_task.dart';
 import 'package:todo/widgets/day_plan_list.dart';
 
+import '../app_actions.dart';
 import '../date.dart';
 import '../providers/throw_away_task_provider.dart';
 import '../widgets/text_header.dart';
@@ -25,15 +26,15 @@ class _DailyScreenState extends State<DailyScreen> {
               Text("Day Plan"),
             ],
           ),
-          // actions: [
-          //   PopupMenuButton(
-          //     onSelected: (value) =>
-          //         AppActionsHelper.handleAction(value, context),
-          //     itemBuilder: (context) => <PopupMenuEntry>[
-          //       AppActionsHelper.buildAction(AppActions.Settings),
-          //     ],
-          //   )
-          // ],
+          actions: [
+            PopupMenuButton<AppActions>(
+              onSelected: (AppActions value) =>
+                  AppActionsHelper.handleAction(value, context),
+              itemBuilder: (context) => <PopupMenuEntry<AppActions>>[
+                AppActionsHelper.buildAction(AppActions.Settings),
+              ],
+            )
+          ],
         ),
         body: _buildBody(),
         // floatingActionButton: FloatingActionButton(

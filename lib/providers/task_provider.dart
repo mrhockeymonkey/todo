@@ -27,6 +27,16 @@ class TaskProvider extends ProviderBase<Task> {
     notifyListeners();
   }
 
+  Iterable<Task> getByDate(Date date, {includeOutstanding = false}) => items
+      .where(
+        (t) => t.dueDate != null,
+      )
+      .where(
+        (t) =>
+            t.dueDate!.isAtSameMomentAs(date) ||
+            (includeOutstanding && !t.isDone && t.dueDate!.isBefore(date)),
+      );
+
   // Task getRoutineById(String id) => _items[id];
 
   // Future<void> fetch() async {

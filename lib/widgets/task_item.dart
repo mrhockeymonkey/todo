@@ -29,30 +29,10 @@ class TaskItem extends StatelessWidget {
     return ListTile(
       key: ValueKey(task),
       title: Text(task.title),
-      subtitle: Row(
-        children: [
-          category.id != null
-              ? Icon(
-                  category.icon,
-                  size: 15,
-                  color: category.color,
-                )
-              : Container(),
-          Text(" ${category.name}")
-        ],
-      ),
-      // subtitle: task.isPinned
-      //     ? Container(
-      //         alignment: AlignmentDirectional.centerStart,
-      //         child: Icon(
-      //           Entypo.pin,
-      //           size: 15,
-      //           color: AppColour.pinActiveColor,
-      //         ),
-      //       )
-      //     : null,
+      subtitle: task.dueDate != null
+          ? Text(task.dueDate!.yMMMd())
+          : Text("At Some Point"),
       leading: Icon(Category.defaultIcon, color: AppColour.colorCustom),
-      trailing: Text(task.order.toString()),
       onTap: () => Navigator.of(context)
           .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
 

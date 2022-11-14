@@ -4,6 +4,8 @@ import 'package:todo/screens/task_detail_screen.dart';
 import 'package:todo/widgets/date_header.dart';
 import 'package:todo/widgets/task_list.dart';
 
+import '../app_actions.dart';
+
 class TasksScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _TaskScreenState();
@@ -20,16 +22,16 @@ class _TaskScreenState extends State<TasksScreen> {
               Text("Tasks"),
             ],
           ),
-          actions: [
-            // TODO
-            // PopupMenuButton(
-            //   onSelected: (value) =>
-            //       AppActionsHelper.handleAction(value, context),
-            //   itemBuilder: (context) => <PopupMenuEntry>[
-            //     AppActionsHelper.buildAction(AppActions.ClearCompleted),
-            //     AppActionsHelper.buildAction(AppActions.Settings),
-            //   ],
-            // )
+          actions: <Widget>[
+            PopupMenuButton<AppActions>(
+              onSelected: (AppActions value) =>
+                  AppActionsHelper.handleAction(value, context),
+              itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<AppActions>>[
+                AppActionsHelper.buildAction(AppActions.ClearCompleted),
+                AppActionsHelper.buildAction(AppActions.Settings),
+              ],
+            )
           ],
         ),
         body: _buildBody(),

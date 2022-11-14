@@ -27,7 +27,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   String? _taskTitle;
   String? _categoryId;
   Date? _selectedDate;
-  String? _notesValue;
+  String _notesValue = "";
 
   @override
   void didChangeDependencies() {
@@ -94,7 +94,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
       categoryId: _categoryId,
       isPinned: _isPinned,
       dueDate: _selectedDate,
-      notes: _notesValue ?? "",
+      notes: _notesValue,
     );
     await Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task);
     Navigator.of(context).pop();
@@ -200,20 +200,20 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
           subtitle: Text(category.title),
           onTap: _selectCategory,
         ),
-        ListTile(
-            title: Text("Pin"),
-            leading: Icon(
-              Entypo.pin,
-              color: _isPinned
-                  ? AppColour.pinActiveColor
-                  : AppColour.InactiveColor,
-            ),
-            subtitle: Text("Toggle pin for this task"),
-            onTap: () {
-              setState(() {
-                _isPinned = !_isPinned;
-              });
-            }),
+        // ListTile(
+        //     title: Text("Pin"),
+        //     leading: Icon(
+        //       Entypo.pin,
+        //       color: _isPinned
+        //           ? AppColour.pinActiveColor
+        //           : AppColour.InactiveColor,
+        //     ),
+        //     subtitle: Text("Toggle pin for this task"),
+        //     onTap: () {
+        //       setState(() {
+        //         _isPinned = !_isPinned;
+        //       });
+        //     }),
         ListTile(
           title: Text("When"),
           leading: Icon(Icons.today,
@@ -231,8 +231,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
                 )
               : null,
           subtitle: _selectedDate != null
-              // ? Text("${dateFmt.format(_selectedDate?.dateTime)}")
-              ? Text("Foo") // TODO Date format
+              ? Text(_selectedDate!.yMMMd())
               : Text("At Some Point"),
           onTap: _selectDate,
         ),
@@ -245,12 +244,20 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
               hintText: "Notes",
               hintStyle: TextStyle(color: Colors.black54),
             ),
-            onChanged: (value) => _notesValue = value,
+            onChanged: (value) {
+              var oldValue = _notesValue;
+              _notesValue = value;
+
+              if (oldValue == "" && value != "") setState(() {});
+              if (oldValue != "" && value == "") setState(() {});
+            },
           ),
           leading: Icon(
             //Icons.subject,
             FontAwesome.sticky_note,
-            color: _notesValue != "" ? category.color : AppColour.InactiveColor,
+            color: _notesValue != ""
+                ? AppColour.colorCustom
+                : AppColour.InactiveColor,
           ),
         ),
       ],
