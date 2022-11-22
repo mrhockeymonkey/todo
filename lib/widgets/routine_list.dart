@@ -42,6 +42,6 @@ class RoutineListState extends State<RoutineList> {
 
   void _handleDismiss(DismissDirection direction, Routine routine) {
     Provider.of<RoutineProvider>(context, listen: false)
-        .addOrUpdate(routine.copyAsDone());
+        .addOrUpdate(routine.done());
   }
 }

@@ -33,6 +33,21 @@ class Date {
         other.day,
       ));
 
+  Date add(Duration duration) {
+    return new Date(_dateTime.add(duration));
+  }
+
+  // Adds a day tothe given date or returns tomorrow if given date is in the past
+  Date addFromNow(Duration duration) {
+    var now = Date.now();
+
+    return this.isBefore(now) ? now.add(duration) : this.add(duration);
+    // if (this.isBefore(now)) {
+    //   return now.add(duration);
+    // }
+    // return this.add(duration);
+  }
+
   @override
   String toString() => "Date: $day/$month/$year";
 

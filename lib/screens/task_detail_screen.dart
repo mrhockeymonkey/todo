@@ -44,7 +44,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
         _taskTitle = task.title;
         _categoryId = task.categoryId;
         _shouldFocusTitleField = false;
-        _isPinned = task.isPinned;
+        _isPinned = task.isFlagged;
         _selectedDate = task.dueDate;
         _notesValue = task.notes;
       }
@@ -92,7 +92,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
       id: _taskId,
       title: _taskTitle ?? "foo", // TODO loosing the will a bit now
       categoryId: _categoryId,
-      isPinned: _isPinned,
+      isFlagged: _isPinned,
       dueDate: _selectedDate,
       notes: _notesValue,
     );

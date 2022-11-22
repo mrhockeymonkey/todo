@@ -3,6 +3,8 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/task.dart';
+import 'package:todo/widgets/badge_icon.dart';
+import 'package:todo/widgets/flagged_icon.dart';
 import 'package:uuid/uuid.dart';
 
 import '../app_colour.dart';
@@ -10,9 +12,11 @@ import '../app_constants.dart';
 import '../providers/task_provider.dart';
 import '../screens/task_detail_screen.dart';
 import 'category.dart';
+import 'day_plan_actions.dart';
 
 class DayPlanBacklogTask extends DayPlanBase<Task> {
   final Task task;
+  bool showButtons = false;
 
   DayPlanBacklogTask({required this.task});
 
@@ -20,7 +24,7 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
   Widget build(BuildContext context) => Dismissible(
         key: Key(Uuid().v1()),
         direction: DismissDirection.startToEnd,
-        onDismissed: (direction) => _handleDismiss(context, direction, task),
+        onDismissed: (direction) => _handleDismiss(context, direction),
         child: ListTile(
           key: ValueKey(task.id),
           title: Text(
@@ -34,25 +38,44 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
           ),
           leading: task.isDone
               ? Icon(Entypo.pin, color: Colors.grey[350])
-              : Icon(Category.defaultIcon, color: AppColour.colorCustom),
-          trailing: Icon(AppConstants.DragIndicator),
-          subtitle: Row(
-            children: [IconButton(onPressed: () {}, icon: Icon(Icons.edit))],
+              : FlaggedIcon(
+                  icon: Category.defaultIcon,
+                  color: AppColour.colorCustom,
+                  showFlag: task.isFlagged),
+          trailing: DayPlanActions(
+            handleSnooze: _handleSnooze,
+            handleFlag: _handleFlag,
           ),
+          subtitle: showButtons
+              ? Row(
+                  children: [
+                    IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                    IconButton(onPressed: () {}, icon: Icon(Icons.air)),
+                  ],
+                )
+              : null,
           isThreeLine: false,
           onTap: () => Navigator.of(context)
               .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
         ),
       );
 
-  void _handleDismiss(
-    BuildContext context,
-    DismissDirection direction,
-    Task task,
-  ) {
-    Provider.of<TaskProvider>(context, listen: false)
-        .addOrUpdate(task.copyWith(isDone: true));
+  void _handleDismiss(BuildContext context, DismissDirection direction) =>
+      Provider.of<TaskProvider>(context, listen: false)
+          .addOrUpdate(task.done());
+
+  void _handleSnooze(BuildContext context) {
+    if (task.dueDate == null) return;
+
+    var oneDay = new Duration(days: 1);
+    var snoozedTask = task.copyWith(dueDate: task.dueDate!.addFromNow(oneDay));
+
+    Provider.of<TaskProvider>(context, listen: false).addOrUpdate(snoozedTask);
   }
+
+  void _handleFlag(BuildContext context) =>
+      Provider.of<TaskProvider>(context, listen: false)
+          .addOrUpdate(task.copyWith(isFlagged: !task.isFlagged));
 
   @override
   int get order => task.order;

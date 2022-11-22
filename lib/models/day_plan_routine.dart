@@ -9,6 +9,7 @@ import 'package:uuid/uuid.dart';
 import '../providers/routine_provider.dart';
 import '../screens/routine_detail_screen.dart';
 import '../widgets/routine_icon.dart';
+import 'day_plan_actions.dart';
 
 class DayPlanRoutine extends DayPlanBase<Routine> {
   final Routine routine;
@@ -19,11 +20,11 @@ class DayPlanRoutine extends DayPlanBase<Routine> {
   Widget build(BuildContext context) => Dismissible(
         key: Key(Uuid().v1()),
         direction: DismissDirection.startToEnd,
-        onDismissed: (direction) => _handleDismiss(context, direction, routine),
+        onDismissed: (direction) => _handleDismiss(context, direction),
         child: ListTile(
           leading: RoutineIcon(color: AppColour.colorCustom),
           title: Text(routine.title),
-          trailing: Icon(AppConstants.DragIndicator),
+          trailing: DayPlanActions(handleSnooze: _handleSnooze),
           isThreeLine: false,
           onTap: () => Navigator.of(context).pushNamed(
             RoutineDetailScreen.routeName,
@@ -35,10 +36,18 @@ class DayPlanRoutine extends DayPlanBase<Routine> {
   void _handleDismiss(
     BuildContext context,
     DismissDirection direction,
-    Routine routine,
   ) {
     Provider.of<RoutineProvider>(context, listen: false)
-        .addOrUpdate(routine.copyAsDone());
+        .addOrUpdate(routine.done());
+  }
+
+  void _handleSnooze(BuildContext context) {
+    var oneDay = new Duration(days: 1);
+    var snoozedRoutine =
+        routine.copyWith(nextDueDateTime: routine.dueDate.addFromNow(oneDay));
+
+    Provider.of<RoutineProvider>(context, listen: false)
+        .addOrUpdate(snoozedRoutine);
   }
 
   @override

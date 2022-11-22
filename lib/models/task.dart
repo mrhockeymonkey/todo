@@ -8,7 +8,7 @@ class Task implements DbItem {
   final String title;
   final String? categoryId;
   final bool isDone;
-  final bool isPinned;
+  final bool isFlagged;
   final Date? dueDate; // TODO replace with null object for Date?
   final int order;
   final String notes;
@@ -18,7 +18,7 @@ class Task implements DbItem {
     required this.title,
     this.categoryId,
     this.isDone = false,
-    this.isPinned = false,
+    this.isFlagged = false,
     this.dueDate,
     this.order = 0,
     this.notes = "",
@@ -29,7 +29,7 @@ class Task implements DbItem {
         title: map['title'],
         categoryId: map['categoryId'] ?? null,
         isDone: map['isDone'] ?? false,
-        isPinned: map['isPinned'] ?? false,
+        isFlagged: map['isFlagged'] ?? false,
         dueDate: map['dueDate'] != null
             ? Date.fromMillisecondsSinceEpoch(map['dueDate'])
             : null,
@@ -42,7 +42,7 @@ class Task implements DbItem {
         'title': title,
         'categoryId': categoryId,
         'isDone': isDone,
-        'isPinned': isPinned,
+        'isFlagged': isFlagged,
         'dueDate': dueDate?.millisecondsSinceEpoch,
         'order': order,
         'notes': notes,
@@ -52,14 +52,16 @@ class Task implements DbItem {
     String? title,
     bool? isDone,
     int? order,
+    Date? dueDate,
+    bool? isFlagged,
   }) =>
       Task(
         id: this.id,
         title: title ?? this.title,
         categoryId: this.categoryId,
         isDone: isDone ?? this.isDone,
-        isPinned: this.isPinned,
-        dueDate: this.dueDate,
+        isFlagged: isFlagged ?? this.isFlagged,
+        dueDate: dueDate ?? this.dueDate,
         order: order ?? this.order,
         notes: this.notes,
       );
@@ -72,21 +74,7 @@ class Task implements DbItem {
     return dueDate!.dateTime.isBefore(DateTime.now()) ? true : false;
   }
 
-  // bool isPinnedOrUpcoming(DateTime lookAheadDate) {
-  //   if (isDone) {
-  //     return false;
-  //   }
-
-  //   if (isPinned) {
-  //     return true;
-  //   }
-
-  //   if (dueDate != null && dueDate.dateTime.isBefore(lookAheadDate)) {
-  //     return true;
-  //   }
-
-  //   return false;
-  // }
+  Task done() => this.copyWith(isDone: true);
 
   String toString() => "Task = {id: '$id', title: '$title', isDone: '$isDone'}";
 }

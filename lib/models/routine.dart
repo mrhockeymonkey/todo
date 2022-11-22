@@ -11,8 +11,8 @@ class Routine implements DbItem {
 
   final int recurNum;
   final String recurLen;
-  final DateTime lastCompletedDate;
-  DateTime _nextDueDateTime;
+  final Date lastCompletedDate;
+  Date _nextDueDateTime;
 
   final Color color;
   final String notes;
@@ -24,19 +24,19 @@ class Routine implements DbItem {
     required this.title,
     this.recurNum = 5,
     this.recurLen = "minutes",
-    lastCompletedDate,
-    nextDueDateTime,
+    Date? lastCompletedDate,
+    Date? nextDueDateTime,
     this.color = Colors.black,
     this.notes = "",
     this.displayOnPinned = false,
     this.order = 0,
   })  : this.lastCompletedDate = lastCompletedDate == null ||
-                lastCompletedDate == DateTime.fromMillisecondsSinceEpoch(0)
-            ? Jiffy().dateTime
+                lastCompletedDate == Date.fromMillisecondsSinceEpoch(0)
+            ? Date.now()
             : lastCompletedDate,
         this._nextDueDateTime = nextDueDateTime == null ||
-                nextDueDateTime == DateTime.fromMillisecondsSinceEpoch(0)
-            ? calculateNextDueDate(Jiffy(), recurLen, recurNum).dateTime
+                nextDueDateTime == Date.fromMillisecondsSinceEpoch(0)
+            ? calculateNextDueDate(Date.now(), recurLen, recurNum)
             : nextDueDateTime;
 
   factory Routine.fromMap(Map<String, dynamic> map) {
@@ -46,9 +46,8 @@ class Routine implements DbItem {
       recurNum: map['recurNum'],
       recurLen: map['recurLen'],
       lastCompletedDate:
-          DateTime.fromMillisecondsSinceEpoch(map['lastCompletedDate'] ?? 0),
-      nextDueDateTime:
-          DateTime.fromMillisecondsSinceEpoch(map['nextDueDate'] ?? 0),
+          Date.fromMillisecondsSinceEpoch(map['lastCompletedDate'] ?? 0),
+      nextDueDateTime: Date.fromMillisecondsSinceEpoch(map['nextDueDate'] ?? 0),
       notes: map['notes'] ?? "",
       displayOnPinned: map['displayOnPinned'] ?? false,
       order: map['order'] ?? 0,
@@ -76,8 +75,8 @@ class Routine implements DbItem {
   Routine copyWith({
     String? title,
     int? order,
-    DateTime? lastCompletedDate,
-    DateTime? nextDueDateTime,
+    Date? lastCompletedDate,
+    Date? nextDueDateTime,
   }) =>
       Routine(
         id: this.id,
@@ -92,56 +91,66 @@ class Routine implements DbItem {
         order: order ?? this.order,
       );
 
-  Routine copyAsDone() {
-    var now = Jiffy();
-    var lastCompletedDate = now.dateTime;
-    var nextDueDateTime =
-        calculateNextDueDate(now, this.recurLen, this.recurNum).dateTime;
+  Routine done() {
+    Date now = Date.now();
+    Date lastCompletedDate = now;
+    Date nextDueDateTime =
+        calculateNextDueDate(now, this.recurLen, this.recurNum);
     print(
-        "Routine: '$title', Completed: '${lastCompletedDate.toIso8601String()}', NextDue: '${_nextDueDateTime.toIso8601String()}'");
+        "Routine: '$title', Completed: '${lastCompletedDate}', NextDue: '${_nextDueDateTime}'");
 
     return this.copyWith(
         lastCompletedDate: lastCompletedDate, nextDueDateTime: nextDueDateTime);
   }
 
-  Date get dueDate => new Date(_nextDueDateTime);
+  Routine tomorrow() {
+    var tomorrow = this.dueDate.add(const Duration(days: 1));
+    return this.copyWith(nextDueDateTime: tomorrow);
+  }
+
+  Date get dueDate => _nextDueDateTime;
 
   double get percent {
     if (lastCompletedDate == null || _nextDueDateTime == null) {
       return 1.0;
     }
 
-    var elapsed = DateTime.now().difference(lastCompletedDate);
-    var foo = _nextDueDateTime.difference(lastCompletedDate);
+    var elapsed = DateTime.now().difference(lastCompletedDate.dateTime);
+    var foo = _nextDueDateTime.dateTime.difference(lastCompletedDate.dateTime);
 
     return min(1.0, (elapsed.inSeconds / foo.inSeconds));
   }
 
   bool get isDue => percent >= 1.0;
 
-  String get dueWhen =>
-      isDue ? "due" : Jiffy(_nextDueDateTime).from(DateTime.now()).toString();
+  String get dueWhen => isDue
+      ? "due"
+      : Jiffy(_nextDueDateTime.dateTime).from(DateTime.now()).toString();
 
-  static Jiffy calculateNextDueDate(
-      Jiffy lastCompleted, String recurLen, int recurNum) {
+  static Date calculateNextDueDate(
+      Date lastCompleted, String recurLen, int recurNum) {
+    var jiffy = Jiffy(lastCompleted.dateTime);
     switch (recurLen) {
       case 'minutes':
-        return lastCompleted.add(minutes: recurNum);
+        jiffy.add(minutes: recurNum);
         break;
       case 'hours':
-        return lastCompleted.add(hours: recurNum);
+        jiffy.add(hours: recurNum);
         break;
       case 'days':
-        return lastCompleted.add(days: recurNum);
+        jiffy.add(days: recurNum);
         break;
       case 'weeks':
-        return lastCompleted.add(weeks: recurNum);
+        jiffy.add(weeks: recurNum);
         break;
       case 'months':
-        return lastCompleted.add(months: recurNum);
+        jiffy.add(months: recurNum);
         break;
       default: // minutes
-        return lastCompleted.add(minutes: recurNum);
+        jiffy.add(minutes: recurNum);
+        break;
     }
+
+    return Date(jiffy.dateTime);
   }
 }

@@ -7,6 +7,7 @@ import 'package:todo/models/throw_away_task.dart';
 import 'package:uuid/uuid.dart';
 
 import '../providers/throw_away_task_provider.dart';
+import 'day_plan_actions.dart';
 
 class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
   ThrowAwayTask todo;
@@ -17,7 +18,7 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
   Widget build(BuildContext context) => Dismissible(
         key: Key(Uuid().v1()),
         direction: DismissDirection.startToEnd,
-        onDismissed: (direction) => _handleDismiss(context, direction, item),
+        onDismissed: (direction) => _handleDismiss(context, direction),
         child: ListTile(
           leading: todo.done
               ? Icon(Icons.check, color: Colors.grey[350])
@@ -25,7 +26,7 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
                   Entypo.minus,
                   color: AppColour.colorCustom,
                 ),
-          trailing: Icon(Icons.drag_indicator_sharp),
+          trailing: DayPlanActions(handleSnooze: _handleSnooze),
           title: TextFormField(
             textCapitalization: TextCapitalization.words,
             initialValue: todo.title.isEmpty ? null : item.title,
@@ -56,11 +57,17 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
   void _handleDismiss(
     BuildContext context,
     DismissDirection direction,
-    ThrowAwayTask task,
   ) =>
-      Provider.of<ThrowAwayTaskProvider>(context, listen: false).addOrUpdate(
-          new ThrowAwayTask(
-              id: task.id, title: task.title, done: true, date: task.date));
+      Provider.of<ThrowAwayTaskProvider>(context, listen: false)
+          .addOrUpdate(todo.donee());
+
+  void _handleSnooze(BuildContext context) {
+    var oneDay = new Duration(days: 1);
+    var snoozedTodo = todo.copyWith(date: todo.date.addFromNow(oneDay));
+
+    Provider.of<ThrowAwayTaskProvider>(context, listen: false)
+        .addOrUpdate(snoozedTodo);
+  }
 
   @override
   int get order => todo.order;

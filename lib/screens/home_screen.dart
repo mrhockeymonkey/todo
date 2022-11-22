@@ -20,20 +20,6 @@ class _HomeScreenState extends State<HomeScreen> {
     DailyScreen(),
     RoutinesScreen(),
   ];
-  // final List<Map<String, Object>> _pages = [
-  //   {
-  //     'page': TasksScreen(),
-  //     'title': '',
-  //   },
-  //   {
-  //     'page': DailyScreen(),
-  //     'title': '',
-  //   },
-  //   {
-  //     'page': RoutinesScreen(),
-  //     'title': '',
-  //   },
-  // ];
 
   void _selectScreen(int index) {
     setState(() {

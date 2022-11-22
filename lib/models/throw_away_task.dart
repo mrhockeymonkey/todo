@@ -47,4 +47,13 @@ class ThrowAwayTask implements DbItem {
         date: date ?? this.date,
         order: order ?? this.order,
       );
+
+  ThrowAwayTask donee() {
+    return this.copyWith(done: true);
+  }
+
+  ThrowAwayTask tomorrow() {
+    var tomorrow = this.date.add(const Duration(days: 1));
+    return this.copyWith(date: tomorrow);
+  }
 }
