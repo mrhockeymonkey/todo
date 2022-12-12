@@ -8,6 +8,7 @@ import 'package:todo/providers/test_provider.dart';
 import 'package:todo/providers/throw_away_task_provider.dart';
 import 'package:todo/screens/categories_screen.dart';
 import 'package:todo/screens/category_detail_screen.dart';
+import 'package:todo/screens/export_json_screen.dart';
 import 'package:todo/screens/home_screen.dart';
 import 'package:todo/screens/routine_detail_screen.dart';
 import 'package:todo/screens/settings_screen.dart';
@@ -68,6 +69,11 @@ class MyApp extends StatelessWidget {
             hintStyle: TextStyle(color: Colors.white30),
             labelStyle: TextStyle(color: Colors.white),
           ),
+          // textButtonTheme: TextButtonThemeData(
+          //   style: TextButton.styleFrom(
+          //     primary: AppColour.colorCustom,
+          //   ),
+          // ),
           textSelectionTheme: TextSelectionThemeData(
             cursorColor: Colors.white,
             selectionHandleColor: Colors.white70,
@@ -81,6 +87,7 @@ class MyApp extends StatelessWidget {
           SettingsScreen.routeName: (context) => SettingsScreen(),
           CategoriesScreen.routeName: (context) => CategoriesScreen(),
           CategoryDetailScreen.routeName: (context) => CategoryDetailScreen(),
+          ExportJsonPage.routeName: (context) => ExportJsonPage(),
         },
       ),
     );

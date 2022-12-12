@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo/screens/categories_screen.dart';
+import 'package:todo/screens/export_json_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   static const String routeName = '/settings';
@@ -16,6 +17,7 @@ class SettingsScreen extends StatelessWidget {
             child: ListView(
               children: [
                 _buildCategoriesTile(context),
+                _buildJsonExportTile(context),
               ],
             ),
           )
@@ -30,4 +32,9 @@ class SettingsScreen extends StatelessWidget {
       //subtitle: Text(""),
       //isThreeLine: true,
       onTap: () => Navigator.of(context).pushNamed(CategoriesScreen.routeName));
+
+  Widget _buildJsonExportTile(BuildContext context) => ListTile(
+      leading: Icon(Icons.code),
+      title: Text("Export JSON"),
+      onTap: () => Navigator.of(context).pushNamed(ExportJsonPage.routeName));
 }

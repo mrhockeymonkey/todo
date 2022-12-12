@@ -18,3 +18,7 @@ samples, guidance on mobile development, and a full API reference.
 
 https://itnext.io/build-an-animated-gauge-in-flutter-e495a436dbf8
 
+```
+flutter run --flavour dev
+flutter run --flavour prod --release
+```
