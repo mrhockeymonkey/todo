@@ -32,6 +32,8 @@ class Date {
         other.day,
       ));
 
+  int compareTo(Date other) => _dateTime.compareTo(other.dateTime);
+
   Date add(Duration duration) {
     return Date(_dateTime.add(duration));
   }

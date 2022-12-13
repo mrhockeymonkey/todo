@@ -38,21 +38,18 @@ class _HomeScreenState extends State<HomeScreen> {
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _selectScreen,
-          items: [
-            const BottomNavigationBarItem(
+          items: const [
+            BottomNavigationBarItem(
               label: '',
               icon: Icon(Entypo.pin),
             ),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
               label: '',
               icon: Icon(Entypo.list),
             ),
             BottomNavigationBarItem(
               label: '',
-              icon: BadgeIcon(
-                icon: const RoutineIcon(),
-                badgeCount: Provider.of<RoutineProvider>(context).isDueCount,
-              ),
+              icon: RoutineIcon(),
             ),
           ],
         ),

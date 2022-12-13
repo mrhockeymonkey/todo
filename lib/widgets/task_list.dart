@@ -27,11 +27,18 @@ class TaskListState extends State<TaskList> {
     var tasks = Provider.of<TaskProvider>(context).items;
     final categoryProvider = Provider.of<CategoryProvider>(context);
 
-    tasks.sort((a, b) {
-      final ac = categoryProvider.getCategoryOrDefault(a.categoryId);
-      final bc = categoryProvider.getCategoryOrDefault(a.categoryId);
-      return ac.order.compareTo(bc.order);
-    });
+    // no dueDate set appears on top and then sorted by dueDate ascending
+    tasks.sort(((a, b) {
+      if (a.dueDate == null) return -1;
+      if (b.dueDate == null) return 1;
+      return a.dueDate!.compareTo(b.dueDate!);
+    }));
+
+    // tasks.sort((a, b) {
+    //   final ac = categoryProvider.getCategoryOrDefault(a.categoryId);
+    //   final bc = categoryProvider.getCategoryOrDefault(a.categoryId);
+    //   return ac.order.compareTo(bc.order);
+    // });
 
     var dueTasks = tasks.where((element) => element.isDue).toList();
     var doneTasks = tasks.where((element) => element.isDone).toList();

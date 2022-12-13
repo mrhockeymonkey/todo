@@ -31,8 +31,9 @@ class ExportDataV1 {
         .map((t) => Task(
               title: t["title"],
               notes: t["notes"],
-              dueDate:
-                  Date.fromMillisecondsSinceEpoch(t["dueDateMsSinceEpoch"]),
+              dueDate: t["dueDateMsSinceEpoch"] == null
+                  ? null
+                  : Date.fromMillisecondsSinceEpoch(t["dueDateMsSinceEpoch"]),
             ))
         .toList();
 
@@ -42,6 +43,10 @@ class ExportDataV1 {
               recurNum: r["recurNum"],
               recurLen: r["recurLen"],
               notes: r["notes"],
+              lastCompletedDate: r["lastCompletedDateMsSinceEpoch"] == null
+                  ? null
+                  : Date.fromMillisecondsSinceEpoch(
+                      r["lastCompletedDateMsSinceEpoch"]),
             ))
         .toList();
 
@@ -55,7 +60,7 @@ class ExportDataV1 {
     List<Map<String, dynamic>> exportedRoutines = [];
 
     tasks.forEach((t) => exportedTasks.add(_createTaskExport(t)));
-    routines.forEach((r) => exportedTasks.add(_createRoutineExport(r)));
+    routines.forEach((r) => exportedRoutines.add(_createRoutineExport(r)));
 
     exportData[_tasksProp] = exportedTasks;
     exportData[_routinesProp] = exportedRoutines;
@@ -66,7 +71,7 @@ class ExportDataV1 {
   Map<String, dynamic> _createTaskExport(Task task) => {
         "id": task.id,
         "title": task.title,
-        "dueDateMsSinceEpoch": task.dueDate?.millisecondsSinceEpoch ?? 0,
+        "dueDateMsSinceEpoch": task.dueDate?.millisecondsSinceEpoch,
         "notes": task.notes
       };
 
@@ -76,5 +81,7 @@ class ExportDataV1 {
         "recurNum": routine.recurNum,
         "recurLen": routine.recurLen,
         "notes": routine.notes,
+        "lastCompletedDateMsSinceEpoch":
+            routine.lastCompletedDate.millisecondsSinceEpoch,
       };
 }
