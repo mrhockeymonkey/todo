@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class RecurEvery {
   int recurNum;
   String recurLen;

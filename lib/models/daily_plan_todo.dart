@@ -16,13 +16,13 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
 
   @override
   Widget build(BuildContext context) => Dismissible(
-        key: Key(Uuid().v1()),
+        key: Key(const Uuid().v1()),
         direction: DismissDirection.startToEnd,
         onDismissed: (direction) => _handleDismiss(context, direction),
         child: ListTile(
           leading: todo.done
               ? Icon(Icons.check, color: Colors.grey[350])
-              : Icon(
+              : const Icon(
                   Entypo.minus,
                   color: AppColour.colorCustom,
                 ),
@@ -39,13 +39,13 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
                 Provider.of<ThrowAwayTaskProvider>(context, listen: false)
                     .stash(todo.copyWith(title: newValue)),
             style: todo.done
-                ? TextStyle(
+                ? const TextStyle(
                     decoration: TextDecoration.lineThrough,
                     color: Colors.grey,
                   )
                 : null,
             cursorColor: Colors.black,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: InputBorder.none,
               hintText: "Do Something",
               hintStyle: TextStyle(color: Colors.grey),
@@ -62,7 +62,7 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
           .addOrUpdate(todo.donee());
 
   void _handleSnooze(BuildContext context) {
-    var oneDay = new Duration(days: 1);
+    var oneDay = const Duration(days: 1);
     var snoozedTodo = todo.copyWith(date: todo.date.addFromNow(oneDay));
 
     Provider.of<ThrowAwayTaskProvider>(context, listen: false)
@@ -73,10 +73,10 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
   int get order => todo.order;
 
   @override
-  String toString() => "${this.runtimeType}: ${todo.title}";
+  String toString() => "$runtimeType: ${todo.title}";
 
   @override
-  Type get itemtype => this.runtimeType;
+  Type get itemtype => runtimeType;
 
   @override
   ThrowAwayTask get item => todo;

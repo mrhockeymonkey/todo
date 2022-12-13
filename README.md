@@ -10,6 +10,7 @@ flutter run --flavour prod --release
 ## Things left  to do
 
 - configurable days ahead, 
+- UI for categories is a bit rough
 - Import/export categories
 - address all vscode problems
 - ui fixes

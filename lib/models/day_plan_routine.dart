@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
-import 'package:todo/app_constants.dart';
 import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/routine.dart';
 import 'package:uuid/uuid.dart';
@@ -18,11 +17,11 @@ class DayPlanRoutine extends DayPlanBase<Routine> {
 
   @override
   Widget build(BuildContext context) => Dismissible(
-        key: Key(Uuid().v1()),
+        key: Key(const Uuid().v1()),
         direction: DismissDirection.startToEnd,
         onDismissed: (direction) => _handleDismiss(context, direction),
         child: ListTile(
-          leading: RoutineIcon(color: AppColour.colorCustom),
+          leading: const RoutineIcon(color: AppColour.colorCustom),
           title: Text(routine.title),
           trailing: DayPlanActions(handleSnooze: _handleSnooze),
           isThreeLine: false,
@@ -42,7 +41,7 @@ class DayPlanRoutine extends DayPlanBase<Routine> {
   }
 
   void _handleSnooze(BuildContext context) {
-    var oneDay = new Duration(days: 1);
+    var oneDay = const Duration(days: 1);
     var snoozedRoutine =
         routine.copyWith(nextDueDateTime: routine.dueDate.addFromNow(oneDay));
 
@@ -54,10 +53,10 @@ class DayPlanRoutine extends DayPlanBase<Routine> {
   int get order => routine.order;
 
   @override
-  String toString() => "${this.runtimeType}: ${routine.title}";
+  String toString() => "$runtimeType: ${routine.title}";
 
   @override
-  Type get itemtype => this.runtimeType;
+  Type get itemtype => runtimeType;
 
   @override
   Routine get item => routine;

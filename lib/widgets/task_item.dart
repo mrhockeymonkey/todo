@@ -11,7 +11,7 @@ import 'package:todo/screens/task_detail_screen.dart';
 class TaskItem extends StatelessWidget {
   final Task task;
 
-  TaskItem({required this.task});
+  const TaskItem({super.key, required this.task});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class TaskItem extends StatelessWidget {
       title: Text(task.title),
       subtitle: task.dueDate != null
           ? Text(task.dueDate!.yMMMd())
-          : Text("At Some Point"),
+          : const Text("At Some Point"),
       leading: Icon(Category.defaultIcon, color: AppColour.colorCustom),
       onTap: () => Navigator.of(context)
           .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
@@ -53,17 +53,17 @@ class TaskItem extends StatelessWidget {
 
   Widget _buildDoneTaskItem(BuildContext context, Category category) =>
       ListTile(
-        key: ValueKey(0),
+        key: const ValueKey(0),
         title: Text(
           task.title,
-          style: TextStyle(
+          style: const TextStyle(
             decoration: TextDecoration.lineThrough,
             color: Colors.grey,
           ),
         ),
-        leading: Icon(Icons.check),
+        leading: const Icon(Icons.check),
         trailing: IconButton(
-          icon: Icon(Icons.undo),
+          icon: const Icon(Icons.undo),
           onPressed: () {
             Provider.of<TaskProvider>(context, listen: false)
                 .addOrUpdate(task.copyWith(isDone: false));

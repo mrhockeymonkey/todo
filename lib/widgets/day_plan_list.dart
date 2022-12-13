@@ -17,12 +17,13 @@ import 'package:todo/date.dart';
 class DayPlanList extends StatefulWidget {
   final Date date;
 
-  DayPlanList({
+  const DayPlanList({
+    super.key,
     required this.date,
   });
 
   @override
-  State<StatefulWidget> createState() => new DayPlanListState();
+  State<StatefulWidget> createState() => DayPlanListState();
 }
 
 class DayPlanListState extends State<DayPlanList> {
@@ -34,7 +35,7 @@ class DayPlanListState extends State<DayPlanList> {
 
   @override
   void didChangeDependencies() {
-    debugPrint("DidChangeDependencies: ${this._toStringCustom()}");
+    debugPrint("DidChangeDependencies: ${_toStringCustom()}");
     super.didChangeDependencies();
 
     if (widget.date == Date.now()) {
@@ -47,32 +48,32 @@ class DayPlanListState extends State<DayPlanList> {
 
     _dayPlanToDos = throwAwayTaskProvider
         .getByDate(widget.date)
-        .map((e) => new DayPlanToDo(todo: e))
+        .map((e) => DayPlanToDo(todo: e))
         .toList();
 
     _dayPlanTasks = backlogTaskProvider
         .getByDate(widget.date, includeOutstanding: _includeOutstanding)
-        .map((e) => new DayPlanBacklogTask(task: e))
+        .map((e) => DayPlanBacklogTask(task: e))
         .toList();
 
     _dayPlanRoutines = routineProvider.items
         .where((r) =>
             r.dueDate.isAtSameMomentAs(widget.date) ||
             (_includeOutstanding && r.dueDate.isBefore(widget.date)))
-        .map((e) => new DayPlanRoutine(routine: e))
+        .map((e) => DayPlanRoutine(routine: e))
         .toList();
 
     _dayPlanItems = []; // TODO covariance??
 
-    _dayPlanToDos.forEach((element) {
+    for (var element in _dayPlanToDos) {
       _dayPlanItems.add(element);
-    });
-    _dayPlanTasks.forEach((element) {
+    }
+    for (var element in _dayPlanTasks) {
       _dayPlanItems.add(element);
-    });
-    _dayPlanRoutines.forEach((element) {
+    }
+    for (var element in _dayPlanRoutines) {
       _dayPlanItems.add(element);
-    });
+    }
 
     _dayPlanItems.sort((a, b) => a.order.compareTo(b.order)); // descending
   }
@@ -104,7 +105,7 @@ class DayPlanListState extends State<DayPlanList> {
     List<Task> updatedTasks = [];
     List<Routine> updatedRoutines = [];
 
-    _dayPlanItems.forEach((item) {
+    for (var item in _dayPlanItems) {
       debugPrint("${item.toString()} is now $next");
 
       switch (item.runtimeType) {
@@ -125,7 +126,7 @@ class DayPlanListState extends State<DayPlanList> {
       }
 
       next++;
-    });
+    }
 
     Provider.of<ThrowAwayTaskProvider>(context, listen: false)
         .updateAll(updatedToDos);
@@ -135,5 +136,5 @@ class DayPlanListState extends State<DayPlanList> {
   }
 
   String _toStringCustom() =>
-      "${this.runtimeType} (${widget.date.toString()}) ${_includeOutstanding ? "(Today)" : ""}";
+      "$runtimeType (${widget.date.toString()}) ${_includeOutstanding ? "(Today)" : ""}";
 }

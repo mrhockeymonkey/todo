@@ -37,7 +37,6 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
     fetched?.entries.forEach((element) {
       // assert?
       final T item = parse(element.value);
-      debugPrint(element.value);
       _items.putIfAbsent(item.id!, () => item);
     });
     notifyListeners();

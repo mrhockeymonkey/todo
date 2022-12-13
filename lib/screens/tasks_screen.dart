@@ -7,6 +7,8 @@ import 'package:todo/widgets/task_list.dart';
 import '../app_actions.dart';
 
 class TasksScreen extends StatefulWidget {
+  const TasksScreen({super.key});
+
   @override
   State<StatefulWidget> createState() => _TaskScreenState();
 }
@@ -17,9 +19,9 @@ class _TaskScreenState extends State<TasksScreen> {
         appBar: AppBar(
           title: Row(
             children: [
-              Icon(Entypo.list),
+              const Icon(Entypo.list),
               Container(width: 10),
-              Text("Tasks"),
+              const Text("Tasks"),
             ],
           ),
           actions: <Widget>[
@@ -28,15 +30,15 @@ class _TaskScreenState extends State<TasksScreen> {
                   AppActionsHelper.handleAction(value, context),
               itemBuilder: (BuildContext context) =>
                   <PopupMenuEntry<AppActions>>[
-                AppActionsHelper.buildAction(AppActions.ClearCompleted),
-                AppActionsHelper.buildAction(AppActions.Settings),
+                AppActionsHelper.buildAction(AppActions.clearCompleted),
+                AppActionsHelper.buildAction(AppActions.settings),
               ],
             )
           ],
         ),
         body: _buildBody(),
         floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
           onPressed: () => Navigator.of(context)
               .pushNamed(TaskDetailScreen.routeName, arguments: null),
         ),
@@ -44,8 +46,8 @@ class _TaskScreenState extends State<TasksScreen> {
 
   Widget _buildBody() => CustomScrollView(
         slivers: [
-          SliverList(delegate: SliverChildListDelegate([DateHeader()])),
-          TaskList(),
+          SliverList(delegate: SliverChildListDelegate([const DateHeader()])),
+          const TaskList(),
         ],
       );
 }

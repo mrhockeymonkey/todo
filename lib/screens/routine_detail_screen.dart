@@ -11,6 +11,8 @@ import '../app_colour.dart';
 class RoutineDetailScreen extends StatefulWidget {
   static const String routeName = '/routine-detail';
 
+  const RoutineDetailScreen({super.key});
+
   @override
   State<StatefulWidget> createState() => RoutineDetailScreenState();
 }
@@ -70,10 +72,10 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Routine"),
+        title: const Text("Routine"),
         actions: [
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: _delete,
           )
         ],
@@ -85,7 +87,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.check),
+        child: const Icon(Icons.check),
         onPressed: _save,
       ),
       resizeToAvoidBottomInset: false,
@@ -134,7 +136,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Every"),
+          title: const Text("Every"),
           content: RepeatPicker(_updateRecurValues),
           actions: <Widget>[
             // TextButton(
@@ -144,7 +146,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
             //   },
             // ),
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 // setState(() {
                 //   debugPrint("repeatNum: " +
@@ -162,20 +164,20 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
   }
 
   Widget _buildTitleHeader() => Container(
-        padding: EdgeInsets.symmetric(horizontal: 25),
+        padding: const EdgeInsets.symmetric(horizontal: 25),
         height: 72,
         color: AppColour.colorCustom,
         child: Form(
           key: _form,
           child: TextFormField(
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
             textCapitalization: TextCapitalization.words,
             initialValue: _routineTitle,
             autofocus: _shouldFocusTitleField,
             onSaved: (String? value) {
               _routineTitle = value;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Do Something',
               labelText: 'Title',
               focusedBorder: UnderlineInputBorder(
@@ -190,22 +192,22 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
       shrinkWrap: true, // constrain listview within remaining column space
       children: [
         ListTile(
-          leading: Icon(
+          leading: const Icon(
             Icons.repeat,
             color: AppColour.colorCustom,
           ),
-          title: Text("Repeats"),
+          title: const Text("Repeats"),
           subtitle:
               Text("Every ${_routineRecurNum.toString()} $_routineRecurLen"),
           onTap: _selectSchedule,
         ),
         ListTile(
-            title: Text("Scheduled"),
-            leading: Icon(
+            title: const Text("Scheduled"),
+            leading: const Icon(
               Entypo.calendar,
-              color: AppColour.InactiveColor,
+              color: AppColour.inactiveColor,
             ),
-            subtitle: Text("Coming Soon"),
+            subtitle: const Text("Coming Soon"),
             onTap: () {
               setState(() {
                 _displayOnPinned = !_displayOnPinned;
@@ -216,7 +218,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
             initialValue: _notesValue,
             keyboardType: TextInputType.multiline,
             maxLines: null,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: "Notes",
               hintStyle: TextStyle(color: Colors.black54),
             ),
@@ -234,7 +236,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
             FontAwesome.sticky_note,
             color: _notesValue != ""
                 ? AppColour.colorCustom
-                : AppColour.InactiveColor,
+                : AppColour.inactiveColor,
           ),
         ),
       ],

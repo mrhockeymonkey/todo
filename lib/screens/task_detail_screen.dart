@@ -5,13 +5,14 @@ import 'package:todo/app_colour.dart';
 import 'package:todo/date.dart';
 import 'package:todo/models/category.dart';
 import 'package:todo/providers/category_provider.dart';
-import 'package:intl/intl.dart';
 
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/models/task.dart';
 
 class TaskDetailScreen extends StatefulWidget {
   static const String routeName = '/task-detail';
+
+  const TaskDetailScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => TaskDetailScreenState();
@@ -57,10 +58,10 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Task"),
+        title: const Text("Task"),
         actions: [
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: _delete,
           )
         ],
@@ -72,7 +73,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.check),
+        child: const Icon(Icons.check),
         onPressed: _save,
       ),
       resizeToAvoidBottomInset: false,
@@ -111,7 +112,6 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   Future _selectCategory() async {
     final categories =
         Provider.of<CategoryProvider>(context, listen: false).items;
-    debugPrint(categories.length);
     List<Widget> options = [];
 
     for (var i = 0; i < categories.length; i++) {
@@ -127,16 +127,16 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
                   categories[i].icon,
                   color: Colors.white,
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Text(
                   categories[i].title,
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ],
             ),
             color: categories[i].color,
             height: 80.0,
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
           ),
         ),
       );
@@ -151,27 +151,28 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
       },
     );
 
-    if (picked != null)
+    if (picked != null) {
       setState(() {
         _categoryId = categories[picked].id;
       });
+    }
   }
 
   Widget _buildTitleHeader() => Container(
-        padding: EdgeInsets.symmetric(horizontal: 25),
+        padding: const EdgeInsets.symmetric(horizontal: 25),
         height: 72,
         color: AppColour.colorCustom,
         child: Form(
           key: _form,
           child: TextFormField(
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
             textCapitalization: TextCapitalization.words,
             initialValue: _taskTitle,
             autofocus: _shouldFocusTitleField,
             onSaved: (String? value) {
               _taskTitle = value;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Do Something',
               labelText: 'Title',
               focusedBorder: UnderlineInputBorder(
@@ -185,14 +186,12 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
     Category category = _categoryId == null
         ? Category.defaultCategory()
         : Provider.of<CategoryProvider>(context).getItemById(_categoryId!);
-    DateFormat dateFmt =
-        new DateFormat.yMMMMd(Localizations.localeOf(context).toLanguageTag());
 
     return ListView(
       shrinkWrap: true, // constrain listview within remaining column space
       children: [
         ListTile(
-          title: Text('Category'),
+          title: const Text('Category'),
           leading: Icon(
             category.icon,
             color: category.color,
@@ -215,14 +214,14 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
         //       });
         //     }),
         ListTile(
-          title: Text("When"),
+          title: const Text("When"),
           leading: Icon(Icons.today,
               color: _selectedDate != null
                   ? category.color
-                  : AppColour.InactiveColor),
+                  : AppColour.inactiveColor),
           trailing: _selectedDate != null
               ? IconButton(
-                  icon: Icon(Icons.clear),
+                  icon: const Icon(Icons.clear),
                   onPressed: () {
                     setState(() {
                       _selectedDate = null;
@@ -232,7 +231,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
               : null,
           subtitle: _selectedDate != null
               ? Text(_selectedDate!.yMMMd())
-              : Text("At Some Point"),
+              : const Text("At Some Point"),
           onTap: _selectDate,
         ),
         ListTile(
@@ -240,7 +239,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
             initialValue: _notesValue,
             keyboardType: TextInputType.multiline,
             maxLines: null,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: "Notes",
               hintStyle: TextStyle(color: Colors.black54),
             ),
@@ -257,7 +256,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
             FontAwesome.sticky_note,
             color: _notesValue != ""
                 ? AppColour.colorCustom
-                : AppColour.InactiveColor,
+                : AppColour.inactiveColor,
           ),
         ),
       ],
@@ -269,11 +268,11 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
     DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime.now().subtract(Duration(days: 365)),
-        lastDate: DateTime.now().add(Duration(days: 365 * 2)));
+        firstDate: DateTime.now().subtract(const Duration(days: 365)),
+        lastDate: DateTime.now().add(const Duration(days: 365 * 2)));
     if (picked != null) {
       setState(() {
-        _selectedDate = new Date(picked);
+        _selectedDate = Date(picked);
       });
     }
   }

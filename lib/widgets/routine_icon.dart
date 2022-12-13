@@ -6,7 +6,8 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 class RoutineIcon extends StatelessWidget {
   final Color? color;
 
-  RoutineIcon({
+  const RoutineIcon({
+    super.key,
     this.color,
   });
 
@@ -16,7 +17,7 @@ class RoutineIcon extends StatelessWidget {
         alignment: Alignment.center,
         child: Icon(
           Entypo.circular_graph,
-          color: color != null ? color : null,
+          color: color,
         ),
       );
 }

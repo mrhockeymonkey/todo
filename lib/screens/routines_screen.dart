@@ -8,6 +8,8 @@ import 'package:todo/screens/routine_detail_screen.dart';
 import 'package:todo/app_actions.dart';
 
 class RoutinesScreen extends StatefulWidget {
+  const RoutinesScreen({super.key});
+
   @override
   State<StatefulWidget> createState() => _RoutinesScreenState();
 }
@@ -22,10 +24,10 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
             Transform(
               transform: Matrix4.rotationY(pi),
               alignment: Alignment.center,
-              child: Icon(Entypo.circular_graph),
+              child: const Icon(Entypo.circular_graph),
             ),
             Container(width: 10),
-            Text("Routines"),
+            const Text("Routines"),
           ],
         ),
         actions: <Widget>[
@@ -33,14 +35,14 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
             onSelected: (AppActions value) =>
                 AppActionsHelper.handleAction(value, context),
             itemBuilder: (context) => <PopupMenuEntry<AppActions>>[
-              AppActionsHelper.buildAction(AppActions.Settings),
+              AppActionsHelper.buildAction(AppActions.settings),
             ],
           )
         ],
       ),
       body: _buildBody(),
       floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
+          child: const Icon(Icons.add),
           onPressed: () => Navigator.of(context).pushNamed(
                 RoutineDetailScreen.routeName,
               )),
@@ -49,8 +51,8 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
 
   Widget _buildBody() => CustomScrollView(
         slivers: [
-          SliverList(delegate: SliverChildListDelegate([DateHeader()])),
-          RoutineList(),
+          SliverList(delegate: SliverChildListDelegate([const DateHeader()])),
+          const RoutineList(),
         ],
       );
 }

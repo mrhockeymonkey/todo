@@ -6,7 +6,7 @@ class AnimatedGauge extends StatefulWidget {
   final double percent;
 
   // const AnimatedGauge({Key key, required this.percent}) : super(key: key);
-  const AnimatedGauge({required this.percent}); //: super(key: key);
+  const AnimatedGauge({super.key, required this.percent}); //: super(key: key);
 
   //final GaugeDriver driver;
 
@@ -29,7 +29,7 @@ class GaugeState extends State<AnimatedGauge>
     //begin = 0.0;
     //end = widget.percent;
     _controller = AnimationController(
-        vsync: this, duration: Duration(milliseconds: 1000));
+        vsync: this, duration: const Duration(milliseconds: 1000));
     //_animation = Tween<double>(begin: begin, end: end).animate(_controller);
     super.initState();
     //widget.driver.listen(on);
@@ -51,7 +51,7 @@ class GaugeState extends State<AnimatedGauge>
     var begin = 0.0;
     var end = widget.percent;
     var animation = Tween<double>(begin: begin, end: end).animate(_controller);
-    final double _diameter = (MediaQuery.of(context).size.width / 1.616);
+    final double diameter = (MediaQuery.of(context).size.width / 1.616);
 
     _controller.reset();
     animation.addStatusListener((status) {
@@ -69,15 +69,15 @@ class GaugeState extends State<AnimatedGauge>
             foregroundPainter: GaugePainter(percent: animation.value),
             child: Container(
                 constraints: BoxConstraints.expand(
-                  height: _diameter,
-                  width: _diameter,
+                  height: diameter,
+                  width: diameter,
                 ),
                 child: end > 0.99
                     ? Icon(
                         Entypo.flag,
                         color: Colors.red[700],
                       )
-                    : Icon(
+                    : const Icon(
                         Entypo.hour_glass,
                         color: Colors.grey,
                       )

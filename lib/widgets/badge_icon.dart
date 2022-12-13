@@ -4,7 +4,8 @@ class BadgeIcon extends StatelessWidget {
   final Widget icon;
   final int badgeCount;
 
-  BadgeIcon({
+  const BadgeIcon({
+    super.key,
     required this.icon,
     required this.badgeCount,
   });
@@ -14,25 +15,25 @@ class BadgeIcon extends StatelessWidget {
         children: <Widget>[
           icon,
           badgeCount <= 0
-              ? SizedBox(
+              ? const SizedBox(
                   height: 1,
                   width: 1,
                 )
-              : new Positioned(
+              : Positioned(
                   right: 0,
-                  child: new Container(
-                    padding: EdgeInsets.all(1),
-                    decoration: new BoxDecoration(
+                  child: Container(
+                    padding: const EdgeInsets.all(1),
+                    decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    constraints: BoxConstraints(
+                    constraints: const BoxConstraints(
                       minWidth: 12,
                       minHeight: 12,
                     ),
-                    child: new Text(
+                    child: Text(
                       badgeCount.toString(),
-                      style: new TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 8,
                       ),

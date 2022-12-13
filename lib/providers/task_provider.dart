@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/providers/provider_base.dart';
 
@@ -22,7 +23,7 @@ class TaskProvider extends ProviderBase<Task> {
   Future<void> clearCompletedTasks() async {
     items.where((element) => element.isDone).forEach((task) async {
       debugPrint("Deleting task '${task.id}': ${task.title}");
-      await this.delete(task.id!, notify: false); // TODO dont like !
+      await delete(task.id!, notify: false); // TODO dont like !
     });
     notifyListeners();
   }

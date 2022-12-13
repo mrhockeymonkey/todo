@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/category.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 // import 'package:icon_picker/icon_picker.dart';
-import 'package:todo/models/routine.dart';
 import 'package:todo/providers/category_provider.dart';
-import 'package:todo/providers/routine_provider.dart';
-import 'package:todo/widgets/repeat_picker.dart';
-import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 import '../app_colour.dart';
 
 class CategoryDetailScreen extends StatefulWidget {
   static const String routeName = '/category-detail';
+
+  const CategoryDetailScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => CategoryDetailScreenState();
@@ -26,7 +23,6 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
   String? _categoryId;
   String? _categoryTitle;
   String? _categoryIconName;
-  IconData? _iconData;
   Color _categoryColor = AppColour.colorCustom; // TODO
   int? _categoryOrder;
 
@@ -48,7 +44,6 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
         _categoryTitle = category.title;
         _categoryColor = category.color;
         _categoryIconName = category.iconName;
-        _iconData = Category.icons[_categoryIconName];
         _categoryOrder = category.order;
         _shouldFocusTitleField = false;
       }
@@ -62,10 +57,10 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Category"),
+        title: const Text("Category"),
         actions: [
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: _delete,
           )
         ],
@@ -77,7 +72,7 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.check),
+        child: const Icon(Icons.check),
         onPressed: _save,
       ),
       resizeToAvoidBottomInset: false,
@@ -103,6 +98,7 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
 
     await Provider.of<CategoryProvider>(context, listen: false)
         .addOrUpdate(category);
+
     Navigator.of(context).pop();
   }
 
@@ -115,20 +111,20 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
   }
 
   Widget _buildTitleHeader() => Container(
-        padding: EdgeInsets.symmetric(horizontal: 25),
+        padding: const EdgeInsets.symmetric(horizontal: 25),
         height: 72,
         color: AppColour.colorCustom,
         child: Form(
           key: _form,
           child: TextFormField(
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
             textCapitalization: TextCapitalization.words,
             initialValue: _categoryTitle,
             autofocus: _shouldFocusTitleField,
             onSaved: (String? value) {
               _categoryTitle = value;
             },
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'New Category',
               labelText: 'Name',
               focusedBorder: UnderlineInputBorder(
@@ -143,7 +139,7 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
       shrinkWrap: true, // constrain listview within remaining column space
       children: [
         ListTile(
-          title: Text("Icon"),
+          title: const Text("Icon"),
           leading: Icon(
             Category.icons[_categoryIconName],
             color: _categoryColor,
@@ -154,7 +150,7 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
           // onTap: _selectSchedule,
         ),
         ListTile(
-          title: Text("Colour"),
+          title: const Text("Colour"),
           leading: Icon(
             Icons.square,
             color: _categoryColor,
@@ -220,8 +216,8 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Pick an icon"),
-        content: Container(
+        title: const Text("Pick an icon"),
+        content: SizedBox(
           height: 500,
           width: 600,
           child: GridView.builder(

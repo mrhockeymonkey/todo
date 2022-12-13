@@ -3,20 +3,17 @@ import 'package:provider/provider.dart';
 import 'package:todo/models/category.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:todo/screens/category_detail_screen.dart';
-import 'package:todo/widgets/checkbox_picker.dart';
-import 'package:todo/widgets/icon_picker.dart';
-import 'package:todo/widgets/color_picker.dart';
 
 class CategoriesScreen extends StatefulWidget {
   static const String routeName = '/categories';
+
+  const CategoriesScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _CategoriesScreenState();
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  TextEditingController _textFieldController = TextEditingController();
-
   @override
   void initState() {
     //Provider.of<CategoryProvider>(context, listen: false).fetch();
@@ -27,11 +24,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Categories"),
+        title: const Text("Categories"),
       ),
       body: _buildCategoryList(context),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () => Navigator.of(context).pushNamed(
           CategoryDetailScreen.routeName,
         ),
@@ -57,7 +54,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           onTap: () => Navigator.of(context).pushNamed(
               CategoryDetailScreen.routeName,
               arguments: category.id),
-          trailing: Icon(Icons.drag_indicator));
+          trailing: const Icon(Icons.drag_indicator));
     };
 
     return ReorderableListView.builder(
@@ -81,104 +78,5 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
         });
       },
     );
-  }
-
-  // TODO this could be a stateful widget
-  _displayDialog(BuildContext context, String? categoryId) async {
-    _textFieldController.clear();
-    Category thisCategory;
-    if (categoryId != null) {
-      thisCategory = Provider.of<CategoryProvider>(context, listen: false)
-          .getItemById(categoryId);
-    } else {
-      thisCategory = Category.defaultCategory();
-    }
-    String currentCategoryName = thisCategory.name;
-    String currentIconName = thisCategory.iconName;
-    Color currentColor = thisCategory.color;
-    bool isDefaultCategory = false;
-
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Edit Category'),
-            content: Column(
-              children: [
-                Row(
-                  children: [
-                    Text("Name:"),
-                    FittedBox(),
-                  ],
-                ),
-                TextField(
-                  controller: _textFieldController,
-                  decoration: InputDecoration(hintText: currentCategoryName),
-                  textCapitalization: TextCapitalization.words,
-                  onChanged: (String newName) {
-                    currentCategoryName = newName;
-                  },
-                ),
-                Container(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    Text("Icon:"),
-                    FittedBox(),
-                  ],
-                ),
-                IconPicker((String newName) => currentIconName = newName),
-                Container(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    Text("Color:"),
-                    FittedBox(),
-                  ],
-                ),
-                ColorPicker((Color newColor) => currentColor = newColor),
-                Container(
-                  height: 20,
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              categoryId != null
-                  ? TextButton(
-                      child: Text(
-                        "DELETE",
-                        style: TextStyle(color: Colors.red[600]),
-                      ),
-                      onPressed: () {
-                        Provider.of<CategoryProvider>(context, listen: false)
-                            .delete(categoryId);
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  : Container(),
-              new TextButton(
-                child: new Text('OK'),
-                onPressed: () {
-                  Provider.of<CategoryProvider>(context, listen: false)
-                      .addOrUpdate(Category(
-                    id: thisCategory.id,
-                    name: currentCategoryName,
-                    iconName: currentIconName,
-                    color: currentColor,
-                  ));
-                  Navigator.of(context).pop();
-                },
-              ),
-              new TextButton(
-                child: new Text('CANCEL'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
-        });
   }
 }

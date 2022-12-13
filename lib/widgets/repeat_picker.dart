@@ -4,7 +4,7 @@ import 'package:wheel_chooser/wheel_chooser.dart';
 class RepeatPicker extends StatefulWidget {
   final Function updateRepeatValues;
 
-  RepeatPicker(this.updateRepeatValues);
+  const RepeatPicker(this.updateRepeatValues, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -35,7 +35,7 @@ class _RepeatPickerState extends State<RepeatPicker> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        Container(
+        SizedBox(
           width: 60,
           height: 140,
           child: WheelChooser.custom(
@@ -58,7 +58,7 @@ class _RepeatPickerState extends State<RepeatPicker> {
             },
           ),
         ),
-        Container(
+        SizedBox(
           width: 90,
           height: 140,
           child: WheelChooser.custom(

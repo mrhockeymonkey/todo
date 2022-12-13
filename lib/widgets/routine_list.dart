@@ -7,8 +7,10 @@ import 'package:todo/widgets/routine_item.dart';
 import 'package:uuid/uuid.dart';
 
 class RoutineList extends StatefulWidget {
+  const RoutineList({super.key});
+
   @override
-  State<StatefulWidget> createState() => new RoutineListState();
+  State<StatefulWidget> createState() => RoutineListState();
 }
 
 class RoutineListState extends State<RoutineList> {
@@ -29,7 +31,7 @@ class RoutineListState extends State<RoutineList> {
         (BuildContext context, int index) {
           Routine routine = routines[index];
           return Dismissible(
-            key: Key(Uuid().v1()), // dissmissed widget will reappear
+            key: Key(const Uuid().v1()), // dissmissed widget will reappear
             direction: DismissDirection.startToEnd,
             onDismissed: (direction) => _handleDismiss(direction, routine),
             child: RoutineItem(routine: routine),

@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:todo/date.dart';
@@ -6,6 +8,7 @@ import 'dart:math';
 import 'package:todo/providers/db_item.dart';
 
 class Routine implements DbItem {
+  @override
   final String? id;
   final String title;
 
@@ -30,11 +33,11 @@ class Routine implements DbItem {
     this.notes = "",
     this.displayOnPinned = false,
     this.order = 0,
-  })  : this.lastCompletedDate = lastCompletedDate == null ||
+  })  : lastCompletedDate = lastCompletedDate == null ||
                 lastCompletedDate == Date.fromMillisecondsSinceEpoch(0)
             ? Date.now()
             : lastCompletedDate,
-        this._nextDueDateTime = nextDueDateTime == null ||
+        _nextDueDateTime = nextDueDateTime == null ||
                 nextDueDateTime == Date.fromMillisecondsSinceEpoch(0)
             ? calculateNextDueDate(Date.now(), recurLen, recurNum)
             : nextDueDateTime;
@@ -54,21 +57,18 @@ class Routine implements DbItem {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'title': title,
       'recurNum': recurNum,
       'recurLen': recurLen,
-      'lastCompletedDate': lastCompletedDate != null
-          ? lastCompletedDate.millisecondsSinceEpoch
-          : 0,
-      'nextDueDate': _nextDueDateTime != null
-          ? _nextDueDateTime.millisecondsSinceEpoch
-          : 0,
-      'notes': this.notes,
-      'displayOnPinned': this.displayOnPinned,
-      'order': this.order,
+      'lastCompletedDate': lastCompletedDate.millisecondsSinceEpoch,
+      'nextDueDate': _nextDueDateTime.millisecondsSinceEpoch,
+      'notes': notes,
+      'displayOnPinned': displayOnPinned,
+      'order': order,
     };
   }
 
@@ -79,41 +79,40 @@ class Routine implements DbItem {
     Date? nextDueDateTime,
   }) =>
       Routine(
-        id: this.id,
+        id: id,
         title: title ?? this.title,
-        recurNum: this.recurNum,
-        recurLen: this.recurLen,
+        recurNum: recurNum,
+        recurLen: recurLen,
         lastCompletedDate: lastCompletedDate ?? this.lastCompletedDate,
-        nextDueDateTime: nextDueDateTime ?? this._nextDueDateTime,
-        color: this.color,
-        notes: this.notes,
-        displayOnPinned: this.displayOnPinned,
+        nextDueDateTime: nextDueDateTime ?? _nextDueDateTime,
+        color: color,
+        notes: notes,
+        displayOnPinned: displayOnPinned,
         order: order ?? this.order,
       );
 
   Routine done() {
     Date now = Date.now();
     Date lastCompletedDate = now;
-    Date nextDueDateTime =
-        calculateNextDueDate(now, this.recurLen, this.recurNum);
+    Date nextDueDateTime = calculateNextDueDate(now, recurLen, recurNum);
     debugPrint(
         "Routine: '$title', Completed: '${lastCompletedDate}', NextDue: '${_nextDueDateTime}'");
 
-    return this.copyWith(
+    return copyWith(
         lastCompletedDate: lastCompletedDate, nextDueDateTime: nextDueDateTime);
   }
 
   Routine tomorrow() {
-    var tomorrow = this.dueDate.add(const Duration(days: 1));
-    return this.copyWith(nextDueDateTime: tomorrow);
+    var tomorrow = dueDate.add(const Duration(days: 1));
+    return copyWith(nextDueDateTime: tomorrow);
   }
 
   Date get dueDate => _nextDueDateTime;
 
   double get percent {
-    if (lastCompletedDate == null || _nextDueDateTime == null) {
-      return 1.0;
-    }
+    // if (lastCompletedDate == null || _nextDueDateTime == null) {
+    //   return 1.0;
+    // }
 
     var elapsed = DateTime.now().difference(lastCompletedDate.dateTime);
     var foo = _nextDueDateTime.dateTime.difference(lastCompletedDate.dateTime);

@@ -6,7 +6,8 @@ class FlaggedIcon extends StatelessWidget {
   final bool showFlag;
   final Color? color;
 
-  FlaggedIcon({
+  const FlaggedIcon({
+    super.key,
     required this.icon,
     required this.showFlag,
     this.color,
@@ -20,7 +21,7 @@ class FlaggedIcon extends StatelessWidget {
         color: color,
       );
 
-  Widget _flagged() => Container(
+  Widget _flagged() => SizedBox(
         height: 30,
         width: 30,
         child: Stack(
@@ -32,17 +33,17 @@ class FlaggedIcon extends StatelessWidget {
             Positioned(
               right: 0,
               bottom: 0,
-              child: new Container(
-                padding: EdgeInsets.all(1),
+              child: Container(
+                padding: const EdgeInsets.all(1),
                 // decoration: new BoxDecoration(
                 //   color: Colors.white,
                 //   borderRadius: BorderRadius.circular(6),
                 // ),
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minWidth: 12,
                   minHeight: 12,
                 ),
-                child: Icon(
+                child: const Icon(
                   Entypo.flag,
                   color: Colors.red,
                   size: 12.0,

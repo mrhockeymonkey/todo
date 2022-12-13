@@ -5,7 +5,8 @@ class DayPlanActions extends StatelessWidget {
   final Function? handleSnooze;
   final Function? handleFlag;
 
-  DayPlanActions({
+  const DayPlanActions({
+    super.key,
     this.handleFlag,
     this.handleSnooze,
   });
@@ -25,7 +26,7 @@ class DayPlanActions extends StatelessWidget {
                             Navigator.of(context).pop();
                             handleFlag!(context);
                           },
-                          icon: Icon(Entypo.flag)),
+                          icon: const Icon(Entypo.flag)),
                   handleSnooze == null
                       ? Container()
                       : IconButton(
@@ -33,7 +34,7 @@ class DayPlanActions extends StatelessWidget {
                             Navigator.of(context).pop();
                             handleSnooze!(context);
                           },
-                          icon: Icon(Icons.snooze)),
+                          icon: const Icon(Icons.snooze)),
                 ],
               ),
             ),

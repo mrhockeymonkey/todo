@@ -4,7 +4,7 @@ import 'package:todo/models/category.dart';
 class IconPicker extends StatefulWidget {
   final Function updateIconValue;
 
-  IconPicker(this.updateIconValue);
+  const IconPicker(this.updateIconValue, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -23,22 +23,20 @@ class _IconPickerState extends State<IconPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: DropdownButton<String>(
-        value: currentIconName,
-        items: iconChoice.map((String iconName) {
-          return new DropdownMenuItem<String>(
-            value: iconName,
-            child: Icon(Category.icons[iconName]),
-          );
-        }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {
-            currentIconName = newValue ?? currentIconName;
-            widget.updateIconValue(newValue);
-          });
-        },
-      ),
+    return DropdownButton<String>(
+      value: currentIconName,
+      items: iconChoice.map((String iconName) {
+        return DropdownMenuItem<String>(
+          value: iconName,
+          child: Icon(Category.icons[iconName]),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          currentIconName = newValue ?? currentIconName;
+          widget.updateIconValue(newValue);
+        });
+      },
     );
   }
 }

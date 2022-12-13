@@ -3,12 +3,10 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/task.dart';
-import 'package:todo/widgets/badge_icon.dart';
 import 'package:todo/widgets/flagged_icon.dart';
 import 'package:uuid/uuid.dart';
 
 import '../app_colour.dart';
-import '../app_constants.dart';
 import '../providers/task_provider.dart';
 import '../screens/task_detail_screen.dart';
 import 'category.dart';
@@ -22,7 +20,7 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
 
   @override
   Widget build(BuildContext context) => Dismissible(
-        key: Key(Uuid().v1()),
+        key: Key(const Uuid().v1()),
         direction: DismissDirection.startToEnd,
         onDismissed: (direction) => _handleDismiss(context, direction),
         child: ListTile(
@@ -30,7 +28,7 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
           title: Text(
             task.title,
             style: task.isDone
-                ? TextStyle(
+                ? const TextStyle(
                     decoration: TextDecoration.lineThrough,
                     color: Colors.grey,
                   )
@@ -49,8 +47,8 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
           subtitle: showButtons
               ? Row(
                   children: [
-                    IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
-                    IconButton(onPressed: () {}, icon: Icon(Icons.air)),
+                    IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
+                    IconButton(onPressed: () {}, icon: const Icon(Icons.air)),
                   ],
                 )
               : null,
@@ -67,7 +65,7 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
   void _handleSnooze(BuildContext context) {
     if (task.dueDate == null) return;
 
-    var oneDay = new Duration(days: 1);
+    var oneDay = const Duration(days: 1);
     var snoozedTask = task.copyWith(dueDate: task.dueDate!.addFromNow(oneDay));
 
     Provider.of<TaskProvider>(context, listen: false).addOrUpdate(snoozedTask);
@@ -81,10 +79,10 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
   int get order => task.order;
 
   @override
-  String toString() => "${this.runtimeType}: ${task.title}";
+  String toString() => "$runtimeType: ${task.title}";
 
   @override
-  Type get itemtype => this.runtimeType;
+  Type get itemtype => runtimeType;
 
   @override
   Task get item => task;

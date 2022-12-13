@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/providers/task_provider.dart';
-import 'package:todo/providers/test_provider.dart';
 import 'package:todo/providers/throw_away_task_provider.dart';
 import 'package:todo/screens/categories_screen.dart';
 import 'package:todo/screens/category_detail_screen.dart';
@@ -21,14 +20,14 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   //SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     //systemNavigationBarColor: Colors.blue, // navigation bar color
     statusBarColor: AppColour.colorCustom,
     //statusBarBrightness: Brightness.light,
     //statusBarIconBrightness: Brightness.dark,
   ));
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -49,26 +48,26 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Flutter Demo', // TODO rename/ rebrand
-        localizationsDelegates: [
+        localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: [
+        supportedLocales: const [
           Locale('en', 'US'),
           Locale('en', 'GB'),
         ],
         theme: ThemeData(
           primarySwatch: AppColour.colorCustom,
-          appBarTheme: AppBarTheme(
+          appBarTheme: const AppBarTheme(
             elevation: 0.0,
             backgroundColor: AppColour.colorCustom,
             systemOverlayStyle: SystemUiOverlayStyle.light,
           ),
-          floatingActionButtonTheme: FloatingActionButtonThemeData(
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
             backgroundColor: AppColour.colorCustom,
           ),
-          inputDecorationTheme: InputDecorationTheme(
+          inputDecorationTheme: const InputDecorationTheme(
             hintStyle: TextStyle(color: Colors.white30),
             labelStyle: TextStyle(color: Colors.white),
           ),
@@ -77,21 +76,23 @@ class MyApp extends StatelessWidget {
           //     primary: AppColour.colorCustom,
           //   ),
           // ),
-          textSelectionTheme: TextSelectionThemeData(
+          textSelectionTheme: const TextSelectionThemeData(
             cursorColor: Colors.white,
             selectionHandleColor: Colors.white70,
           ),
         ),
         initialRoute: '/',
         routes: {
-          '/': (ctx) => HomeScreen(),
-          RoutineDetailScreen.routeName: (context) => RoutineDetailScreen(),
-          TaskDetailScreen.routeName: (context) => TaskDetailScreen(),
-          SettingsScreen.routeName: (context) => SettingsScreen(),
-          CategoriesScreen.routeName: (context) => CategoriesScreen(),
-          CategoryDetailScreen.routeName: (context) => CategoryDetailScreen(),
-          ExportJsonPage.routeName: (context) => ExportJsonPage(),
-          ImportJsonScreen.routeName: (context) => ImportJsonScreen(),
+          '/': (ctx) => const HomeScreen(),
+          RoutineDetailScreen.routeName: (context) =>
+              const RoutineDetailScreen(),
+          TaskDetailScreen.routeName: (context) => const TaskDetailScreen(),
+          SettingsScreen.routeName: (context) => const SettingsScreen(),
+          CategoriesScreen.routeName: (context) => const CategoriesScreen(),
+          CategoryDetailScreen.routeName: (context) =>
+              const CategoryDetailScreen(),
+          ExportJsonPage.routeName: (context) => const ExportJsonPage(),
+          ImportJsonScreen.routeName: (context) => const ImportJsonScreen(),
         },
       ),
     );

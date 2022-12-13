@@ -11,8 +11,10 @@ import '../providers/throw_away_task_provider.dart';
 import '../widgets/text_header.dart';
 
 class DailyScreen extends StatefulWidget {
+  const DailyScreen({super.key});
+
   @override
-  State<StatefulWidget> createState() => new _DailyScreenState();
+  State<StatefulWidget> createState() => _DailyScreenState();
 }
 
 class _DailyScreenState extends State<DailyScreen> {
@@ -21,9 +23,9 @@ class _DailyScreenState extends State<DailyScreen> {
         appBar: AppBar(
           title: Row(
             children: [
-              Icon(Entypo.pin),
+              const Icon(Entypo.pin),
               Container(width: 10),
-              Text("Day Plan"),
+              const Text("Day Plan"),
             ],
           ),
           actions: [
@@ -31,7 +33,7 @@ class _DailyScreenState extends State<DailyScreen> {
               onSelected: (AppActions value) =>
                   AppActionsHelper.handleAction(value, context),
               itemBuilder: (context) => <PopupMenuEntry<AppActions>>[
-                AppActionsHelper.buildAction(AppActions.Settings),
+                AppActionsHelper.buildAction(AppActions.settings),
               ],
             )
           ],
@@ -48,13 +50,13 @@ class _DailyScreenState extends State<DailyScreen> {
   void _newThrowAwayTask(Date date) =>
       Provider.of<ThrowAwayTaskProvider>(context, listen: false)
         ..saveStashed()
-        ..addOrUpdate(new ThrowAwayTask(
+        ..addOrUpdate(ThrowAwayTask(
             id: null, title: "", done: false, date: date, order: 99999));
 
   Widget _buildBody() {
     var today = DateTime.now();
-    var tomorrow = DateTime.now().add(new Duration(days: 1));
-    var dayAfterNext = DateTime.now().add(new Duration(days: 2));
+    var tomorrow = DateTime.now().add(const Duration(days: 1));
+    var dayAfterNext = DateTime.now().add(const Duration(days: 2));
 
     return CustomScrollView(
       controller: PrimaryScrollController.of(context) ?? ScrollController(),
@@ -68,11 +70,11 @@ class _DailyScreenState extends State<DailyScreen> {
             children: [
               IconButton(
                   onPressed: () => _newThrowAwayTask(Date(today)),
-                  icon: Icon(Icons.add)),
+                  icon: const Icon(Icons.add)),
             ],
           ),
         ),
-        SliverFillRemaining(),
+        const SliverFillRemaining(),
 
         //TOMORROW
         SliverToBoxAdapter(
@@ -85,7 +87,7 @@ class _DailyScreenState extends State<DailyScreen> {
             children: [
               IconButton(
                   onPressed: () => _newThrowAwayTask(Date(tomorrow)),
-                  icon: Icon(Icons.add)),
+                  icon: const Icon(Icons.add)),
             ],
           ),
         ),
@@ -101,7 +103,7 @@ class _DailyScreenState extends State<DailyScreen> {
             children: [
               IconButton(
                   onPressed: () => _newThrowAwayTask(Date(dayAfterNext)),
-                  icon: Icon(Icons.add)),
+                  icon: const Icon(Icons.add)),
             ],
           ),
         )

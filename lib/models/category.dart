@@ -4,6 +4,7 @@ import 'package:todo/app_colour.dart';
 import 'package:todo/providers/db_item.dart';
 
 class Category implements DbItem {
+  @override
   final String? id;
   final String name;
   final String iconName;
@@ -56,11 +57,11 @@ class Category implements DbItem {
   });
 
   Category.defaultCategory()
-      : this.id = null,
-        this.name = "Default",
-        this.order = 99999,
-        this.iconName = "pin",
-        this.color = AppColour.colorCustom;
+      : id = null,
+        name = "Default",
+        order = 99999,
+        iconName = "pin",
+        color = AppColour.colorCustom;
 
   factory Category.fromMap(Map<String, dynamic> map) => Category(
         id: map['id'],
@@ -71,13 +72,14 @@ class Category implements DbItem {
       );
 
   Category copyWith({int? order}) => Category(
-        id: this.id,
-        name: this.name,
-        iconName: this.iconName,
-        color: this.color,
+        id: id,
+        name: name,
+        iconName: iconName,
+        color: color,
         order: order ?? this.order,
       );
 
+  @override
   Map<String, dynamic> toMap() => {
         'id': id,
         'name': name,

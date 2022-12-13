@@ -1,10 +1,10 @@
 extension IntExtentions on int {
   DateTime asDateTime() {
-    if (this == null) {
-      throw ArgumentError.notNull("int");
-    }
+    // if (this == null) {
+    //   throw ArgumentError.notNull("int");
+    // }
 
-    String strDate = this.toString();
+    String strDate = toString();
     if (strDate.length != 8) {
       throw ArgumentError.value(strDate.length);
     }

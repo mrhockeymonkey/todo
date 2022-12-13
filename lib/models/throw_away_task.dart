@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-import "package:flutter/foundation.dart";
 import 'package:todo/providers/db_item.dart';
 
 import '../date.dart';
@@ -41,7 +39,7 @@ class ThrowAwayTask implements DbItem {
     int? order,
   }) =>
       ThrowAwayTask(
-        id: this.id,
+        id: id,
         title: title ?? this.title,
         done: done ?? this.done,
         date: date ?? this.date,
@@ -49,11 +47,11 @@ class ThrowAwayTask implements DbItem {
       );
 
   ThrowAwayTask donee() {
-    return this.copyWith(done: true);
+    return copyWith(done: true);
   }
 
   ThrowAwayTask tomorrow() {
-    var tomorrow = this.date.add(const Duration(days: 1));
-    return this.copyWith(date: tomorrow);
+    var tomorrow = date.add(const Duration(days: 1));
+    return copyWith(date: tomorrow);
   }
 }

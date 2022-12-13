@@ -9,6 +9,8 @@ import 'package:todo/widgets/routine_icon.dart';
 import 'package:todo/widgets/badge_icon.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   State<StatefulWidget> createState() => _HomeScreenState();
 }
@@ -16,9 +18,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 1;
   final List<Widget> _pages = [
-    TasksScreen(),
-    DailyScreen(),
-    RoutinesScreen(),
+    const TasksScreen(),
+    const DailyScreen(),
+    const RoutinesScreen(),
   ];
 
   void _selectScreen(int index) {
@@ -37,18 +39,18 @@ class _HomeScreenState extends State<HomeScreen> {
           currentIndex: _selectedIndex,
           onTap: _selectScreen,
           items: [
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               label: '',
               icon: Icon(Entypo.pin),
             ),
-            BottomNavigationBarItem(
+            const BottomNavigationBarItem(
               label: '',
               icon: Icon(Entypo.list),
             ),
             BottomNavigationBarItem(
               label: '',
               icon: BadgeIcon(
-                icon: RoutineIcon(),
+                icon: const RoutineIcon(),
                 badgeCount: Provider.of<RoutineProvider>(context).isDueCount,
               ),
             ),

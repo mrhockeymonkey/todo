@@ -1,18 +1,15 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:todo/app_colour.dart';
 import 'package:todo/models/export/export_data_v1.dart';
 
-import '../models/routine.dart';
-import '../models/task.dart';
 import '../providers/routine_provider.dart';
 import '../providers/task_provider.dart';
 
 class ExportJsonPage extends StatefulWidget {
   static const String routeName = '/export-json';
+
+  const ExportJsonPage({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -33,7 +30,7 @@ class _ExportJsonPageState extends State<ExportJsonPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Backup Data"),
+        title: const Text("Backup Data"),
         // elevation: 0.0,
       ),
       body: _buildBody(),
@@ -56,16 +53,15 @@ class _ExportJsonPageState extends State<ExportJsonPage> {
   Widget _buildTextBox() => Expanded(
         child: Container(
           child: Text(json),
-          padding: EdgeInsets.all(10.0),
+          padding: const EdgeInsets.all(10.0),
         ),
       );
 
   Widget _buildButton() => ElevatedButton(
-        child: Text(
+        child: const Text(
           "Copy To Clipboard",
           style: TextStyle(color: Colors.white),
         ),
-        style: TextButton.styleFrom(primary: Colors.green),
         onPressed: () {
           Clipboard.setData(ClipboardData(text: json));
           debugPrint("copied to clipboard");

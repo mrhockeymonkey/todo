@@ -7,7 +7,8 @@ import 'package:todo/models/routine.dart';
 class RoutineItem extends StatelessWidget {
   final Routine routine;
 
-  RoutineItem({
+  const RoutineItem({
+    super.key,
     required this.routine,
   });
 
@@ -22,7 +23,7 @@ class RoutineItem extends StatelessWidget {
         ),
       ),
       title: Text(routine.title),
-      subtitle: Text("${routine.dueWhen}"),
+      subtitle: Text(routine.dueWhen),
       onTap: () => Navigator.of(context).pushNamed(
         RoutineDetailScreen.routeName,
         arguments: routine.id,

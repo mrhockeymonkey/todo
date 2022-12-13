@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/providers/task_provider.dart';
@@ -6,8 +5,8 @@ import 'package:todo/providers/task_provider.dart';
 import './screens/settings_screen.dart';
 
 enum AppActions {
-  Settings,
-  ClearCompleted,
+  settings,
+  clearCompleted,
 }
 
 class AppAction {
@@ -22,9 +21,9 @@ class AppAction {
 class AppActionsHelper {
   static AppAction _getAction(AppActions action) {
     switch (action) {
-      case AppActions.Settings:
+      case AppActions.settings:
         return AppAction(friendlyName: "Settings", iconData: Icons.settings);
-      case AppActions.ClearCompleted:
+      case AppActions.clearCompleted:
         return AppAction(
             friendlyName: "Clear Completed", iconData: Icons.delete);
       default:
@@ -34,11 +33,11 @@ class AppActionsHelper {
 
   static void handleAction(AppActions value, BuildContext context) async {
     switch (value) {
-      case AppActions.ClearCompleted:
+      case AppActions.clearCompleted:
         await Provider.of<TaskProvider>(context, listen: false)
             .clearCompletedTasks();
         break;
-      case AppActions.Settings:
+      case AppActions.settings:
         Navigator.of(context).pushNamed(SettingsScreen.routeName);
         break;
       default:

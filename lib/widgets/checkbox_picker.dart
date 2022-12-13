@@ -4,7 +4,8 @@ class CheckboxPicker extends StatefulWidget {
   final Function updateValue;
   final bool initialValue;
 
-  CheckboxPicker({
+  const CheckboxPicker({
+    super.key,
     required this.updateValue,
     required this.initialValue,
   });

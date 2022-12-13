@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo/models/category.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/providers/category_provider.dart';
 
@@ -8,8 +7,10 @@ import 'package:todo/providers/task_provider.dart';
 import 'package:todo/widgets/task_item.dart';
 
 class TaskList extends StatefulWidget {
+  const TaskList({super.key});
+
   @override
-  State<StatefulWidget> createState() => new TaskListState();
+  State<StatefulWidget> createState() => TaskListState();
 }
 
 class TaskListState extends State<TaskList> {
@@ -25,7 +26,6 @@ class TaskListState extends State<TaskList> {
     debugPrint("Build: TaskList");
     var tasks = Provider.of<TaskProvider>(context).items;
     final categoryProvider = Provider.of<CategoryProvider>(context);
-    debugPrint(tasks.length);
 
     tasks.sort((a, b) {
       final ac = categoryProvider.getCategoryOrDefault(a.categoryId);
@@ -41,8 +41,6 @@ class TaskListState extends State<TaskList> {
         .toList();
 
     tasks = dueTasks + otherTasks + doneTasks;
-
-    debugPrint(tasks.length);
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(

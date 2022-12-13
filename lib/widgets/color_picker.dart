@@ -4,7 +4,7 @@ import 'package:todo/models/category.dart';
 class ColorPicker extends StatefulWidget {
   final Function updateIconValue;
 
-  ColorPicker(this.updateIconValue);
+  const ColorPicker(this.updateIconValue, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -23,28 +23,26 @@ class _ColorPickerState extends State<ColorPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: DropdownButton<Color>(
-        value: currentColor,
-        items: colorChoice.map((Color col) {
-          return new DropdownMenuItem<Color>(
-            value: col,
-            child: SizedBox(
-              height: 20,
-              width: 20,
-              child: Container(
-                color: col,
-              ),
+    return DropdownButton<Color>(
+      value: currentColor,
+      items: colorChoice.map((Color col) {
+        return DropdownMenuItem<Color>(
+          value: col,
+          child: SizedBox(
+            height: 20,
+            width: 20,
+            child: Container(
+              color: col,
             ),
-          );
-        }).toList(),
-        onChanged: (Color? newValue) {
-          setState(() {
-            currentColor = newValue ?? currentColor;
-            widget.updateIconValue(newValue);
-          });
-        },
-      ),
+          ),
+        );
+      }).toList(),
+      onChanged: (Color? newValue) {
+        setState(() {
+          currentColor = newValue ?? currentColor;
+          widget.updateIconValue(newValue);
+        });
+      },
     );
   }
 }

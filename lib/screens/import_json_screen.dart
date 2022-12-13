@@ -1,17 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/export/export_data_v1.dart';
-import 'package:todo/models/routine.dart';
-import 'package:todo/models/task.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/providers/task_provider.dart';
 
-import '../date.dart';
-
 class ImportJsonScreen extends StatefulWidget {
   static const String routeName = '/import-json';
+
+  const ImportJsonScreen({super.key});
 
   @override
   State<StatefulWidget> createState() => _ImportJsonScreenState();
@@ -23,7 +19,7 @@ class _ImportJsonScreenState extends State<ImportJsonScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: Text("Import JSON"),
+          title: const Text("Import JSON"),
           // elevation: 0.0,
         ),
         body: _buildBody(),
@@ -43,12 +39,11 @@ class _ImportJsonScreenState extends State<ImportJsonScreen> {
       );
 
   Widget _buildImportButton() => ElevatedButton(
-        child: Text(
+        onPressed: _handleImport,
+        child: const Text(
           "Import",
           style: TextStyle(color: Colors.white),
         ),
-        style: TextButton.styleFrom(primary: Colors.green),
-        onPressed: _handleImport,
       );
 
   Widget _buildTextBox() => Expanded(
@@ -79,12 +74,12 @@ class _ImportJsonScreenState extends State<ImportJsonScreen> {
       context: context,
       builder: (context) => AlertDialog(
         content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Import ${importData.tasks.length} tasks"),
             Text("Import ${importData.routines.length} routines"),
           ],
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
         ),
         actions: [
           ElevatedButton(

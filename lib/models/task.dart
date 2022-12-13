@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:todo/providers/db_item.dart';
 
 import '../date.dart';
@@ -56,14 +55,14 @@ class Task implements DbItem {
     bool? isFlagged,
   }) =>
       Task(
-        id: this.id,
+        id: id,
         title: title ?? this.title,
-        categoryId: this.categoryId,
+        categoryId: categoryId,
         isDone: isDone ?? this.isDone,
         isFlagged: isFlagged ?? this.isFlagged,
         dueDate: dueDate ?? this.dueDate,
         order: order ?? this.order,
-        notes: this.notes,
+        notes: notes,
       );
 
   bool get isDue {
@@ -74,7 +73,7 @@ class Task implements DbItem {
     return dueDate!.dateTime.isBefore(DateTime.now()) ? true : false;
   }
 
-  Task done() => this.copyWith(isDone: true);
+  Task done() => copyWith(isDone: true);
 
   String toString() => "Task = {id: '$id', title: '$title', isDone: '$isDone'}";
 }
