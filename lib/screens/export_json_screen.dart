@@ -52,8 +52,8 @@ class _ExportJsonPageState extends State<ExportJsonPage> {
 
   Widget _buildTextBox() => Expanded(
         child: Container(
-          child: Text(json),
           padding: const EdgeInsets.all(10.0),
+          child: Text(json),
         ),
       );
 

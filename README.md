@@ -12,7 +12,6 @@ flutter run --flavour prod --release
 - configurable days ahead, 
 - UI for categories is a bit rough
 - Import/export categories
-- address all vscode problems
 - ui fixes
   - no callout on tab buttons
   - order tasks with "at some point" on top
@@ -25,5 +24,5 @@ flutter run --flavour prod --release
 
 
 ```json
-{"version":1,"tasks":[{"id":"edyu4qitk","title":"foo1","dueDateMsSinceEpoch":0,"notes":""}],"routines":[{"id":"5wmshc0m9","title":"bar1","recurNum":1,"recurLen":"days","notes":""}]}
+{"version":1,"tasks":[{"id":"edyu4qitk","title":"foo2","dueDateMsSinceEpoch":0,"notes":""}],"routines":[{"id":"5wmshc0m9","title":"bar2","recurNum":1,"recurLen":"days","notes":""}]}
 ```

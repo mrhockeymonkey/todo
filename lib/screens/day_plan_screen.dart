@@ -39,12 +39,6 @@ class _DailyScreenState extends State<DailyScreen> {
           ],
         ),
         body: _buildBody(),
-        // floatingActionButton: FloatingActionButton(
-        //   child: Icon(Icons.ac_unit),
-        // onPressed: () => Navigator.of(context).pushNamed(
-        //     TaskDetailScreen.routeName,
-        //     arguments: TaskDetailArgs(null, DateTime.now())),
-        // ),
       );
 
   void _newThrowAwayTask(Date date) =>

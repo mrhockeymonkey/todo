@@ -3,12 +3,13 @@ import 'package:todo/providers/db_item.dart';
 import '../date.dart';
 
 class Task implements DbItem {
+  @override
   final String? id;
   final String title;
   final String? categoryId;
   final bool isDone;
   final bool isFlagged;
-  final Date? dueDate; // TODO replace with null object for Date?
+  final Date? dueDate;
   final int order;
   final String notes;
 
@@ -26,7 +27,7 @@ class Task implements DbItem {
   factory Task.fromMap(Map<String, dynamic> map) => Task(
         id: map['id'],
         title: map['title'],
-        categoryId: map['categoryId'] ?? null,
+        categoryId: map['categoryId'],
         isDone: map['isDone'] ?? false,
         isFlagged: map['isFlagged'] ?? false,
         dueDate: map['dueDate'] != null
@@ -36,6 +37,7 @@ class Task implements DbItem {
         notes: map['notes'] ?? "",
       );
 
+  @override
   Map<String, dynamic> toMap() => {
         'id': id,
         'title': title,
@@ -75,5 +77,6 @@ class Task implements DbItem {
 
   Task done() => copyWith(isDone: true);
 
+  @override
   String toString() => "Task = {id: '$id', title: '$title', isDone: '$isDone'}";
 }

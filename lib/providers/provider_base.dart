@@ -34,15 +34,18 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
   Future _fetch() async {
     debugPrint("fetching data from '$tableName' table");
     var fetched = await db.collection(tableName).get();
-    fetched?.entries.forEach((element) {
-      // assert?
-      final T item = parse(element.value);
-      _items.putIfAbsent(item.id!, () => item);
-    });
+
+    if (fetched != null) {
+      for (var element in fetched.entries) {
+        // assert?
+        final T item = parse(element.value);
+        _items.putIfAbsent(item.id!, () => item);
+      }
+    }
     notifyListeners();
   }
 
-  Future delete(String id, {bool notify: true}) async {
+  Future delete(String id, {bool notify = true}) async {
     debugPrint("Deleting $tableName item with id $id");
     await db.collection(tableName).doc(id).delete();
     _items.remove(id);
@@ -68,11 +71,9 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
   }
 
   Future updateAll(List<T> items, {bool notify = true}) async {
-    items.forEach((item) async {
-      await this.addOrUpdate(item, notify: false);
-      //await db.collection(tableName).doc(item.id).set(item.toMap());
-      //_items[item.id] = item;
-    });
+    for (var item in items) {
+      await addOrUpdate(item, notify: false);
+    }
 
     if (notify) notifyListeners();
   }

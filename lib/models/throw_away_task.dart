@@ -3,6 +3,7 @@ import 'package:todo/providers/db_item.dart';
 import '../date.dart';
 
 class ThrowAwayTask implements DbItem {
+  @override
   final String? id;
   final String title;
   final bool done;
@@ -24,6 +25,7 @@ class ThrowAwayTask implements DbItem {
       date: Date.fromMillisecondsSinceEpoch(map['date']),
       order: map['order'] ?? 0);
 
+  @override
   Map<String, dynamic> toMap() => {
         'id': id,
         'title': title,

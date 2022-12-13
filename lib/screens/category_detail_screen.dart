@@ -23,7 +23,7 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
   String? _categoryId;
   String? _categoryTitle;
   String? _categoryIconName;
-  Color _categoryColor = AppColour.colorCustom; // TODO
+  Color _categoryColor = AppColour.colorCustom;
   int? _categoryOrder;
 
   @override
@@ -72,14 +72,14 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.check),
         onPressed: _save,
+        child: const Icon(Icons.check),
       ),
       resizeToAvoidBottomInset: false,
     );
   }
 
-  void _save() async {
+  Future _save() async {
     // validate and save the form data
     final isValid = _form.currentState?.validate() ?? false;
     if (!isValid) {
@@ -99,14 +99,17 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
     await Provider.of<CategoryProvider>(context, listen: false)
         .addOrUpdate(category);
 
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 
-  void _delete() async {
+  Future _delete() async {
     if (_categoryId != null) {
       await Provider.of<CategoryProvider>(context, listen: false)
           .delete(_categoryId!);
     }
+
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 
@@ -123,6 +126,12 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
             autofocus: _shouldFocusTitleField,
             onSaved: (String? value) {
               _categoryTitle = value;
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Must enter a Category title';
+              }
+              return null;
             },
             decoration: const InputDecoration(
               hintText: 'New Category',

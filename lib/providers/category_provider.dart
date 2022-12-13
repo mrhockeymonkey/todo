@@ -9,6 +9,7 @@ class CategoryProvider extends ProviderBase<Category> {
   @override
   Category parse(Map<String, dynamic> json) => Category.fromMap(json);
 
+  @override
   List<Category> get items {
     var items = [...super.items];
     items.sort((a, b) => a.order.compareTo(b.order));
@@ -22,6 +23,6 @@ class CategoryProvider extends ProviderBase<Category> {
       return itemsMap[categoryId]!;
     }
 
-    return Category.defaultCategory(); // TODO null-object
+    return Category.defaultCategory();
   }
 }

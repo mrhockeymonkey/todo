@@ -96,9 +96,18 @@ class _ImportJsonScreenState extends State<ImportJsonScreen> {
 
     if (!shouldCommit) return;
 
-    await Provider.of<TaskProvider>(context, listen: false)
-        .updateAll(importData.tasks);
-    await Provider.of<RoutineProvider>(context, listen: false)
-        .updateAll(importData.routines);
+    if (!mounted) return;
+
+    await Future.wait([
+      Provider.of<TaskProvider>(context, listen: false)
+          .updateAll(importData.tasks),
+      Provider.of<RoutineProvider>(context, listen: false)
+          .updateAll(importData.routines),
+    ]);
+
+    // await Provider.of<TaskProvider>(context, listen: false)
+    //     .updateAll(importData.tasks);
+    // await Provider.of<RoutineProvider>(context, listen: false)
+    //     .updateAll(importData.routines);
   }
 }

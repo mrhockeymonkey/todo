@@ -110,14 +110,11 @@ class Routine implements DbItem {
   Date get dueDate => _nextDueDateTime;
 
   double get percent {
-    // if (lastCompletedDate == null || _nextDueDateTime == null) {
-    //   return 1.0;
-    // }
-
     var elapsed = DateTime.now().difference(lastCompletedDate.dateTime);
-    var foo = _nextDueDateTime.dateTime.difference(lastCompletedDate.dateTime);
+    var total =
+        _nextDueDateTime.dateTime.difference(lastCompletedDate.dateTime);
 
-    return min(1.0, (elapsed.inSeconds / foo.inSeconds));
+    return min(1.0, (elapsed.inSeconds / total.inSeconds));
   }
 
   bool get isDue => percent >= 1.0;

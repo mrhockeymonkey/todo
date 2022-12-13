@@ -5,5 +5,5 @@ extension DateTimeExtensions on DateTime {
 
   String formatString() => DateFormat.yMMMMd('en_GB').format(this);
 
-  DateTime withoutTime() => DateTime(year, month, day); // TODO
+  DateTime withoutTime() => DateTime(year, month, day);
 }

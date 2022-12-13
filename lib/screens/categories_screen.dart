@@ -41,7 +41,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final categoryProvider = Provider.of<CategoryProvider>(context);
     final categories = categoryProvider.items;
 
-    final builder = (context, index) {
+    builder(context, index) {
       var category = categories[index];
       return ListTile(
           key: ValueKey(index),
@@ -55,7 +55,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               CategoryDetailScreen.routeName,
               arguments: category.id),
           trailing: const Icon(Icons.drag_indicator));
-    };
+    }
 
     return ReorderableListView.builder(
       itemBuilder: builder,

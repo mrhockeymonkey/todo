@@ -23,7 +23,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
   bool _isInit = false;
   bool _shouldFocusTitleField = true;
   String? _routineId;
-  String? _routineTitle;
+  String _routineTitle = "";
   int _routineRecurNum = 1;
   String _routineRecurLen = "days";
   String _notesValue = "";
@@ -87,14 +87,14 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.check),
         onPressed: _save,
+        child: const Icon(Icons.check),
       ),
       resizeToAvoidBottomInset: false,
     );
   }
 
-  void _save() async {
+  Future _save() async {
     // validate and save the form data
     final isValid = _form.currentState?.validate() ?? false;
     if (!isValid) {
@@ -105,7 +105,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
     // save item via provider and pop
     final routine = Routine(
       id: _routineId,
-      title: _routineTitle ?? "bar", // TODO again
+      title: _routineTitle,
       recurNum: _routineRecurNum,
       recurLen: _routineRecurLen,
       notes: _notesValue,
@@ -113,14 +113,18 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
     );
     await Provider.of<RoutineProvider>(context, listen: false)
         .addOrUpdate(routine);
+
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 
-  void _delete() async {
+  Future _delete() async {
     if (_routineId != null) {
       await Provider.of<RoutineProvider>(context, listen: false)
           .delete(_routineId!);
     }
+
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 
@@ -175,7 +179,13 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
             initialValue: _routineTitle,
             autofocus: _shouldFocusTitleField,
             onSaved: (String? value) {
-              _routineTitle = value;
+              _routineTitle = value ?? "";
+            },
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return 'Must enter a routine title';
+              }
+              return null;
             },
             decoration: const InputDecoration(
               hintText: 'Do Something',

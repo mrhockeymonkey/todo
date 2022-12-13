@@ -9,6 +9,7 @@ class RoutineProvider extends ProviderBase<Routine> {
   @override
   Routine parse(Map<String, dynamic> json) => Routine.fromMap(json);
 
+  @override
   List<Routine> get items {
     var items = [...super.items];
     items.sort((a, b) => b.percent.compareTo(a.percent));

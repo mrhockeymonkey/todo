@@ -8,7 +8,7 @@ class GaugePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    Color color = Color.lerp(Colors.green, Colors.red, percent)!; // TODO ?? !
+    Color color = Color.lerp(Colors.green, Colors.red, percent)!;
 
     Paint circleBrush = Paint()
       ..strokeWidth = 2.0

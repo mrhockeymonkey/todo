@@ -4,7 +4,7 @@ import '../date.dart';
 import '../models/throw_away_task.dart';
 
 class ThrowAwayTaskProvider extends ProviderBase<ThrowAwayTask> {
-  Map<String, ThrowAwayTask> _stash = {};
+  final Map<String, ThrowAwayTask> _stash = {};
 
   ThrowAwayTaskProvider({
     required String tableName,

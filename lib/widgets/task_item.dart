@@ -35,19 +35,6 @@ class TaskItem extends StatelessWidget {
       leading: Icon(Category.defaultIcon, color: AppColour.colorCustom),
       onTap: () => Navigator.of(context)
           .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
-
-      // trailing: IconButton(
-      //   icon: Icon(
-      //     Entypo.pin,
-      //     color: task.isPinned
-      //         ? AppColour.pinActiveColor
-      //         : AppColour.InactiveColor,
-      //   ),
-      // onPressed: () {
-      //   task.isPinned = !task.isPinned;
-      //   Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task);
-      // },
-      // ),
     );
   }
 

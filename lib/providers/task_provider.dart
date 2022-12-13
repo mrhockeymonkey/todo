@@ -22,8 +22,10 @@ class TaskProvider extends ProviderBase<Task> {
 
   Future<void> clearCompletedTasks() async {
     items.where((element) => element.isDone).forEach((task) async {
-      debugPrint("Deleting task '${task.id}': ${task.title}");
-      await delete(task.id!, notify: false); // TODO dont like !
+      if (task.id != null) {
+        debugPrint("Deleting task '${task.id}': ${task.title}");
+        await delete(task.id!, notify: false);
+      }
     });
     notifyListeners();
   }

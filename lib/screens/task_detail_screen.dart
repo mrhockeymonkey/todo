@@ -25,7 +25,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   bool _shouldFocusTitleField = true;
   bool _isPinned = false;
   String? _taskId;
-  String? _taskTitle;
+  String _taskTitle = "";
   String? _categoryId;
   Date? _selectedDate;
   String _notesValue = "";
@@ -33,7 +33,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // TODO remove isinit?
+
     if (!_isInit) {
       var taskId = ModalRoute.of(context)?.settings.arguments;
 
@@ -73,38 +73,45 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.check),
         onPressed: _save,
+        child: const Icon(Icons.check),
       ),
       resizeToAvoidBottomInset: false,
     );
   }
 
-  void _save() async {
+  Future _save() async {
     // validate and save the form data
     final isValid = _form.currentState?.validate() ?? false;
+    debugPrint("is valid: $isValid");
+
     if (!isValid) {
       return;
     }
+    debugPrint("savin");
     _form.currentState?.save();
 
     // save item via provider and pop
     final task = Task(
       id: _taskId,
-      title: _taskTitle ?? "foo", // TODO loosing the will a bit now
+      title: _taskTitle,
       categoryId: _categoryId,
       isFlagged: _isPinned,
       dueDate: _selectedDate,
       notes: _notesValue,
     );
     await Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task);
+
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 
-  void _delete() async {
+  Future _delete() async {
     if (_taskId != null) {
       await Provider.of<TaskProvider>(context, listen: false).delete(_taskId!);
     }
+
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 
@@ -121,6 +128,9 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
             Navigator.pop(context, i);
           },
           child: Container(
+            color: categories[i].color,
+            height: 80.0,
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
               children: <Widget>[
                 Icon(
@@ -134,9 +144,6 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
                 ),
               ],
             ),
-            color: categories[i].color,
-            height: 80.0,
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
           ),
         ),
       );
@@ -170,7 +177,13 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
             initialValue: _taskTitle,
             autofocus: _shouldFocusTitleField,
             onSaved: (String? value) {
-              _taskTitle = value;
+              _taskTitle = value ?? "";
+            },
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return 'Must enter a task title';
+              }
+              return null;
             },
             decoration: const InputDecoration(
               hintText: 'Do Something',
