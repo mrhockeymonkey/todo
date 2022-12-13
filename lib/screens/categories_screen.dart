@@ -40,7 +40,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   }
 
   Widget _buildCategoryList(BuildContext context) {
-    print("Build: RoutineList");
+    debugPrint("Build: RoutineList");
     final categoryProvider = Provider.of<CategoryProvider>(context);
     final categories = categoryProvider.items;
 

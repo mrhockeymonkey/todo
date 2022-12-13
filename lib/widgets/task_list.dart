@@ -22,10 +22,10 @@ class TaskListState extends State<TaskList> {
 
   @override
   Widget build(BuildContext context) {
-    print("Build: TaskList");
+    debugPrint("Build: TaskList");
     var tasks = Provider.of<TaskProvider>(context).items;
     final categoryProvider = Provider.of<CategoryProvider>(context);
-    print(tasks.length);
+    debugPrint(tasks.length);
 
     tasks.sort((a, b) {
       final ac = categoryProvider.getCategoryOrDefault(a.categoryId);
@@ -42,7 +42,7 @@ class TaskListState extends State<TaskList> {
 
     tasks = dueTasks + otherTasks + doneTasks;
 
-    print(tasks.length);
+    debugPrint(tasks.length);
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(

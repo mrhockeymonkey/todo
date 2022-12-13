@@ -10,6 +10,7 @@ import 'package:todo/screens/categories_screen.dart';
 import 'package:todo/screens/category_detail_screen.dart';
 import 'package:todo/screens/export_json_screen.dart';
 import 'package:todo/screens/home_screen.dart';
+import 'package:todo/screens/import_json_screen.dart';
 import 'package:todo/screens/routine_detail_screen.dart';
 import 'package:todo/screens/settings_screen.dart';
 import 'package:todo/screens/task_detail_screen.dart';
@@ -31,6 +32,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -88,6 +91,7 @@ class MyApp extends StatelessWidget {
           CategoriesScreen.routeName: (context) => CategoriesScreen(),
           CategoryDetailScreen.routeName: (context) => CategoryDetailScreen(),
           ExportJsonPage.routeName: (context) => ExportJsonPage(),
+          ImportJsonScreen.routeName: (context) => ImportJsonScreen(),
         },
       ),
     );

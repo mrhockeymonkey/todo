@@ -20,7 +20,7 @@ class RoutineListState extends State<RoutineList> {
 
   @override
   Widget build(BuildContext context) {
-    print("Build: RoutineList");
+    debugPrint("Build: RoutineList");
     final routineProvider = Provider.of<RoutineProvider>(context);
     final routines = routineProvider.items;
 

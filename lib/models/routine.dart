@@ -96,7 +96,7 @@ class Routine implements DbItem {
     Date lastCompletedDate = now;
     Date nextDueDateTime =
         calculateNextDueDate(now, this.recurLen, this.recurNum);
-    print(
+    debugPrint(
         "Routine: '$title', Completed: '${lastCompletedDate}', NextDue: '${_nextDueDateTime}'");
 
     return this.copyWith(

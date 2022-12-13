@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
+import 'package:todo/models/export/export_data_v1.dart';
 
 import '../models/routine.dart';
 import '../models/task.dart';
@@ -20,6 +21,14 @@ class ExportJsonPage extends StatefulWidget {
 }
 
 class _ExportJsonPageState extends State<ExportJsonPage> {
+  String json = "";
+
+  @override
+  void didChangeDependencies() {
+    json = _buildJson(context);
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,70 +40,48 @@ class _ExportJsonPageState extends State<ExportJsonPage> {
     );
   }
 
-  Widget _buildBody() {
-    var json = _buildJson();
-
-    return Row(
-      children: [
-        Expanded(
+  Widget _buildBody() => Row(
+        children: [
+          Expanded(
             child: Column(
-          children: [
-            ElevatedButton(
-              child: Text(
-                "Copy To Clipboard",
-                style: TextStyle(color: Colors.white),
-              ),
-              style: TextButton.styleFrom(primary: Colors.green),
-              onPressed: () {
-                Clipboard.setData(ClipboardData(text: json));
-                print("copied to clipboard");
-              },
+              children: [
+                _buildTextBox(),
+                _buildButton(),
+              ],
             ),
-            Container(
-              child: Text(json),
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-            ),
-          ],
-        ))
-      ],
-    );
-  }
+          )
+        ],
+      );
 
-  String _buildJson() {
-    List<Map<String, dynamic>> exportedTasks = [];
-    List<Map<String, dynamic>> exportedRoutines = [];
+  Widget _buildTextBox() => Expanded(
+        child: Container(
+          child: Text(json),
+          padding: EdgeInsets.all(10.0),
+        ),
+      );
 
-    final backlogTaskProvider = Provider.of<TaskProvider>(context);
-    final routineProvider = Provider.of<RoutineProvider>(context);
+  Widget _buildButton() => ElevatedButton(
+        child: Text(
+          "Copy To Clipboard",
+          style: TextStyle(color: Colors.white),
+        ),
+        style: TextButton.styleFrom(primary: Colors.green),
+        onPressed: () {
+          Clipboard.setData(ClipboardData(text: json));
+          debugPrint("copied to clipboard");
+        },
+      );
 
-    backlogTaskProvider.items
+  String _buildJson(BuildContext context) {
+    var exportTasks = Provider.of<TaskProvider>(context)
+        .items
         .where((t) => !t.isDone)
-        .forEach((t) => exportedTasks.add(_createTaskExport(t)));
+        .toList();
 
-    routineProvider.items
-        .forEach((r) => exportedRoutines.add(_createRoutineExport(r)));
+    var exportRoutines = Provider.of<RoutineProvider>(context).items.toList();
 
-    Map<String, dynamic> appData = {
-      "version": 1,
-      "tasks": exportedTasks,
-      "routines": exportedRoutines,
-    };
+    var exportData = ExportDataV1(exportTasks, exportRoutines);
 
-    return jsonEncode(appData);
+    return exportData.toJson();
   }
-
-  Map<String, dynamic> _createTaskExport(Task task) => {
-        "id": task.id,
-        "title": task.title,
-        "dueDateMsSinceEpoch": task.dueDate?.millisecondsSinceEpoch ?? 0,
-        "notes": task.notes
-      };
-
-  Map<String, dynamic> _createRoutineExport(Routine routine) => {
-        "id": routine.id,
-        "title": routine.title,
-        "recurNum": routine.recurNum,
-        "recurLen": routine.recurLen,
-        "notes": routine.notes,
-      };
 }

@@ -209,8 +209,8 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
   //       enableSearch: true,
   //       searchHint: 'Search icon',
   //       iconCollection: Category.icons,
-  //       onChanged: (val) => print(val),
-  //       onSaved: (val) => print(val),
+  //       onChanged: (val) => debugPrint(val),
+  //       onSaved: (val) => debugPrint(val),
   //     ),
   //   );
   // }
@@ -279,7 +279,7 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
         //   // child: ColorPicker(
         //   //   pickerColor: Colors.black,
         //   //   onColorChanged: (value) {
-        //   //     print(value);
+        //   //     debugPrint(value);
         //   //   },
         //   // ),
         //   // Use Material color picker:
@@ -295,7 +295,7 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
         //   child: BlockPicker(
         //     pickerColor: _categoryColor,
         //     onColorChanged: (value) {
-        //       print(value);
+        //       debugPrint(value);
         //     },
         //   ),
         //

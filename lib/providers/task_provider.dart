@@ -21,7 +21,7 @@ class TaskProvider extends ProviderBase<Task> {
 
   Future<void> clearCompletedTasks() async {
     items.where((element) => element.isDone).forEach((task) async {
-      print("Deleting task '${task.id}': ${task.title}");
+      debugPrint("Deleting task '${task.id}': ${task.title}");
       await this.delete(task.id!, notify: false); // TODO dont like !
     });
     notifyListeners();
@@ -43,14 +43,14 @@ class TaskProvider extends ProviderBase<Task> {
   //   var fetched = await _db.collection(_tasks).get();
   //   fetched?.entries?.forEach((element) {
   //     final item = Task.fromMap(element.value);
-  //     print(element.value);
+  //     debugPrint(element.value);
   //     _items.putIfAbsent(item.id, () => item);
   //   });
   //   notifyListeners();
   // }
 
   // void delete(String id) async {
-  //   print("[Deleted] '$id'");
+  //   debugPrint("[Deleted] '$id'");
   //   await _db.collection(_tasks).doc(id).delete();
   //   _items.remove(id);
   //   notifyListeners();
@@ -61,12 +61,12 @@ class TaskProvider extends ProviderBase<Task> {
   //     var taskMap = task.toMap();
   //     taskMap['id'] = _db.collection(_tasks).doc().id;
   //     task = Task.fromMap(taskMap);
-  //     print("[New] '${task.toString()}'");
+  //     debugPrint("[New] '${task.toString()}'");
   //   }
 
   //   await _db.collection(_tasks).doc(task.id).set(task.toMap());
   //   _items[task.id] = task;
-  //   print("[Saved] '${task.toString()}'");
+  //   debugPrint("[Saved] '${task.toString()}'");
   //   notifyListeners();
   // }
 }

@@ -29,14 +29,14 @@ class RoutineProvider extends ProviderBase<Routine> {
   //   var fetched = await _db.collection(_routines).get();
   //   fetched?.entries?.forEach((element) {
   //     final item = Routine.fromMap(element.value);
-  //     print(element.value);
+  //     debugPrint(element.value);
   //     _items.putIfAbsent(item.id, () => item);
   //   });
   //   notifyListeners();
   // }
 
   // void delete(String id) async {
-  //   print("Deleting routine with is ${id.toString()}");
+  //   debugPrint("Deleting routine with is ${id.toString()}");
   //   await _db.collection(_routines).doc(id).delete();
   //   _items.remove(id);
   //   notifyListeners();
@@ -47,12 +47,12 @@ class RoutineProvider extends ProviderBase<Routine> {
   //     var routineMap = routine.toMap();
   //     routineMap['id'] = _db.collection(_routines).doc().id;
   //     routine = Routine.fromMap(routineMap);
-  //     print("Creating new routine with id '${routine.id}'");
+  //     debugPrint("Creating new routine with id '${routine.id}'");
   //   }
 
   //   await _db.collection(_routines).doc(routine.id).set(routine.toMap());
   //   _items[routine.id] = routine;
-  //   print("Saved routine: Id '${routine.id}', Title '${routine.title}'");
+  //   debugPrint("Saved routine: Id '${routine.id}', Title '${routine.title}'");
   //   notifyListeners();
   // }
 }

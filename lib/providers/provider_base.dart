@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:localstore/localstore.dart';
-import 'package:todo/models/category.dart';
 
 import 'package:todo/providers/db_item.dart';
 
@@ -33,19 +32,19 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
   T parse(Map<String, dynamic> json);
 
   Future _fetch() async {
-    print("fetching data from '$tableName' table");
+    debugPrint("fetching data from '$tableName' table");
     var fetched = await db.collection(tableName).get();
-    fetched?.entries?.forEach((element) {
+    fetched?.entries.forEach((element) {
       // assert?
       final T item = parse(element.value);
-      print(element.value);
+      debugPrint(element.value);
       _items.putIfAbsent(item.id!, () => item);
     });
     notifyListeners();
   }
 
   Future delete(String id, {bool notify: true}) async {
-    print("Deleting $tableName item with id $id");
+    debugPrint("Deleting $tableName item with id $id");
     await db.collection(tableName).doc(id).delete();
     _items.remove(id);
     if (notify) {
@@ -59,12 +58,12 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
     if (itemMap['id'] == null) {
       itemMap['id'] = db.collection(tableName).doc().id;
       item = parse(itemMap);
-      print("Creating new $tableName item with id '${item.id}'");
+      debugPrint("Creating new $tableName item with id '${item.id}'");
     }
     String id = itemMap['id'];
     await db.collection(tableName).doc(id).set(itemMap);
     _items[id] = item;
-    print("Saved $tableName item: Id '${item.id}', Item: '$itemMap'");
+    debugPrint("Saved $tableName item: Id '${item.id}', Item: '$itemMap'");
 
     if (notify) notifyListeners();
   }

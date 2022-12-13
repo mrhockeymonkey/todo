@@ -111,7 +111,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   Future _selectCategory() async {
     final categories =
         Provider.of<CategoryProvider>(context, listen: false).items;
-    print(categories.length);
+    debugPrint(categories.length);
     List<Widget> options = [];
 
     for (var i = 0; i < categories.length; i++) {

@@ -34,7 +34,7 @@ class DayPlanListState extends State<DayPlanList> {
 
   @override
   void didChangeDependencies() {
-    print("DidChangeDependencies: ${this._toStringCustom()}");
+    debugPrint("DidChangeDependencies: ${this._toStringCustom()}");
     super.didChangeDependencies();
 
     if (widget.date == Date.now()) {
@@ -79,7 +79,7 @@ class DayPlanListState extends State<DayPlanList> {
 
   @override
   Widget build(BuildContext context) {
-    print("Build: ${_toStringCustom()}");
+    debugPrint("Build: ${_toStringCustom()}");
 
     return ReorderableSliverList(
       delegate: ReorderableSliverChildBuilderDelegate(
@@ -94,7 +94,7 @@ class DayPlanListState extends State<DayPlanList> {
   }
 
   void _onReorder(int oldIndex, int newIndex) {
-    print("moved $oldIndex --> $newIndex");
+    debugPrint("moved $oldIndex --> $newIndex");
 
     var moved = _dayPlanItems.removeAt(oldIndex);
     _dayPlanItems.insert(newIndex, moved);
@@ -105,7 +105,7 @@ class DayPlanListState extends State<DayPlanList> {
     List<Routine> updatedRoutines = [];
 
     _dayPlanItems.forEach((item) {
-      print("${item.toString()} is now $next");
+      debugPrint("${item.toString()} is now $next");
 
       switch (item.runtimeType) {
         case DayPlanToDo:

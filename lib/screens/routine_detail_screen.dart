@@ -147,7 +147,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
               child: Text('OK'),
               onPressed: () {
                 // setState(() {
-                //   print("repeatNum: " +
+                //   debugPrint("repeatNum: " +
                 //       _routineRecurNum.toString() +
                 //       " repeatLen: " +
                 //       _routineRecurLen);
