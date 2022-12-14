@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
             create: (_) => ThrowAwayTaskProvider(tableName: "dayplantasks"))
       ],
       child: MaterialApp(
-        title: 'Flutter Demo', // TODO rename/ rebrand
+        title: 'Life Admin',
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

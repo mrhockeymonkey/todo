@@ -16,7 +16,7 @@ flutter run --flavor prod --release
 - refactor structure
 - scheduled routines (i.e. on 15th of every month)
 - icon
-- rebrand (LifeAdminMgr) + publish to play store
+- publish to play store
 
 ...someday maybe:
 
