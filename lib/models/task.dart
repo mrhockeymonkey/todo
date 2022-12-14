@@ -75,7 +75,10 @@ class Task implements DbItem {
     return dueDate!.dateTime.isBefore(DateTime.now()) ? true : false;
   }
 
-  Task done() => copyWith(isDone: true);
+  Task done() => copyWith(
+        isDone: true,
+        dueDate: Date.now(),
+      );
 
   @override
   String toString() => "Task = {id: '$id', title: '$title', isDone: '$isDone'}";

@@ -8,4 +8,6 @@ abstract class DayPlanBase<TItem> {
   TItem get item;
 
   Type get itemtype;
+
+  bool get isDone;
 }

@@ -31,7 +31,7 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
             textCapitalization: TextCapitalization.words,
             initialValue: todo.title.isEmpty ? null : item.title,
             enabled: !todo.done,
-            //autofocus: _shouldFocusTitleField,
+            autofocus: todo.title == "",
             onEditingComplete: () async =>
                 await Provider.of<ThrowAwayTaskProvider>(context, listen: false)
                     .saveStashed(),
@@ -80,4 +80,7 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
 
   @override
   ThrowAwayTask get item => todo;
+
+  @override
+  bool get isDone => todo.done;
 }

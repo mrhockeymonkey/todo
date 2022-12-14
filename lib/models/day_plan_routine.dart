@@ -60,4 +60,7 @@ class DayPlanRoutine extends DayPlanBase<Routine> {
 
   @override
   Routine get item => routine;
+
+  @override
+  bool get isDone => false;
 }

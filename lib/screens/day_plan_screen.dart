@@ -45,7 +45,12 @@ class _DailyScreenState extends State<DailyScreen> {
       Provider.of<ThrowAwayTaskProvider>(context, listen: false)
         ..saveStashed()
         ..addOrUpdate(ThrowAwayTask(
-            id: null, title: "", done: false, date: date, order: 99999));
+          id: null,
+          title: "",
+          done: false,
+          date: date,
+          order: 99999,
+        ));
 
   Widget _buildBody() {
     var today = DateTime.now();
@@ -59,15 +64,7 @@ class _DailyScreenState extends State<DailyScreen> {
         SliverToBoxAdapter(
             child: TextHeader(text: Jiffy(today).MMMMEEEEd.toString())),
         DayPlanList(date: Date(today)),
-        SliverToBoxAdapter(
-          child: Row(
-            children: [
-              IconButton(
-                  onPressed: () => _newThrowAwayTask(Date(today)),
-                  icon: const Icon(Icons.add)),
-            ],
-          ),
-        ),
+        _buildAddButton(Date(today)),
         const SliverFillRemaining(),
 
         //TOMORROW
@@ -76,15 +73,16 @@ class _DailyScreenState extends State<DailyScreen> {
         DayPlanList(
           date: Date(tomorrow),
         ),
-        SliverToBoxAdapter(
-          child: Row(
-            children: [
-              IconButton(
-                  onPressed: () => _newThrowAwayTask(Date(tomorrow)),
-                  icon: const Icon(Icons.add)),
-            ],
-          ),
-        ),
+        _buildAddButton(Date(tomorrow)),
+        // SliverToBoxAdapter(
+        //   child: Row(
+        //     children: [
+        //       IconButton(
+        //           onPressed: () => _newThrowAwayTask(Date(tomorrow)),
+        //           icon: const Icon(Icons.add)),
+        //     ],
+        //   ),
+        // ),
 
         // DAY AFTER
         SliverToBoxAdapter(
@@ -92,16 +90,39 @@ class _DailyScreenState extends State<DailyScreen> {
         DayPlanList(
           date: Date(dayAfterNext),
         ),
-        SliverToBoxAdapter(
-          child: Row(
-            children: [
-              IconButton(
-                  onPressed: () => _newThrowAwayTask(Date(dayAfterNext)),
-                  icon: const Icon(Icons.add)),
-            ],
-          ),
-        )
+        _buildAddButton(Date(dayAfterNext)),
+        // SliverToBoxAdapter(
+        //   child: Row(
+        //     children: [
+        //       IconButton(
+        //           onPressed: () => _newThrowAwayTask(Date(dayAfterNext)),
+        //           icon: const Icon(Icons.add)),
+        //     ],
+        //   ),
+        // )
       ],
     );
   }
+
+  Widget _buildAddButton(Date date) => SliverToBoxAdapter(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10.0),
+              child: FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: () => _newThrowAwayTask(date),
+              ),
+            )
+          ],
+        ),
+        // Row(
+        //   children: [
+        //     IconButton(
+        //         onPressed: () => _newThrowAwayTask(Date(today)),
+        //         icon: const Icon(Icons.add)),
+        //   ],
+        // ),
+      );
 }

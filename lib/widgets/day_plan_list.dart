@@ -63,7 +63,7 @@ class DayPlanListState extends State<DayPlanList> {
         .map((e) => DayPlanRoutine(routine: e))
         .toList();
 
-    _dayPlanItems = []; // TODO covariance??
+    _dayPlanItems = [];
 
     for (var element in _dayPlanToDos) {
       _dayPlanItems.add(element);
@@ -76,6 +76,7 @@ class DayPlanListState extends State<DayPlanList> {
     }
 
     _dayPlanItems.sort((a, b) => a.order.compareTo(b.order)); // descending
+    _dayPlanItems.sort((a, b) => a.isDone ? 1 : -1); // completed last
   }
 
   @override
