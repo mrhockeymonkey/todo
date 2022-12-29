@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
 import 'package:todo/models/day_plan_base.dart';
@@ -7,6 +8,7 @@ import 'package:uuid/uuid.dart';
 
 import '../providers/routine_provider.dart';
 import '../screens/routine_detail_screen.dart';
+import '../widgets/flagged_icon.dart';
 import '../widgets/routine_icon.dart';
 import 'day_plan_actions.dart';
 
@@ -21,9 +23,16 @@ class DayPlanRoutine extends DayPlanBase<Routine> {
         direction: DismissDirection.startToEnd,
         onDismissed: (direction) => _handleDismiss(context, direction),
         child: ListTile(
-          leading: const RoutineIcon(color: AppColour.colorCustom),
+          leading: RoutineIcon(
+            color: AppColour.colorCustom,
+            isFlagged: routine.isFlagged,
+          ),
+          // leading: const RoutineIcon(color: AppColour.colorCustom),
           title: Text(routine.title),
-          trailing: DayPlanActions(handleSnooze: _handleSnooze),
+          trailing: DayPlanActions(
+            handleSnooze: _handleSnooze,
+            handleFlag: _handleFlag,
+          ),
           isThreeLine: false,
           onTap: () => Navigator.of(context).pushNamed(
             RoutineDetailScreen.routeName,
@@ -49,6 +58,10 @@ class DayPlanRoutine extends DayPlanBase<Routine> {
         .addOrUpdate(snoozedRoutine);
   }
 
+  void _handleFlag(BuildContext context) =>
+      Provider.of<RoutineProvider>(context, listen: false)
+          .addOrUpdate(routine.copyWith(isFlagged: !routine.isFlagged));
+
   @override
   int get order => routine.order;
 
@@ -63,4 +76,7 @@ class DayPlanRoutine extends DayPlanBase<Routine> {
 
   @override
   bool get isDone => false;
+
+  @override
+  bool get isFlagged => routine.isFlagged;
 }

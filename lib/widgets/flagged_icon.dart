@@ -21,6 +21,35 @@ class FlaggedIcon extends StatelessWidget {
         color: color,
       );
 
+  // Widget _flagged() => SizedBox(
+  //       height: 30,
+  //       width: 30,
+  //       child: Stack(
+  //         children: <Widget>[
+  //           const Icon(
+  //             Entypo.flag,
+  //             color: Colors.red,
+  //           ),
+  //           Positioned(
+  //             right: 0,
+  //             bottom: 0,
+  //             child: Container(
+  //               padding: const EdgeInsets.all(1),
+  //               constraints: const BoxConstraints(
+  //                 minWidth: 12,
+  //                 minHeight: 12,
+  //               ),
+  //               child: Icon(
+  //                 icon,
+  //                 color: color,
+  //                 size: 12.0,
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+
   Widget _flagged() => SizedBox(
         height: 30,
         width: 30,
@@ -35,10 +64,6 @@ class FlaggedIcon extends StatelessWidget {
               bottom: 0,
               child: Container(
                 padding: const EdgeInsets.all(1),
-                // decoration: new BoxDecoration(
-                //   color: Colors.white,
-                //   borderRadius: BorderRadius.circular(6),
-                // ),
                 constraints: const BoxConstraints(
                   minWidth: 12,
                   minHeight: 12,

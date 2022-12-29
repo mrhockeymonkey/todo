@@ -89,4 +89,7 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
 
   @override
   bool get isDone => task.isDone;
+
+  @override
+  bool get isFlagged => task.isFlagged;
 }

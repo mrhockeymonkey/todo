@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
 import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/throw_away_task.dart';
+import 'package:todo/widgets/flagged_icon.dart';
 import 'package:uuid/uuid.dart';
 
 import '../providers/throw_away_task_provider.dart';
@@ -22,11 +23,19 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
         child: ListTile(
           leading: todo.done
               ? Icon(Icons.check, color: Colors.grey[350])
-              : const Icon(
-                  Entypo.minus,
+              : FlaggedIcon(
+                  icon: Entypo.minus,
+                  showFlag: todo.isFlagged,
                   color: AppColour.colorCustom,
                 ),
-          trailing: DayPlanActions(handleSnooze: _handleSnooze),
+          // const Icon(
+          //     Entypo.minus,
+          //     color: AppColour.colorCustom,
+          //   ),
+          trailing: DayPlanActions(
+            handleSnooze: _handleSnooze,
+            handleFlag: _handleFlag,
+          ),
           title: TextFormField(
             textCapitalization: TextCapitalization.words,
             initialValue: todo.title.isEmpty ? null : item.title,
@@ -69,6 +78,10 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
         .addOrUpdate(snoozedTodo);
   }
 
+  void _handleFlag(BuildContext context) =>
+      Provider.of<ThrowAwayTaskProvider>(context, listen: false)
+          .addOrUpdate(todo.copyWith(isFlagged: !todo.isFlagged));
+
   @override
   int get order => todo.order;
 
@@ -83,4 +96,7 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
 
   @override
   bool get isDone => todo.done;
+
+  @override
+  bool get isFlagged => todo.isFlagged;
 }

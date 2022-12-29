@@ -9,6 +9,7 @@ class ThrowAwayTask implements DbItem {
   final bool done;
   final Date date;
   final int order;
+  final bool isFlagged;
 
   const ThrowAwayTask({
     required this.id,
@@ -16,14 +17,17 @@ class ThrowAwayTask implements DbItem {
     required this.done,
     required this.date,
     this.order = 0,
+    this.isFlagged = false,
   });
 
   factory ThrowAwayTask.fromMap(Map<String, dynamic> map) => ThrowAwayTask(
-      id: map['id'],
-      title: map['title'],
-      done: map['done'],
-      date: Date.fromMillisecondsSinceEpoch(map['date']),
-      order: map['order'] ?? 0);
+        id: map['id'],
+        title: map['title'],
+        done: map['done'],
+        date: Date.fromMillisecondsSinceEpoch(map['date']),
+        order: map['order'] ?? 0,
+        isFlagged: map['isFlagged'] ?? false,
+      );
 
   @override
   Map<String, dynamic> toMap() => {
@@ -32,6 +36,7 @@ class ThrowAwayTask implements DbItem {
         'done': done,
         'date': date.millisecondsSinceEpoch,
         'order': order,
+        'isFlagged': isFlagged,
       };
 
   ThrowAwayTask copyWith({
@@ -39,6 +44,7 @@ class ThrowAwayTask implements DbItem {
     bool? done,
     Date? date,
     int? order,
+    bool? isFlagged,
   }) =>
       ThrowAwayTask(
         id: id,
@@ -46,6 +52,7 @@ class ThrowAwayTask implements DbItem {
         done: done ?? this.done,
         date: date ?? this.date,
         order: order ?? this.order,
+        isFlagged: isFlagged ?? this.isFlagged,
       );
 
   ThrowAwayTask donee() {

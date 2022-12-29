@@ -21,6 +21,7 @@ class Routine implements DbItem {
   final String notes;
   final bool displayOnPinned;
   final int order;
+  final bool isFlagged;
 
   Routine({
     this.id,
@@ -33,6 +34,7 @@ class Routine implements DbItem {
     this.notes = "",
     this.displayOnPinned = false,
     this.order = 0,
+    this.isFlagged = false,
   })  : lastCompletedDate = lastCompletedDate == null ||
                 lastCompletedDate == Date.fromMillisecondsSinceEpoch(0)
             ? Date.now()
@@ -54,6 +56,7 @@ class Routine implements DbItem {
       notes: map['notes'] ?? "",
       displayOnPinned: map['displayOnPinned'] ?? false,
       order: map['order'] ?? 0,
+      isFlagged: map['isFlagged'] ?? false,
     );
   }
 
@@ -69,6 +72,7 @@ class Routine implements DbItem {
       'notes': notes,
       'displayOnPinned': displayOnPinned,
       'order': order,
+      'isFlagged': isFlagged,
     };
   }
 
@@ -77,6 +81,7 @@ class Routine implements DbItem {
     int? order,
     Date? lastCompletedDate,
     Date? nextDueDateTime,
+    bool? isFlagged,
   }) =>
       Routine(
         id: id,
@@ -89,6 +94,7 @@ class Routine implements DbItem {
         notes: notes,
         displayOnPinned: displayOnPinned,
         order: order ?? this.order,
+        isFlagged: isFlagged ?? this.isFlagged,
       );
 
   Routine done() {
@@ -99,7 +105,10 @@ class Routine implements DbItem {
         "Routine: '$title', Completed: '${lastCompletedDate}', NextDue: '${_nextDueDateTime}'");
 
     return copyWith(
-        lastCompletedDate: lastCompletedDate, nextDueDateTime: nextDueDateTime);
+      lastCompletedDate: lastCompletedDate,
+      nextDueDateTime: nextDueDateTime,
+      isFlagged: false,
+    );
   }
 
   Routine tomorrow() {

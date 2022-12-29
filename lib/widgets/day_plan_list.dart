@@ -76,7 +76,8 @@ class DayPlanListState extends State<DayPlanList> {
     }
 
     _dayPlanItems.sort((a, b) => a.order.compareTo(b.order)); // descending
-    _dayPlanItems.sort((a, b) => a.isDone ? 1 : -1); // completed last
+    _dayPlanItems.sort((a, b) => b.isFlagged ? 1 : 0); // flagged first
+    _dayPlanItems.sort((a, b) => a.isDone ? 1 : 0); // completed last
   }
 
   @override

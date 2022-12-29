@@ -10,4 +10,6 @@ abstract class DayPlanBase<TItem> {
   Type get itemtype;
 
   bool get isDone;
+
+  bool get isFlagged;
 }
