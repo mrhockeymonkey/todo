@@ -49,7 +49,7 @@ dependencies:
 flutter_icons:
   android: true
   ios: false
-  image_path_android: "assets/icon-foreground-432x432.png"
+  image_path_android: "assets/pin_icon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
   adaptive_icon_background: "#ff07618e" #"#ffffff"
   adaptive_icon_foreground: "assets/pin_icon.png"
