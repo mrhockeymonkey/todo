@@ -7,6 +7,7 @@ import 'package:todo/widgets/flagged_icon.dart';
 import 'package:uuid/uuid.dart';
 
 import '../app_colour.dart';
+import '../providers/category_provider.dart';
 import '../providers/task_provider.dart';
 import '../screens/task_detail_screen.dart';
 import 'category.dart';
@@ -19,44 +20,51 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
   DayPlanBacklogTask({required this.task});
 
   @override
-  Widget build(BuildContext context) => Dismissible(
-        key: Key(const Uuid().v1()),
-        direction: DismissDirection.startToEnd,
-        onDismissed: (direction) => _handleDismiss(context, direction),
-        child: ListTile(
-          key: ValueKey(task.id),
-          title: Text(
-            task.title,
-            style: task.isDone
-                ? const TextStyle(
-                    decoration: TextDecoration.lineThrough,
-                    color: Colors.grey,
-                  )
-                : null,
-          ),
-          leading: task.isDone
-              ? Icon(Entypo.pin, color: Colors.grey[350])
-              : FlaggedIcon(
-                  icon: Category.defaultIcon,
-                  color: AppColour.colorCustom,
-                  showFlag: task.isFlagged),
-          trailing: DayPlanActions(
-            handleSnooze: _handleSnooze,
-            handleFlag: _handleFlag,
-          ),
-          subtitle: showButtons
-              ? Row(
-                  children: [
-                    IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
-                    IconButton(onPressed: () {}, icon: const Icon(Icons.air)),
-                  ],
+  Widget build(BuildContext context) {
+    var categoryId = task.categoryId;
+    var category = categoryId == null
+        ? Category.defaultCategory()
+        : Provider.of<CategoryProvider>(context).getItemById(categoryId);
+
+    return Dismissible(
+      key: Key(const Uuid().v1()),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (direction) => _handleDismiss(context, direction),
+      child: ListTile(
+        key: ValueKey(task.id),
+        title: Text(
+          task.title,
+          style: task.isDone
+              ? const TextStyle(
+                  decoration: TextDecoration.lineThrough,
+                  color: Colors.grey,
                 )
               : null,
-          isThreeLine: false,
-          onTap: () => Navigator.of(context)
-              .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
         ),
-      );
+        leading: task.isDone
+            ? Icon(category.icon, color: category.color)
+            : FlaggedIcon(
+                icon: category.icon,
+                color: category.color,
+                showFlag: task.isFlagged),
+        trailing: DayPlanActions(
+          handleSnooze: _handleSnooze,
+          handleFlag: _handleFlag,
+        ),
+        subtitle: showButtons
+            ? Row(
+                children: [
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.edit)),
+                  IconButton(onPressed: () {}, icon: const Icon(Icons.air)),
+                ],
+              )
+            : null,
+        isThreeLine: false,
+        onTap: () => Navigator.of(context)
+            .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
+      ),
+    );
+  }
 
   void _handleDismiss(BuildContext context, DismissDirection direction) =>
       Provider.of<TaskProvider>(context, listen: false)

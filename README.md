@@ -12,7 +12,6 @@ flutter run --flavor prod --release
 ...until finished:
 
 - configurable days ahead, 
-- UI for categories is a bit rough
 - refactor structure
 - scheduled routines (i.e. on 15th of every month)
 - icon

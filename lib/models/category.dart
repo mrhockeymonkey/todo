@@ -15,6 +15,7 @@ class Category implements DbItem {
   String get title => name;
 
   static IconData get defaultIcon => Entypo.pin;
+  static String get defaultIconName => "pin";
 
   static final Map<String, IconData> icons = {
     "flag": Entypo.flag,

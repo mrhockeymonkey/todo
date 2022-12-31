@@ -113,6 +113,7 @@ class _DailyScreenState extends State<DailyScreen> {
               child: FloatingActionButton(
                 child: const Icon(Icons.add),
                 onPressed: () => _newThrowAwayTask(date),
+                heroTag: date,
               ),
             )
           ],

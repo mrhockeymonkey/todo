@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AppColour {
   static const MaterialColor colorCustom = MaterialColor(0xFF07618E, {
@@ -16,6 +17,16 @@ class AppColour {
 
   static const pinActiveColor = Colors.red;
   static const inactiveColor = Colors.grey;
+
+  static void setStatusBarColor(Color color) =>
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: color,
+      ));
+
+  static void resetStatusBarColor() =>
+      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        statusBarColor: colorCustom,
+      ));
 
   // static final Map<int, Color> swatch = {
   //   50: const Color(0xff07618e),

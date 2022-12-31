@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/category.dart';
 import 'package:todo/providers/category_provider.dart';
@@ -51,9 +52,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             Category.icons[category.iconName],
             color: category.color,
           ),
-          onTap: () => Navigator.of(context).pushNamed(
-              CategoryDetailScreen.routeName,
-              arguments: category.id),
+          onTap: () {
+            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+              statusBarColor: category.color,
+            ));
+            Navigator.of(context).pushNamed(CategoryDetailScreen.routeName,
+                arguments: category.id);
+          },
           trailing: const Icon(Icons.drag_indicator));
     }
 

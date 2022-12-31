@@ -32,7 +32,7 @@ class TaskItem extends StatelessWidget {
       subtitle: task.dueDate != null
           ? Text(task.dueDate!.yMMMd())
           : const Text("At Some Point"),
-      leading: Icon(Category.defaultIcon, color: AppColour.colorCustom),
+      leading: Icon(category.icon, color: category.color),
       onTap: () => Navigator.of(context)
           .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
     );

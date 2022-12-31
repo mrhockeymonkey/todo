@@ -22,7 +22,7 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
   bool _shouldFocusTitleField = true;
   String? _categoryId;
   String? _categoryTitle;
-  String? _categoryIconName;
+  String? _categoryIconName = Category.defaultIconName;
   Color _categoryColor = AppColour.colorCustom;
   int? _categoryOrder;
 
@@ -50,32 +50,41 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
 
       _isInit = true;
     }
+
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Category"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: _delete,
-          )
-        ],
+    return WillPopScope(
+      onWillPop: () async {
+        AppColour.resetStatusBarColor();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Category"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: _delete,
+            )
+          ],
+          backgroundColor: _categoryColor,
+        ),
+        body: Column(
+          children: <Widget>[
+            _buildTitleHeader(),
+            _buildOptionsList(),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _save,
+          backgroundColor: _categoryColor,
+          child: const Icon(Icons.check),
+        ),
+        resizeToAvoidBottomInset: false,
       ),
-      body: Column(
-        children: <Widget>[
-          _buildTitleHeader(),
-          _buildOptionsList(),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _save,
-        child: const Icon(Icons.check),
-      ),
-      resizeToAvoidBottomInset: false,
     );
   }
 
@@ -100,6 +109,8 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
         .addOrUpdate(category);
 
     if (!mounted) return;
+
+    AppColour.resetStatusBarColor();
     Navigator.of(context).pop();
   }
 
@@ -110,13 +121,15 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
     }
 
     if (!mounted) return;
+
+    AppColour.resetStatusBarColor();
     Navigator.of(context).pop();
   }
 
   Widget _buildTitleHeader() => Container(
         padding: const EdgeInsets.symmetric(horizontal: 25),
         height: 72,
-        color: AppColour.colorCustom,
+        color: _categoryColor,
         child: Form(
           key: _form,
           child: TextFormField(
@@ -154,71 +167,18 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
             color: _categoryColor,
           ),
           onTap: _selectIcon,
-          // subtitle:
-          //     Text("Every ${_routineRecurNum.toString()} $_routineRecurLen"),
-          // onTap: _selectSchedule,
         ),
         ListTile(
           title: const Text("Colour"),
-          leading: Icon(
-            Icons.square,
+          leading: CircleColor(
             color: _categoryColor,
+            circleSize: 20.0,
           ),
           onTap: _selectColor,
-          // subtitle: Text("Coming Soon"),
-          // onTap: () {
-          //   setState(() {
-          //     _displayOnPinned = !_displayOnPinned;
-          //   });
-          // }
         ),
-        // ListTile(
-        //   title: TextFormField(
-        //     initialValue: _notesValue,
-        //     keyboardType: TextInputType.multiline,
-        //     maxLines: null,
-        //     decoration: InputDecoration(
-        //       hintText: "Notes",
-        //       hintStyle: TextStyle(color: Colors.black54),
-        //     ),
-        //     cursorColor: Colors.black,
-        //     onChanged: (value) {
-        //       var oldValue = _notesValue;
-        //       _notesValue = value;
-
-        //       if (oldValue == "" && value != "") setState(() {});
-        //       if (oldValue != "" && value == "") setState(() {});
-        //     },
-        //   ),
-        //   leading: Icon(
-        //     //Icons.subject,
-        //     FontAwesome.sticky_note,
-        //     color: _notesValue != ""
-        //         ? AppColour.colorCustom
-        //         : AppColour.InactiveColor,
-        //   ),
-        // ),
       ],
     );
   }
-
-  // Future _selectIcon() async {
-  //   await showDialog(
-  //     context: context,
-  //     builder: (context) => IconPicker(
-  //       initialValue: 'favorite',
-  //       icon: Icon(Icons.apps),
-  //       labelText: "Icon",
-  //       title: "Select an icon",
-  //       cancelBtn: "CANCEL",
-  //       enableSearch: true,
-  //       searchHint: 'Search icon',
-  //       iconCollection: Category.icons,
-  //       onChanged: (val) => debugPrint(val),
-  //       onSaved: (val) => debugPrint(val),
-  //     ),
-  //   );
-  // }
 
   Future _selectIcon() async {
     String? choice;
@@ -258,62 +218,28 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
   }
 
   Future _selectColor() async {
+    Color colorChoice = AppColour.colorCustom;
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Pick a color!'),
         content: MaterialColorPicker(
-          onColorChange: (Color color) {
-            setState(() {
-              _categoryColor = color;
-            });
+          allowShades: false,
+          onMainColorChange: (value) {
+            if (value != null) {
+              colorChoice = value[500] ?? AppColour.colorCustom;
+            }
           },
           selectedColor: _categoryColor,
-          // colors: [
-          //   Colors.red,
-          //   Colors.deepOrange,
-          //   Colors.blue,
-          //   Colors.amber,
-          //   Colors.deepPurple,
-          //   Colors.green,
-          // ],
-          onlyShadeSelection: true,
         ),
-
-        // SingleChildScrollView(
-        //   // child: ColorPicker(
-        //   //   pickerColor: Colors.black,
-        //   //   onColorChanged: (value) {
-        //   //     debugPrint(value);
-        //   //   },
-        //   // ),
-        //   // Use Material color picker:
-        //   //
-        //   // child: MaterialPicker(
-        //   //   pickerColor: pickerColor,
-        //   //   onColorChanged: changeColor,
-        //   //   showLabel: true, // only on portrait mode
-        //   // ),
-        //   //
-        //   // Use Block color picker:
-        //   //
-        //   child: BlockPicker(
-        //     pickerColor: _categoryColor,
-        //     onColorChanged: (value) {
-        //       debugPrint(value);
-        //     },
-        //   ),
-        //
-        // child: MultipleChoiceBlockPicker(
-        //   pickerColors: currentColors,
-        //   onColorsChanged: changeColors,
-        // ),
-        // ),
         actions: <Widget>[
           ElevatedButton(
             child: const Text('OK'),
             onPressed: () {
-              //setState(() => currentColor = pickerColor);
+              setState(() {
+                _categoryColor = colorChoice;
+              });
+              AppColour.setStatusBarColor(_categoryColor);
               Navigator.of(context).pop();
             },
           ),
