@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
             create: (_) => ThrowAwayTaskProvider(tableName: "dayplantasks"))
       ],
       child: MaterialApp(
-        title: 'Daily Doings',
+        title: 'The Daily Doings',
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

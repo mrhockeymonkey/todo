@@ -5,6 +5,9 @@ A "To Do" app catering to my own preferred way of tracking tasks and routines.
 ```
 flutter run --flavor dev
 flutter run --flavor prod --release
+
+# to regenerate icons
+flutter pub run flutter_launcher_icons
 ```
 
 ## Things left  to do...
@@ -14,7 +17,6 @@ flutter run --flavor prod --release
 - configurable days ahead, 
 - refactor structure
 - scheduled routines (i.e. on 15th of every month)
-- icon
 - publish to play store
 
 ...someday maybe:
