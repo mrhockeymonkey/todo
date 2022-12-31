@@ -14,7 +14,6 @@ flutter run --flavor prod --release
 - configurable days ahead, 
 - refactor structure
 - scheduled routines (i.e. on 15th of every month)
-- icon
 - publish to play store
 
 ...someday maybe:
