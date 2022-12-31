@@ -6,7 +6,7 @@ A "To Do" app catering to my own preferred way of tracking tasks and routines.
 flutter run --flavor dev
 flutter run --flavor prod --release
 
-# to rege icons
+# to regenerate icons
 flutter pub run flutter_launcher_icons
 ```
 
