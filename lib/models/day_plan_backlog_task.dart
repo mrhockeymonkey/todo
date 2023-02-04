@@ -42,7 +42,7 @@ class DayPlanBacklogTask extends DayPlanBase<Task> {
               : null,
         ),
         leading: task.isDone
-            ? Icon(category.icon, color: category.color)
+            ? Icon(Icons.check, color: Colors.grey[350])
             : FlaggedIcon(
                 icon: category.icon,
                 color: category.color,

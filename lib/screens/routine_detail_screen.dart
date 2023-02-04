@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/models/repeat_schedule.dart';
 
 import 'package:todo/models/routine.dart';
 import 'package:todo/providers/routine_provider.dart';
@@ -50,18 +51,6 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
         _notesValue = routine.notes;
         _displayOnPinned = routine.displayOnPinned;
       }
-
-      // if (routineId != null) {
-      //   final routine = Provider.of<RoutineProvider>(context, listen: false)
-      //       .getItemById(routineId);
-      //   _routineId = routine.id;
-      //   _routineTitle = routine.title;
-      //   _routineRecurNum = routine.recurNum;
-      //   _routineRecurLen = routine.recurLen;
-      //   _shouldFocusTitleField = false;
-      //   _notesValue = routine.notes;
-      //   _displayOnPinned = routine.displayOnPinned;
-      // }
 
       _isInit = true;
     }
@@ -128,36 +117,26 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
     Navigator.of(context).pop();
   }
 
-  void _updateRecurValues(String recurNum, String recurLen) {
-    setState(() {
-      _routineRecurNum = int.parse(recurNum);
-      _routineRecurLen = recurLen;
-    });
-  }
-
   Future _selectSchedule() async {
+    var answer = RepeatPickerAnswer(
+      type: RepeatScheduleTypes.periodic,
+      period: _routineRecurNum,
+      periodType: _routineRecurLen,
+    );
+
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Every"),
-          content: RepeatPicker(_updateRecurValues),
+          content: RepeatPicker(answer),
           actions: <Widget>[
-            // TextButton(
-            //   child: Text('CANCEL'),
-            //   onPressed: () {
-            //     Navigator.of(context).pop();
-            //   },
-            // ),
             TextButton(
               child: const Text('OK'),
               onPressed: () {
-                // setState(() {
-                //   debugPrint("repeatNum: " +
-                //       _routineRecurNum.toString() +
-                //       " repeatLen: " +
-                //       _routineRecurLen);
-                // });
+                setState(() {
+                  _routineRecurNum = answer.period;
+                  _routineRecurLen = answer.periodType;
+                });
                 Navigator.of(context).pop();
               },
             )
@@ -165,6 +144,9 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
         );
       },
     );
+
+    debugPrint(
+        "answer ${answer.type} ${answer.period} ${answer.periodType} ${answer.dates.join(",")}");
   }
 
   Widget _buildTitleHeader() => Container(
