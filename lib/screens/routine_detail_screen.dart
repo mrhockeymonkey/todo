@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/models/repeat_schedule.dart';
 
 import 'package:todo/models/routine.dart';
 import 'package:todo/providers/routine_provider.dart';
@@ -24,8 +25,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
   bool _shouldFocusTitleField = true;
   String? _routineId;
   String _routineTitle = "";
-  int _routineRecurNum = 1;
-  String _routineRecurLen = "days";
+  RepeatSchedule _schedule = RepeatSchedule();
   String _notesValue = "";
   bool _displayOnPinned = false;
 
@@ -44,24 +44,11 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
             .getItemById(routineId);
         _routineId = routine.id;
         _routineTitle = routine.title;
-        _routineRecurNum = routine.recurNum;
-        _routineRecurLen = routine.recurLen;
+        _schedule = routine.schedule;
         _shouldFocusTitleField = false;
         _notesValue = routine.notes;
         _displayOnPinned = routine.displayOnPinned;
       }
-
-      // if (routineId != null) {
-      //   final routine = Provider.of<RoutineProvider>(context, listen: false)
-      //       .getItemById(routineId);
-      //   _routineId = routine.id;
-      //   _routineTitle = routine.title;
-      //   _routineRecurNum = routine.recurNum;
-      //   _routineRecurLen = routine.recurLen;
-      //   _shouldFocusTitleField = false;
-      //   _notesValue = routine.notes;
-      //   _displayOnPinned = routine.displayOnPinned;
-      // }
 
       _isInit = true;
     }
@@ -106,8 +93,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
     final routine = Routine(
       id: _routineId,
       title: _routineTitle,
-      recurNum: _routineRecurNum,
-      recurLen: _routineRecurLen,
+      schedule: _schedule,
       notes: _notesValue,
       displayOnPinned: _displayOnPinned,
     );
@@ -128,43 +114,16 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
     Navigator.of(context).pop();
   }
 
-  void _updateRecurValues(String recurNum, String recurLen) {
-    setState(() {
-      _routineRecurNum = int.parse(recurNum);
-      _routineRecurLen = recurLen;
-    });
-  }
-
   Future _selectSchedule() async {
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Every"),
-          content: RepeatPicker(_updateRecurValues),
-          actions: <Widget>[
-            // TextButton(
-            //   child: Text('CANCEL'),
-            //   onPressed: () {
-            //     Navigator.of(context).pop();
-            //   },
-            // ),
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                // setState(() {
-                //   debugPrint("repeatNum: " +
-                //       _routineRecurNum.toString() +
-                //       " repeatLen: " +
-                //       _routineRecurLen);
-                // });
-                Navigator.of(context).pop();
-              },
-            )
-          ],
-        );
-      },
-    );
+    var answer = await showDialog(
+        context: context,
+        builder: (BuildContext context) => RepeatPicker(_schedule));
+
+    if (answer != null) {
+      setState(() {
+        _schedule = answer;
+      });
+    }
   }
 
   Widget _buildTitleHeader() => Container(
@@ -207,8 +166,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
             color: AppColour.colorCustom,
           ),
           title: const Text("Repeats"),
-          subtitle:
-              Text("Every ${_routineRecurNum.toString()} $_routineRecurLen"),
+          subtitle: Text(_schedule.displayName),
           onTap: _selectSchedule,
         ),
         ListTile(
