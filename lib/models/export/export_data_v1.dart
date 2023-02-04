@@ -2,6 +2,8 @@
 
 import 'dart:convert';
 
+import 'package:todo/models/repeat_schedule.dart';
+
 import '../../date.dart';
 import '../routine.dart';
 import '../task.dart';
@@ -40,8 +42,7 @@ class ExportDataV1 {
     var routines = importRoutinesData
         .map((r) => Routine(
               title: r["title"],
-              recurNum: r["recurNum"],
-              recurLen: r["recurLen"],
+              schedule: RepeatSchedule(), // TODO update
               notes: r["notes"],
               lastCompletedDate: r["lastCompletedDateMsSinceEpoch"] == null
                   ? null
@@ -78,8 +79,8 @@ class ExportDataV1 {
   Map<String, dynamic> _createRoutineExport(Routine routine) => {
         "id": routine.id,
         "title": routine.title,
-        "recurNum": routine.recurNum,
-        "recurLen": routine.recurLen,
+        "recurNum": 0, // TODO update export/import
+        "recurLen": 0,
         "notes": routine.notes,
         "lastCompletedDateMsSinceEpoch":
             routine.lastCompletedDate.millisecondsSinceEpoch,

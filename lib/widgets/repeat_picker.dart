@@ -82,7 +82,7 @@ class _RepeatPickerState extends State<RepeatPicker> {
                     setState(() {
                       choice.isSelected = !choice.isSelected;
                       answer = answer.copyWith(
-                        type: RepeatScheduleTypes.onDates,
+                        type: const ScheduleType.onDates(),
                         dates: dateChoices
                             .where((choice) => choice.isSelected)
                             .map((choice) => choice.date)
@@ -131,7 +131,7 @@ class _RepeatPickerState extends State<RepeatPicker> {
             onValueChanged: (index) {
               setState(() {
                 answer = answer.copyWith(
-                    type: RepeatScheduleTypes.periodic,
+                    type: const ScheduleType.periodic(),
                     period: repeatAmmountChoice.elementAt(index));
               });
             },
@@ -156,7 +156,7 @@ class _RepeatPickerState extends State<RepeatPicker> {
             onValueChanged: (index) {
               setState(() {
                 answer = answer.copyWith(
-                    type: RepeatScheduleTypes.periodic,
+                    type: const ScheduleType.periodic(),
                     periodType: periodTypeOptions.elementAt(index));
               });
             },

@@ -13,8 +13,8 @@ class Routine implements DbItem {
   final String? id;
   final String title;
 
-  final int recurNum;
-  final String recurLen;
+  // final int recurNum;
+  // final String recurLen;
   final RepeatSchedule schedule;
   final Date lastCompletedDate;
   Date _nextDueDateTime;
@@ -28,9 +28,9 @@ class Routine implements DbItem {
   Routine({
     this.id,
     required this.title,
-    this.recurNum = 5,
-    this.recurLen = "minutes",
-    RepeatSchedule? schedule,
+    // this.recurNum = 5,
+    // this.recurLen = "minutes",
+    required this.schedule,
     Date? lastCompletedDate,
     Date? nextDueDateTime,
     this.color = Colors.black,
@@ -38,25 +38,21 @@ class Routine implements DbItem {
     this.displayOnPinned = false,
     this.order = 0,
     this.isFlagged = false,
-  })  : schedule = schedule ?? RepeatSchedule(),
-        lastCompletedDate = lastCompletedDate == null ||
+  })  : lastCompletedDate = lastCompletedDate == null ||
                 lastCompletedDate == Date.fromMillisecondsSinceEpoch(0)
             ? Date.now()
             : lastCompletedDate,
         _nextDueDateTime = nextDueDateTime == null ||
                 nextDueDateTime == Date.fromMillisecondsSinceEpoch(0)
-            ? calculateNextDueDate(Date.now(), recurLen, recurNum)
+            ? schedule.calculateNextDueDate(Date
+                .now()) //calculateNextDueDate(Date.now(), recurLen, recurNum)
             : nextDueDateTime;
 
   factory Routine.fromMap(Map<String, dynamic> map) {
     return Routine(
       id: map['id'],
       title: map['title'],
-      schedule: map['schedule'] != null
-          ? RepeatSchedule.fromMap(map['schedule'])
-          : null,
-      recurNum: map['recurNum'],
-      recurLen: map['recurLen'],
+      schedule: RepeatSchedule.fromJson(map['schedule']),
       lastCompletedDate:
           Date.fromMillisecondsSinceEpoch(map['lastCompletedDate'] ?? 0),
       nextDueDateTime: Date.fromMillisecondsSinceEpoch(map['nextDueDate'] ?? 0),
@@ -72,9 +68,9 @@ class Routine implements DbItem {
     return {
       'id': id,
       'title': title,
-      'schedule': schedule.toMap(),
-      'recurNum': recurNum,
-      'recurLen': recurLen,
+      'schedule': schedule,
+      // 'recurNum': recurNum,
+      // 'recurLen': recurLen,
       'lastCompletedDate': lastCompletedDate.millisecondsSinceEpoch,
       'nextDueDate': _nextDueDateTime.millisecondsSinceEpoch,
       'notes': notes,
@@ -94,8 +90,7 @@ class Routine implements DbItem {
       Routine(
         id: id,
         title: title ?? this.title,
-        recurNum: recurNum,
-        recurLen: recurLen,
+        schedule: this.schedule,
         lastCompletedDate: lastCompletedDate ?? this.lastCompletedDate,
         nextDueDateTime: nextDueDateTime ?? _nextDueDateTime,
         color: color,
@@ -108,7 +103,8 @@ class Routine implements DbItem {
   Routine done() {
     Date now = Date.now();
     Date lastCompletedDate = now;
-    Date nextDueDateTime = calculateNextDueDate(now, recurLen, recurNum);
+    Date nextDueDateTime = schedule.calculateNextDueDate(
+        now); //calculateNextDueDate(now, recurLen, recurNum);
     debugPrint(
         "Routine: '$title', Completed: '${lastCompletedDate}', NextDue: '${_nextDueDateTime}'");
 
@@ -140,30 +136,30 @@ class Routine implements DbItem {
       ? "due"
       : Jiffy(_nextDueDateTime.dateTime).from(DateTime.now()).toString();
 
-  static Date calculateNextDueDate(
-      Date lastCompleted, String recurLen, int recurNum) {
-    var jiffy = Jiffy(lastCompleted.dateTime);
-    switch (recurLen) {
-      case 'minutes':
-        jiffy.add(minutes: recurNum);
-        break;
-      case 'hours':
-        jiffy.add(hours: recurNum);
-        break;
-      case 'days':
-        jiffy.add(days: recurNum);
-        break;
-      case 'weeks':
-        jiffy.add(weeks: recurNum);
-        break;
-      case 'months':
-        jiffy.add(months: recurNum);
-        break;
-      default: // minutes
-        jiffy.add(minutes: recurNum);
-        break;
-    }
+  // static Date calculateNextDueDate(
+  //     Date lastCompleted, String recurLen, int recurNum) {
+  //   var jiffy = Jiffy(lastCompleted.dateTime);
+  //   switch (recurLen) {
+  //     case 'minutes':
+  //       jiffy.add(minutes: recurNum);
+  //       break;
+  //     case 'hours':
+  //       jiffy.add(hours: recurNum);
+  //       break;
+  //     case 'days':
+  //       jiffy.add(days: recurNum);
+  //       break;
+  //     case 'weeks':
+  //       jiffy.add(weeks: recurNum);
+  //       break;
+  //     case 'months':
+  //       jiffy.add(months: recurNum);
+  //       break;
+  //     default: // minutes
+  //       jiffy.add(minutes: recurNum);
+  //       break;
+  //   }
 
-    return Date(jiffy.dateTime);
-  }
+  //   return Date(jiffy.dateTime);
+  // }
 }
