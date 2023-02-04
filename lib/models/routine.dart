@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:todo/date.dart';
+import 'package:todo/models/repeat_schedule.dart';
 import 'dart:math';
 
 import 'package:todo/providers/db_item.dart';
@@ -14,6 +15,7 @@ class Routine implements DbItem {
 
   final int recurNum;
   final String recurLen;
+  final RepeatSchedule schedule;
   final Date lastCompletedDate;
   Date _nextDueDateTime;
 
@@ -28,6 +30,7 @@ class Routine implements DbItem {
     required this.title,
     this.recurNum = 5,
     this.recurLen = "minutes",
+    RepeatSchedule? schedule,
     Date? lastCompletedDate,
     Date? nextDueDateTime,
     this.color = Colors.black,
@@ -35,7 +38,8 @@ class Routine implements DbItem {
     this.displayOnPinned = false,
     this.order = 0,
     this.isFlagged = false,
-  })  : lastCompletedDate = lastCompletedDate == null ||
+  })  : schedule = schedule ?? RepeatSchedule(),
+        lastCompletedDate = lastCompletedDate == null ||
                 lastCompletedDate == Date.fromMillisecondsSinceEpoch(0)
             ? Date.now()
             : lastCompletedDate,
@@ -48,6 +52,9 @@ class Routine implements DbItem {
     return Routine(
       id: map['id'],
       title: map['title'],
+      schedule: map['schedule'] != null
+          ? RepeatSchedule.fromMap(map['schedule'])
+          : null,
       recurNum: map['recurNum'],
       recurLen: map['recurLen'],
       lastCompletedDate:
@@ -65,6 +72,7 @@ class Routine implements DbItem {
     return {
       'id': id,
       'title': title,
+      'schedule': schedule.toMap(),
       'recurNum': recurNum,
       'recurLen': recurLen,
       'lastCompletedDate': lastCompletedDate.millisecondsSinceEpoch,

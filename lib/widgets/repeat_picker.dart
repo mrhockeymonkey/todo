@@ -4,7 +4,7 @@ import 'package:todo/widgets/repeat_picker_date_choice.dart';
 import 'package:wheel_chooser/wheel_chooser.dart';
 
 class RepeatPicker extends StatefulWidget {
-  final RepeatPickerAnswer repeatPickerAnswer;
+  final RepeatSchedule repeatPickerAnswer;
 
   const RepeatPicker(this.repeatPickerAnswer, {super.key});
 
@@ -16,44 +16,57 @@ class RepeatPicker extends StatefulWidget {
 
 class _RepeatPickerState extends State<RepeatPicker> {
   final List<int> repeatAmmountChoice = List<int>.generate(31, (i) => (i + 1));
-  final List<String> periodTypeOptions = PeriodicTypes.all;
+  final List<PeriodType> periodTypeOptions = PeriodicTypes.all;
 
   final List<RepeatPickerDateChoice> dateChoices =
       List.generate(31, (index) => RepeatPickerDateChoice(index + 1, false));
 
+  late RepeatSchedule answer; // TODO late vs nullable
+
   @override
   void initState() {
     super.initState();
+    answer = widget.repeatPickerAnswer;
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 250,
-      width: 100,
-      child: DefaultTabController(
-        length: 2,
-        child: Column(children: [
-          const TabBar(tabs: [
-            Text(
-              "Periodically",
-              style: TextStyle(color: Colors.black),
-            ),
-            Text(
-              "On Dates",
-              style: TextStyle(color: Colors.black),
-            ),
-          ]),
-          Expanded(
-            child: TabBarView(children: [
-              _buildPeriodicSelector(),
-              _buildDateSelector(),
-            ]),
-          ),
-        ]),
-      ),
+    return AlertDialog(
+      content: _buildDialog(),
+      actions: <Widget>[
+        ElevatedButton(
+          child: const Text('OK'),
+          onPressed: () => Navigator.of(context).pop(answer),
+        ),
+      ],
     );
   }
+
+  Widget _buildDialog() => SizedBox(
+        height: 250,
+        width: 100,
+        child: DefaultTabController(
+          length: 2,
+          child: Column(children: [
+            const TabBar(tabs: [
+              Text(
+                "Periodically",
+                style: TextStyle(color: Colors.black),
+              ),
+              Text(
+                "On Dates",
+                style: TextStyle(color: Colors.black),
+              ),
+            ]),
+            Expanded(
+              child: TabBarView(children: [
+                _buildPeriodicSelector(),
+                _buildDateSelector(),
+              ]),
+            ),
+          ]),
+        ),
+      );
 
   Widget _buildDateSelector() {
     return GridView.count(
@@ -68,6 +81,13 @@ class _RepeatPickerState extends State<RepeatPicker> {
                   onPressed: () {
                     setState(() {
                       choice.isSelected = !choice.isSelected;
+                      answer = answer.copyWith(
+                        type: RepeatScheduleTypes.onDates,
+                        dates: dateChoices
+                            .where((choice) => choice.isSelected)
+                            .map((choice) => choice.date)
+                            .toList(),
+                      );
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -110,9 +130,9 @@ class _RepeatPickerState extends State<RepeatPicker> {
                 .toList(),
             onValueChanged: (index) {
               setState(() {
-                widget.repeatPickerAnswer.type = RepeatScheduleTypes.periodic;
-                widget.repeatPickerAnswer.period =
-                    repeatAmmountChoice.elementAt(index);
+                answer = answer.copyWith(
+                    type: RepeatScheduleTypes.periodic,
+                    period: repeatAmmountChoice.elementAt(index));
               });
             },
           ),
@@ -124,19 +144,20 @@ class _RepeatPickerState extends State<RepeatPicker> {
             startPosition:
                 periodTypeOptions.indexOf(widget.repeatPickerAnswer.periodType),
             children: periodTypeOptions
-                .map((e) => Text(
-                      e,
+                .map((periodType) => Text(
+                      periodType.value,
                       style: TextStyle(
-                          color: widget.repeatPickerAnswer.periodType == e
-                              ? Colors.black
-                              : Colors.grey),
+                          color:
+                              widget.repeatPickerAnswer.periodType == periodType
+                                  ? Colors.black
+                                  : Colors.grey),
                     ))
                 .toList(),
             onValueChanged: (index) {
               setState(() {
-                widget.repeatPickerAnswer.type = RepeatScheduleTypes.periodic;
-                widget.repeatPickerAnswer.periodType =
-                    periodTypeOptions.elementAt(index);
+                answer = answer.copyWith(
+                    type: RepeatScheduleTypes.periodic,
+                    periodType: periodTypeOptions.elementAt(index));
               });
             },
           ),
