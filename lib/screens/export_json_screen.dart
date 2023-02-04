@@ -1,10 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:todo/models/export/export_data_v1.dart';
+import 'package:todo/models/export/export_container.dart';
 
 import '../providers/routine_provider.dart';
 import '../providers/task_provider.dart';
+import '../providers/category_provider.dart';
 
 class ExportJsonPage extends StatefulWidget {
   static const String routeName = '/export-json';
@@ -76,8 +79,15 @@ class _ExportJsonPageState extends State<ExportJsonPage> {
 
     var exportRoutines = Provider.of<RoutineProvider>(context).items.toList();
 
-    var exportData = ExportDataV1(exportTasks, exportRoutines);
+    var exportCategories =
+        Provider.of<CategoryProvider>(context).items.toList();
 
-    return exportData.toJson();
+    var exportData = ExportContainer(
+      exportTasks,
+      exportRoutines,
+      exportCategories,
+    );
+
+    return jsonEncode(exportData);
   }
 }

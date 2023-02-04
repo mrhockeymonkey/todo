@@ -14,18 +14,17 @@ flutter pub run flutter_launcher_icons
 
 ...until finished:
 
+- ui fixes
+- - category icons select color
+- - routine period select bold for chosen values
+- - add buttons are awful, redo 
+- - pretty print json in export?
+- - change flat for arrow up?
 - configurable days ahead, 
+- group tasks by category in task list
 - refactor structure
-- scheduled routines (i.e. on 15th of every month)
 - publish to play store
 
 ...someday maybe:
 
-- Import/export categories
 - animated loading bar for daily progress
-
-
-
-```json
-{"version":1,"tasks":[{"id":"edyu4qitk","title":"foo2","dueDateMsSinceEpoch":0,"notes":""}],"routines":[{"id":"5wmshc0m9","title":"bar2","recurNum":1,"recurLen":"days","notes":""}]}
-```

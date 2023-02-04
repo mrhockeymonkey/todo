@@ -24,7 +24,7 @@ class Task implements DbItem {
     this.notes = "",
   });
 
-  factory Task.fromMap(Map<String, dynamic> map) => Task(
+  factory Task.fromJson(Map<String, dynamic> map) => Task(
         id: map['id'],
         title: map['title'],
         categoryId: map['categoryId'],
@@ -38,7 +38,7 @@ class Task implements DbItem {
       );
 
   @override
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
         'categoryId': categoryId,

@@ -10,7 +10,7 @@ class TaskProvider extends ProviderBase<Task> {
   }) : super(tableName: tableName);
 
   @override
-  Task parse(Map<String, dynamic> json) => Task.fromMap(json);
+  Task parse(Map<String, dynamic> json) => Task.fromJson(json);
 
   @override
   List<Task> get items {
@@ -39,37 +39,4 @@ class TaskProvider extends ProviderBase<Task> {
             t.dueDate!.isAtSameMomentAs(date) ||
             (includeOutstanding && !t.isDone && t.dueDate!.isBefore(date)),
       );
-
-  // Task getRoutineById(String id) => _items[id];
-
-  // Future<void> fetch() async {
-  //   var fetched = await _db.collection(_tasks).get();
-  //   fetched?.entries?.forEach((element) {
-  //     final item = Task.fromMap(element.value);
-  //     debugPrint(element.value);
-  //     _items.putIfAbsent(item.id, () => item);
-  //   });
-  //   notifyListeners();
-  // }
-
-  // void delete(String id) async {
-  //   debugPrint("[Deleted] '$id'");
-  //   await _db.collection(_tasks).doc(id).delete();
-  //   _items.remove(id);
-  //   notifyListeners();
-  // }
-
-  // void addOrUpdate(Task task) async {
-  //   if (task.id == null) {
-  //     var taskMap = task.toMap();
-  //     taskMap['id'] = _db.collection(_tasks).doc().id;
-  //     task = Task.fromMap(taskMap);
-  //     debugPrint("[New] '${task.toString()}'");
-  //   }
-
-  //   await _db.collection(_tasks).doc(task.id).set(task.toMap());
-  //   _items[task.id] = task;
-  //   debugPrint("[Saved] '${task.toString()}'");
-  //   notifyListeners();
-  // }
 }

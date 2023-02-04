@@ -7,7 +7,7 @@ class CategoryProvider extends ProviderBase<Category> {
   }) : super(tableName: tableName);
 
   @override
-  Category parse(Map<String, dynamic> json) => Category.fromMap(json);
+  Category parse(Map<String, dynamic> json) => Category.fromJson(json);
 
   @override
   List<Category> get items {

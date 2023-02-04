@@ -64,7 +64,7 @@ class Category implements DbItem {
         iconName = "pin",
         color = AppColour.colorCustom;
 
-  factory Category.fromMap(Map<String, dynamic> map) => Category(
+  factory Category.fromJson(Map<String, dynamic> map) => Category(
         id: map['id'],
         name: map['name'],
         iconName: map['iconName'] ?? "flag",
@@ -81,7 +81,7 @@ class Category implements DbItem {
       );
 
   @override
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'iconName': iconName,

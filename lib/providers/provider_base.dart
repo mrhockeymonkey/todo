@@ -55,7 +55,7 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
   }
 
   Future addOrUpdate(T item, {bool notify = true}) async {
-    Map<String, dynamic> itemMap = item.toMap();
+    Map<String, dynamic> itemMap = item.toJson();
 
     if (itemMap['id'] == null) {
       itemMap['id'] = db.collection(tableName).doc().id;

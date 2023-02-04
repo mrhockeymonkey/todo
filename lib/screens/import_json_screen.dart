@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo/models/export/export_data_v1.dart';
+import 'package:todo/models/export/export_container.dart';
+import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/providers/task_provider.dart';
 
@@ -68,7 +71,7 @@ class _ImportJsonScreenState extends State<ImportJsonScreen> {
       ));
 
   Future _handleImport() async {
-    var importData = ExportDataV1.fromJson(_inputJson);
+    var importData = ExportContainer.fromJson(jsonDecode(_inputJson));
 
     var shouldCommit = await showDialog(
       context: context,
@@ -79,6 +82,7 @@ class _ImportJsonScreenState extends State<ImportJsonScreen> {
           children: [
             Text("Import ${importData.tasks.length} tasks"),
             Text("Import ${importData.routines.length} routines"),
+            Text("Import ${importData.categories.length} categories"),
           ],
         ),
         actions: [
@@ -103,11 +107,8 @@ class _ImportJsonScreenState extends State<ImportJsonScreen> {
           .updateAll(importData.tasks),
       Provider.of<RoutineProvider>(context, listen: false)
           .updateAll(importData.routines),
+      Provider.of<CategoryProvider>(context, listen: false)
+          .updateAll(importData.categories),
     ]);
-
-    // await Provider.of<TaskProvider>(context, listen: false)
-    //     .updateAll(importData.tasks);
-    // await Provider.of<RoutineProvider>(context, listen: false)
-    //     .updateAll(importData.routines);
   }
 }
