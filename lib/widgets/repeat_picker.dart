@@ -16,17 +16,22 @@ class RepeatPicker extends StatefulWidget {
 
 class _RepeatPickerState extends State<RepeatPicker> {
   final List<int> repeatAmmountChoice = List<int>.generate(31, (i) => (i + 1));
-  final List<PeriodType> periodTypeOptions = PeriodicTypes.all;
+  final List<PeriodType> periodTypeOptions = PeriodType.all;
 
-  final List<RepeatPickerDateChoice> dateChoices =
-      List.generate(31, (index) => RepeatPickerDateChoice(index + 1, false));
+  late final List<RepeatPickerDateChoice> dateChoices;
 
-  late RepeatSchedule answer; // TODO late vs nullable
+  late RepeatSchedule answer;
 
   @override
   void initState() {
     super.initState();
     answer = widget.repeatPickerAnswer;
+    dateChoices = List.generate(
+        31,
+        (index) => RepeatPickerDateChoice(
+              index + 1,
+              answer.dates.contains(index + 1),
+            ));
   }
 
   @override
@@ -47,6 +52,8 @@ class _RepeatPickerState extends State<RepeatPicker> {
         width: 100,
         child: DefaultTabController(
           length: 2,
+          initialIndex:
+              answer.type.value == const ScheduleType.periodic().value ? 0 : 1,
           child: Column(children: [
             const TabBar(tabs: [
               Text(

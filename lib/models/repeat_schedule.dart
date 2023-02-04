@@ -20,43 +20,22 @@ class ScheduleType {
 class PeriodType {
   final String value;
 
-  const PeriodType.minutes() : value = "minutes";
-  const PeriodType.hours() : value = "hours";
   const PeriodType.days() : value = "days";
   const PeriodType.weeks() : value = "weeks";
   const PeriodType.months() : value = "months";
+  const PeriodType.years() : value = "years";
+
   PeriodType.fromJson(Map<String, dynamic> json) : value = json['value'];
 
   Map<String, dynamic> toJson() => {
         'value': value,
       };
 
-  static PeriodType from(String str) {
-    switch (str) {
-      case "minutes":
-        return const PeriodType.minutes();
-      case "hours":
-        return const PeriodType.hours();
-      case "days":
-        return const PeriodType.days();
-      case "weeks":
-        return const PeriodType.weeks();
-      case "months":
-        return const PeriodType.months();
-      default:
-        assert(false, "should never happen");
-        return const PeriodType.minutes();
-    }
-  }
-}
-
-class PeriodicTypes {
   static const List<PeriodType> all = [
-    PeriodType.minutes(),
-    PeriodType.hours(),
     PeriodType.days(),
     PeriodType.weeks(),
     PeriodType.months(),
+    PeriodType.years(),
   ];
 }
 
@@ -107,27 +86,18 @@ class RepeatSchedule {
   Date _calculatePeriodicNext(Date lastCompleted) {
     var jiffy = Jiffy(lastCompleted.dateTime);
     switch (periodType) {
-      case PeriodType.minutes():
-        jiffy.add(minutes: period);
-        break;
-      case PeriodType.hours():
-        jiffy.add(hours: period);
-        break;
       case PeriodType.days():
-        jiffy.add(days: period);
-        break;
+        return Date(jiffy.add(days: period).dateTime);
       case PeriodType.weeks():
-        jiffy.add(weeks: period);
-        break;
+        return Date(jiffy.add(weeks: period).dateTime);
       case PeriodType.months():
-        jiffy.add(months: period);
-        break;
+        return Date(jiffy.add(months: period).dateTime);
+      case PeriodType.years():
+        return Date(jiffy.add(years: period).dateTime);
       default: // minutes
-        jiffy.add(minutes: period);
-        break;
+        assert(true, "should never happen!");
+        return Date(jiffy.add(minutes: period).dateTime);
     }
-
-    return Date(jiffy.dateTime);
   }
 
   Map<String, dynamic> toJson() {
