@@ -40,7 +40,7 @@ class Routine implements DbItem {
             ? schedule.calculateNextDueDate(Date.now())
             : nextDueDateTime;
 
-  factory Routine.fromMap(Map<String, dynamic> map) {
+  factory Routine.fromJson(Map<String, dynamic> map) {
     return Routine(
       id: map['id'],
       title: map['title'],
@@ -56,7 +56,7 @@ class Routine implements DbItem {
   }
 
   @override
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toJson() {
     return {
       'id': id,
       'title': title,

@@ -20,7 +20,7 @@ class ThrowAwayTask implements DbItem {
     this.isFlagged = false,
   });
 
-  factory ThrowAwayTask.fromMap(Map<String, dynamic> map) => ThrowAwayTask(
+  factory ThrowAwayTask.fromJson(Map<String, dynamic> map) => ThrowAwayTask(
         id: map['id'],
         title: map['title'],
         done: map['done'],
@@ -30,7 +30,7 @@ class ThrowAwayTask implements DbItem {
       );
 
   @override
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
         'done': done,

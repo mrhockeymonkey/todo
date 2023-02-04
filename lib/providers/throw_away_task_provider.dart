@@ -11,7 +11,8 @@ class ThrowAwayTaskProvider extends ProviderBase<ThrowAwayTask> {
   }) : super(tableName: tableName);
 
   @override
-  ThrowAwayTask parse(Map<String, dynamic> json) => ThrowAwayTask.fromMap(json);
+  ThrowAwayTask parse(Map<String, dynamic> json) =>
+      ThrowAwayTask.fromJson(json);
 
   @override
   List<ThrowAwayTask> get items {
