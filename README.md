@@ -16,6 +16,7 @@ flutter pub run flutter_launcher_icons
 
 - ui fixes
 - - category icons select color
+- - better looking dates selection
 - - routine period select bold for chosen values
 - - add buttons are awful, redo 
 - - pretty print json in export?

@@ -29,13 +29,13 @@ class ExportContainer {
   );
 
   ExportContainer.fromJson(Map<String, dynamic> json)
-      : tasks = (json[_tasksProp] as List<dynamic>)
+      : tasks = ((json[_tasksProp] ?? []) as List<dynamic>)
             .map((e) => Task.fromJson(e))
             .toList(),
-        routines = (json[_routinesProp] as List<dynamic>)
+        routines = ((json[_routinesProp] ?? []) as List<dynamic>)
             .map((e) => Routine.fromJson(e))
             .toList(),
-        categories = (json[_categoriesProp] as List<dynamic>)
+        categories = ((json[_categoriesProp] ?? []) as List<dynamic>)
             .map((e) => Category.fromJson(e))
             .toList();
 

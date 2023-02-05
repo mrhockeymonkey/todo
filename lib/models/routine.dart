@@ -60,7 +60,7 @@ class Routine implements DbItem {
     return {
       'id': id,
       'title': title,
-      'schedule': schedule,
+      'schedule': schedule.toJson(),
       'lastCompletedDate': lastCompletedDate.millisecondsSinceEpoch,
       'nextDueDate': _nextDueDateTime.millisecondsSinceEpoch,
       'notes': notes,

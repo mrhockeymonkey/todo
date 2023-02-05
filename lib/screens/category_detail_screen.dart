@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:todo/models/category.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 // import 'package:icon_picker/icon_picker.dart';
+import 'package:todo/widgets/custom_color_selection_handle.dart';
 import 'package:todo/providers/category_provider.dart';
 import '../app_colour.dart';
 
@@ -134,6 +135,8 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
           key: _form,
           child: TextFormField(
             style: const TextStyle(color: Colors.white),
+            selectionControls: CustomColorSelectionHandle(Colors.white),
+            cursorColor: Colors.white,
             textCapitalization: TextCapitalization.words,
             initialValue: _categoryTitle,
             autofocus: _shouldFocusTitleField,
@@ -147,6 +150,8 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
               return null;
             },
             decoration: const InputDecoration(
+              hintStyle: TextStyle(color: Colors.white30),
+              labelStyle: TextStyle(color: Colors.white),
               hintText: 'New Category',
               labelText: 'Name',
               focusedBorder: UnderlineInputBorder(

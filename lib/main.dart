@@ -63,19 +63,15 @@ class MyApp extends StatelessWidget {
           floatingActionButtonTheme: const FloatingActionButtonThemeData(
             backgroundColor: AppColour.colorCustom,
           ),
-          inputDecorationTheme: const InputDecorationTheme(
-            hintStyle: TextStyle(color: Colors.white30),
-            labelStyle: TextStyle(color: Colors.white),
-          ),
-          // textButtonTheme: TextButtonThemeData(
-          //   style: TextButton.styleFrom(
-          //     primary: AppColour.colorCustom,
-          //   ),
+          // inputDecorationTheme: const InputDecorationTheme(
+          // hintStyle: TextStyle(color: Colors.white30),
+          // labelStyle: TextStyle(color: Colors.white),
           // ),
-          textSelectionTheme: const TextSelectionThemeData(
-            cursorColor: Colors.white,
-            selectionHandleColor: Colors.white70,
-          ),
+
+          // textSelectionTheme: const TextSelectionThemeData(
+          //   cursorColor: Colors.red,
+          //   selectionHandleColor: Colors.red,
+          // ),
         ),
         initialRoute: '/',
         routes: {
