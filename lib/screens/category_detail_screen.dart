@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/app_constants.dart';
 import 'package:todo/models/category.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
-// import 'package:icon_picker/icon_picker.dart';
+import 'package:todo/widgets/custom_color_selection_handle.dart';
 import 'package:todo/providers/category_provider.dart';
+import 'package:todo/widgets/icon_picker.dart';
 import '../app_colour.dart';
 
 class CategoryDetailScreen extends StatefulWidget {
@@ -25,6 +27,7 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
   String? _categoryIconName = Category.defaultIconName;
   Color _categoryColor = AppColour.colorCustom;
   int? _categoryOrder;
+  String? _iconChoice;
 
   @override
   void initState() {
@@ -46,6 +49,8 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
         _categoryIconName = category.iconName;
         _categoryOrder = category.order;
         _shouldFocusTitleField = false;
+
+        _iconChoice = _categoryIconName;
       }
 
       _isInit = true;
@@ -134,6 +139,8 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
           key: _form,
           child: TextFormField(
             style: const TextStyle(color: Colors.white),
+            selectionControls: CustomColorSelectionHandle(Colors.white),
+            cursorColor: Colors.white,
             textCapitalization: TextCapitalization.words,
             initialValue: _categoryTitle,
             autofocus: _shouldFocusTitleField,
@@ -147,6 +154,8 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
               return null;
             },
             decoration: const InputDecoration(
+              hintStyle: TextStyle(color: Colors.white30),
+              labelStyle: TextStyle(color: Colors.white),
               hintText: 'New Category',
               labelText: 'Name',
               focusedBorder: UnderlineInputBorder(
@@ -181,40 +190,20 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
   }
 
   Future _selectIcon() async {
-    String? choice;
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Pick an icon"),
-        content: SizedBox(
-          height: 500,
-          width: 600,
-          child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-              ),
-              itemCount: Category.icons.length,
-              itemBuilder: (BuildContext context, int index) {
-                var icon = Category.icons.entries.toList()[index];
-                return IconButton(
-                  onPressed: () {
-                    choice = icon.key;
-                  },
-                  icon: Icon(icon.value),
-                );
-              }),
-        ),
-        actions: <Widget>[
-          ElevatedButton(
-            child: const Text('OK'),
-            onPressed: () {
-              setState(() => _categoryIconName = choice);
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
+    var iconChoice = await showDialog<String>(
+        context: context,
+        builder: (context) => IconPicker(
+              currentIcon: _categoryIconName ?? "pin",
+              color: _categoryColor,
+              circleSize: AppConstants.pickerCircleSize,
+              spacing: AppConstants.pickerCircleSpacing,
+            ));
+
+    if (iconChoice != null) {
+      setState(() {
+        _categoryIconName = iconChoice;
+      });
+    }
   }
 
   Future _selectColor() async {
@@ -231,6 +220,9 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
             }
           },
           selectedColor: _categoryColor,
+          elevation: 0.0,
+          circleSize: AppConstants.pickerCircleSize,
+          spacing: AppConstants.pickerCircleSpacing,
         ),
         actions: <Widget>[
           ElevatedButton(

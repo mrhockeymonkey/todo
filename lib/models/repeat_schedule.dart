@@ -58,6 +58,15 @@ class RepeatSchedule {
         periodType = PeriodType.fromJson(map['periodType']),
         dates = map['dates'].cast<int>();
 
+  Map<String, dynamic> toJson() {
+    return {
+      'type': type.toJson(),
+      'period': period,
+      'periodType': periodType.toJson(),
+      'dates': dates,
+    };
+  }
+
   Date calculateNextDueDate(Date lastCompleted) {
     if (type.value == const ScheduleType.periodic().value) {
       return _calculatePeriodicNext(lastCompleted);
@@ -85,28 +94,18 @@ class RepeatSchedule {
 
   Date _calculatePeriodicNext(Date lastCompleted) {
     var jiffy = Jiffy(lastCompleted.dateTime);
-    switch (periodType) {
-      case PeriodType.days():
-        return Date(jiffy.add(days: period).dateTime);
-      case PeriodType.weeks():
-        return Date(jiffy.add(weeks: period).dateTime);
-      case PeriodType.months():
-        return Date(jiffy.add(months: period).dateTime);
-      case PeriodType.years():
-        return Date(jiffy.add(years: period).dateTime);
-      default: // minutes
-        assert(true, "should never happen!");
-        return Date(jiffy.add(minutes: period).dateTime);
+    var pt = periodType.value;
+    if (pt == const PeriodType.days().value) {
+      return Date(jiffy.add(days: period).dateTime);
+    } else if (pt == const PeriodType.weeks().value) {
+      return Date(jiffy.add(weeks: period).dateTime);
+    } else if (pt == const PeriodType.months().value) {
+      return Date(jiffy.add(months: period).dateTime);
+    } else if (pt == const PeriodType.years().value) {
+      return Date(jiffy.add(years: period).dateTime);
+    } else {
+      throw UnsupportedError("Unknown period '${periodType.value}'");
     }
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'type': type,
-      'period': period,
-      'periodType': periodType,
-      'dates': dates,
-    };
   }
 
   RepeatSchedule copyWith({

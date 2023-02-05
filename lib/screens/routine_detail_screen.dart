@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/repeat_schedule.dart';
+import 'package:todo/widgets/custom_color_selection_handle.dart';
 
 import 'package:todo/models/routine.dart';
 import 'package:todo/providers/routine_provider.dart';
@@ -134,6 +135,8 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
           key: _form,
           child: TextFormField(
             style: const TextStyle(color: Colors.white),
+            selectionControls: CustomColorSelectionHandle(Colors.white),
+            cursorColor: Colors.white,
             textCapitalization: TextCapitalization.words,
             initialValue: _routineTitle,
             autofocus: _shouldFocusTitleField,
@@ -147,6 +150,8 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
               return null;
             },
             decoration: const InputDecoration(
+              hintStyle: TextStyle(color: Colors.white30),
+              labelStyle: TextStyle(color: Colors.white),
               hintText: 'Do Something',
               labelText: 'Title',
               focusedBorder: UnderlineInputBorder(

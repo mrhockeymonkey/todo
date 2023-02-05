@@ -5,6 +5,7 @@ import 'package:todo/app_colour.dart';
 import 'package:todo/date.dart';
 import 'package:todo/models/category.dart';
 import 'package:todo/providers/category_provider.dart';
+import 'package:todo/widgets/custom_color_selection_handle.dart';
 
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/models/task.dart';
@@ -166,34 +167,37 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   Widget _buildTitleHeader() => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        height: 72,
-        color: AppColour.colorCustom,
-        child: Form(
-          key: _form,
-          child: TextFormField(
-            style: const TextStyle(color: Colors.white),
-            textCapitalization: TextCapitalization.words,
-            initialValue: _taskTitle,
-            autofocus: _shouldFocusTitleField,
-            onSaved: (String? value) {
-              _taskTitle = value ?? "";
-            },
-            validator: (String? value) {
-              if (value == null || value.isEmpty) {
-                return 'Must enter a task title';
-              }
-              return null;
-            },
-            decoration: const InputDecoration(
-              hintText: 'Do Something',
-              labelText: 'Title',
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white)),
-            ),
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      height: 72,
+      color: AppColour.colorCustom,
+      child: Form(
+        key: _form,
+        child: TextFormField(
+          style: const TextStyle(color: Colors.white),
+          selectionControls: CustomColorSelectionHandle(Colors.white),
+          cursorColor: Colors.white,
+          textCapitalization: TextCapitalization.words,
+          initialValue: _taskTitle,
+          autofocus: _shouldFocusTitleField,
+          onSaved: (String? value) {
+            _taskTitle = value ?? "";
+          },
+          validator: (String? value) {
+            if (value == null || value.isEmpty) {
+              return 'Must enter a task title';
+            }
+            return null;
+          },
+          decoration: const InputDecoration(
+            hintStyle: TextStyle(color: Colors.white30),
+            labelStyle: TextStyle(color: Colors.white),
+            hintText: 'Do Something',
+            labelText: 'Title',
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white)),
           ),
         ),
-      );
+      ));
 
   Widget _buildOptionsList() {
     Category category = _categoryId == null
