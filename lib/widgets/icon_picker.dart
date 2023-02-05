@@ -4,10 +4,14 @@ import 'package:todo/models/category.dart';
 class IconPicker extends StatefulWidget {
   final String currentIcon;
   final Color color;
+  final double circleSize;
+  final double spacing;
 
   const IconPicker({
     required this.currentIcon,
     required this.color,
+    this.circleSize = 45.0,
+    this.spacing = 9.0,
     super.key,
   });
 
@@ -42,26 +46,26 @@ class _IconPickerState extends State<IconPicker> {
   }
 
   Widget _buildIconGridView() {
-    var circleSize = 45.0; // TODO expose as variables
-    var spacing = 9.0;
-
     // Size of dialog
     final double width = MediaQuery.of(context).size.width * 0.8;
-    final double height = MediaQuery.of(context).size.height * 0.6;
     // Number of circle per line, depend on width and circleSize
-    final int nbrCircleLine = width ~/ (circleSize + spacing);
+    final int nbrCircleLine = width ~/ (widget.circleSize + widget.spacing);
 
     return SizedBox(
-      height: height,
-      width: width,
-      child: GridView.count(
-        padding: const EdgeInsets.all(16.0),
-        crossAxisSpacing: spacing,
-        mainAxisSpacing: spacing,
-        crossAxisCount: nbrCircleLine,
-        children: _buildIconButtons(),
-      ),
-    );
+        width: width,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            GridView.count(
+              padding: const EdgeInsets.all(16.0),
+              crossAxisSpacing: widget.spacing,
+              mainAxisSpacing: widget.spacing,
+              crossAxisCount: nbrCircleLine,
+              shrinkWrap: true,
+              children: _buildIconButtons(),
+            ),
+          ],
+        ));
   }
 
   List<Widget> _buildIconButtons() {
@@ -70,25 +74,24 @@ class _IconPickerState extends State<IconPicker> {
 
   Widget _buildIconButton(MapEntry<String, IconData> iconPair) {
     var isSelected = iconPair.key == answer;
-    return GestureDetector(
-        onTap: () => setState(() {
-              answer = iconPair.key;
-            }),
-        child: Material(
-          elevation: 0.0, // TODO cold remove Material if not used
-          shape: const CircleBorder(),
-          child: CircleAvatar(
-            backgroundColor: isSelected ? widget.color : Colors.transparent,
-            child: IconButton(
-              onPressed: () {
-                setState(() {
-                  answer = iconPair.key;
-                });
-              },
-              icon: Icon(iconPair.value,
-                  color: isSelected ? Colors.white : Colors.grey),
-            ),
+    return Material(
+      elevation: 0.0, // TODO cold remove Material if not used
+      shape: const CircleBorder(),
+      child: CircleAvatar(
+        backgroundColor: isSelected ? widget.color : Colors.transparent,
+        child: Container(
+          alignment: Alignment.center,
+          child: IconButton(
+            onPressed: () {
+              setState(() {
+                answer = iconPair.key;
+              });
+            },
+            icon: Icon(iconPair.value,
+                color: isSelected ? Colors.white : Colors.grey),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/app_constants.dart';
 import 'package:todo/models/category.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:todo/widgets/custom_color_selection_handle.dart';
@@ -194,6 +195,8 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
         builder: (context) => IconPicker(
               currentIcon: _categoryIconName ?? "pin",
               color: _categoryColor,
+              circleSize: AppConstants.pickerCircleSize,
+              spacing: AppConstants.pickerCircleSpacing,
             ));
 
     if (iconChoice != null) {
@@ -218,6 +221,8 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
           },
           selectedColor: _categoryColor,
           elevation: 0.0,
+          circleSize: AppConstants.pickerCircleSize,
+          spacing: AppConstants.pickerCircleSpacing,
         ),
         actions: <Widget>[
           ElevatedButton(
