@@ -17,7 +17,6 @@ class CategoriesScreen extends StatefulWidget {
 class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   void initState() {
-    //Provider.of<CategoryProvider>(context, listen: false).fetch();
     super.initState();
   }
 

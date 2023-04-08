@@ -75,6 +75,8 @@ class Task implements DbItem {
     return dueDate!.dateTime.isBefore(DateTime.now()) ? true : false;
   }
 
+  bool get isScheduled => dueDate != null;
+
   Task done() => copyWith(
         isDone: true,
         dueDate: Date.now(),

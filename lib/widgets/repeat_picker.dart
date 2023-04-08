@@ -162,15 +162,13 @@ class _RepeatPickerState extends State<RepeatPicker> {
           width: 60,
           height: 140,
           child: WheelChooser.custom(
-            startPosition:
-                repeatAmmountChoice.indexOf(widget.repeatPickerAnswer.period),
+            startPosition: repeatAmmountChoice.indexOf(answer.period),
             children: repeatAmmountChoice
                 .map((e) => Text(
                       e.toString(),
                       style: TextStyle(
-                          color: widget.repeatPickerAnswer.period == e
-                              ? Colors.black
-                              : Colors.grey),
+                          color:
+                              answer.period == e ? Colors.black : Colors.grey),
                     ))
                 .toList(),
             onValueChanged: (index) {
@@ -186,16 +184,14 @@ class _RepeatPickerState extends State<RepeatPicker> {
           width: 90,
           height: 140,
           child: WheelChooser.custom(
-            startPosition:
-                periodTypeOptions.indexOf(widget.repeatPickerAnswer.periodType),
+            startPosition: periodTypeOptions.indexOf(answer.periodType),
             children: periodTypeOptions
                 .map((periodType) => Text(
                       periodType.value,
                       style: TextStyle(
-                          color:
-                              widget.repeatPickerAnswer.periodType == periodType
-                                  ? Colors.black
-                                  : Colors.grey),
+                          color: answer.periodType == periodType
+                              ? Colors.black
+                              : Colors.grey),
                     ))
                 .toList(),
             onValueChanged: (index) {
