@@ -1,6 +1,7 @@
 import 'package:todo/providers/provider_base.dart';
 
 import '../date.dart';
+import '../models/task.dart';
 import '../models/throw_away_task.dart';
 
 class ThrowAwayTaskProvider extends ProviderBase<ThrowAwayTask> {
@@ -8,7 +9,9 @@ class ThrowAwayTaskProvider extends ProviderBase<ThrowAwayTask> {
 
   ThrowAwayTaskProvider({
     required String tableName,
-  }) : super(tableName: tableName);
+  }) : super(tableName: tableName) {
+    clean();
+  }
 
   @override
   ThrowAwayTask parse(Map<String, dynamic> json) =>
@@ -19,6 +22,11 @@ class ThrowAwayTaskProvider extends ProviderBase<ThrowAwayTask> {
     var items = [...super.items];
     return items;
   }
+
+  void clean() => items
+      .where((i) => i.date.isBefore(Date.now()))
+      .where((i) => i.id != null)
+      .forEach((i) => delete(i.id!));
 
   List<ThrowAwayTask> getByDate(Date date) =>
       items.where((i) => i.date.isAtSameMomentAs(date)).toList();
@@ -37,6 +45,9 @@ class ThrowAwayTaskProvider extends ProviderBase<ThrowAwayTask> {
     await super.updateAll(_stash.values.toList());
     _stash.clear();
   }
+
+  Future AddFromTask(Task task, Date date) async => await addOrUpdate(
+      ThrowAwayTask(id: null, title: task.title, done: false, date: date));
 
   // @override
   // Future addOrUpdate(ThrowAwayTask item, {bool notify = true}) async {

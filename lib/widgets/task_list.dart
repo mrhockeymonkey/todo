@@ -1,13 +1,14 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/task.dart';
-import 'package:todo/providers/category_provider.dart';
-
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/widgets/task_item.dart';
 
 class TaskList extends StatefulWidget {
-  const TaskList({super.key});
+  final List<Task> tasks;
+
+  const TaskList({super.key, required this.tasks});
 
   @override
   State<StatefulWidget> createState() => TaskListState();
@@ -15,44 +16,21 @@ class TaskList extends StatefulWidget {
 
 class TaskListState extends State<TaskList> {
   @override
-  void initState() {
-    //Provider.of<TaskProvider>(context, listen: false).fetch();
-    //Provider.of<CategoryProvider>(context, listen: false).fetch();
-    super.initState();
-  }
+  void initState() => super.initState();
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("Build: TaskList");
-    var tasks = Provider.of<TaskProvider>(context).items;
-    final categoryProvider = Provider.of<CategoryProvider>(context);
-
     // no dueDate set appears on top and then sorted by dueDate ascending
-    tasks.sort(((a, b) {
-      if (a.dueDate == null) return -1;
-      if (b.dueDate == null) return 1;
-      return a.dueDate!.compareTo(b.dueDate!);
-    }));
-
-    // tasks.sort((a, b) {
-    //   final ac = categoryProvider.getCategoryOrDefault(a.categoryId);
-    //   final bc = categoryProvider.getCategoryOrDefault(a.categoryId);
-    //   return ac.order.compareTo(bc.order);
-    // });
-
-    var dueTasks = tasks.where((element) => element.isDue).toList();
-    var doneTasks = tasks.where((element) => element.isDone).toList();
-    var otherTasks = tasks
-        .where((element) =>
-            !dueTasks.contains(element) && !doneTasks.contains(element))
-        .toList();
-
-    tasks = dueTasks + otherTasks + doneTasks;
+    // tasks.sort(((a, b) {
+    //   if (a.dueDate == null) return -1;
+    //   if (b.dueDate == null) return 1;
+    //   return a.dueDate!.compareTo(b.dueDate!);
+    // }));
 
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
-          Task task = tasks[index];
+          Task task = widget.tasks[index];
           return Dismissible(
             key: UniqueKey(),
             direction: DismissDirection.startToEnd,
@@ -60,7 +38,7 @@ class TaskListState extends State<TaskList> {
             child: TaskItem(task: task),
           );
         },
-        childCount: tasks.length,
+        childCount: widget.tasks.length,
       ),
     );
   }

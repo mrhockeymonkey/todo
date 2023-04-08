@@ -29,8 +29,8 @@ class DayPlanList extends StatefulWidget {
 class DayPlanListState extends State<DayPlanList> {
   bool _includeOutstanding = false;
   List<DayPlanToDo> _dayPlanToDos = [];
-  List<DayPlanBacklogTask> _dayPlanTasks = [];
-  List<DayPlanRoutine> _dayPlanRoutines = [];
+  // List<DayPlanBacklogTask> _dayPlanTasks = [];
+  // List<DayPlanRoutine> _dayPlanRoutines = [];
   List<DayPlanBase> _dayPlanItems = [];
 
   @override
@@ -43,37 +43,47 @@ class DayPlanListState extends State<DayPlanList> {
     }
 
     final throwAwayTaskProvider = Provider.of<ThrowAwayTaskProvider>(context);
-    final backlogTaskProvider = Provider.of<TaskProvider>(context);
-    final routineProvider = Provider.of<RoutineProvider>(context);
+    // final backlogTaskProvider = Provider.of<TaskProvider>(context);
+    // final routineProvider = Provider.of<RoutineProvider>(context);
 
     _dayPlanToDos = throwAwayTaskProvider
         .getByDate(widget.date)
         .map((e) => DayPlanToDo(todo: e))
         .toList();
 
-    _dayPlanTasks = backlogTaskProvider
-        .getByDate(widget.date, includeOutstanding: _includeOutstanding)
-        .map((e) => DayPlanBacklogTask(task: e))
-        .toList();
+    if (_dayPlanToDos.isEmpty) {
+      throwAwayTaskProvider.addOrUpdate(ThrowAwayTask(
+        id: null,
+        title: "",
+        done: false,
+        date: widget.date,
+        order: 99999,
+      ));
+    }
 
-    _dayPlanRoutines = routineProvider.items
-        .where((r) =>
-            r.dueDate.isAtSameMomentAs(widget.date) ||
-            (_includeOutstanding && r.dueDate.isBefore(widget.date)))
-        .map((e) => DayPlanRoutine(routine: e))
-        .toList();
+    // _dayPlanTasks = backlogTaskProvider
+    //     .getByDate(widget.date, includeOutstanding: _includeOutstanding)
+    //     .map((e) => DayPlanBacklogTask(task: e))
+    //     .toList();
+
+    // _dayPlanRoutines = routineProvider.items
+    //     .where((r) =>
+    //         r.dueDate.isAtSameMomentAs(widget.date) ||
+    //         (_includeOutstanding && r.dueDate.isBefore(widget.date)))
+    //     .map((e) => DayPlanRoutine(routine: e))
+    //     .toList();
 
     _dayPlanItems = [];
 
     for (var element in _dayPlanToDos) {
       _dayPlanItems.add(element);
     }
-    for (var element in _dayPlanTasks) {
-      _dayPlanItems.add(element);
-    }
-    for (var element in _dayPlanRoutines) {
-      _dayPlanItems.add(element);
-    }
+    // for (var element in _dayPlanTasks) {
+    //   _dayPlanItems.add(element);
+    // }
+    // for (var element in _dayPlanRoutines) {
+    //   _dayPlanItems.add(element);
+    // }
 
     _dayPlanItems.sort((a, b) => a.order.compareTo(b.order)); // descending
     _dayPlanItems.sort((a, b) => b.isFlagged ? 1 : 0); // flagged first
@@ -82,8 +92,6 @@ class DayPlanListState extends State<DayPlanList> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint("Build: ${_toStringCustom()}");
-
     return ReorderableSliverList(
       delegate: ReorderableSliverChildBuilderDelegate(
         (BuildContext context, int index) {
