@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:reorderables/reorderables.dart';
 
 import 'package:todo/models/daily_plan_todo.dart';
-import 'package:todo/models/day_plan_backlog_task.dart';
+import 'package:todo/models/day_plan_task_ptr.dart';
 import 'package:todo/models/day_plan_base.dart';
-import 'package:todo/models/day_plan_routine.dart';
+import 'package:todo/models/day_plan_routine_ptr.dart';
 import 'package:todo/models/routine.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/models/throw_away_task.dart';
@@ -28,9 +28,6 @@ class DayPlanList extends StatefulWidget {
 
 class DayPlanListState extends State<DayPlanList> {
   bool _includeOutstanding = false;
-  List<DayPlanToDo> _dayPlanToDos = [];
-  // List<DayPlanBacklogTask> _dayPlanTasks = [];
-  // List<DayPlanRoutine> _dayPlanRoutines = [];
   List<DayPlanBase> _dayPlanItems = [];
 
   @override
@@ -43,47 +40,26 @@ class DayPlanListState extends State<DayPlanList> {
     }
 
     final throwAwayTaskProvider = Provider.of<ThrowAwayTaskProvider>(context);
-    // final backlogTaskProvider = Provider.of<TaskProvider>(context);
-    // final routineProvider = Provider.of<RoutineProvider>(context);
+    final taskProvider = Provider.of<TaskProvider>(context);
+    final routineProvider = Provider.of<RoutineProvider>(context);
 
-    _dayPlanToDos = throwAwayTaskProvider
-        .getByDate(widget.date)
-        .map((e) => DayPlanToDo(todo: e))
-        .toList();
-
-    if (_dayPlanToDos.isEmpty) {
-      throwAwayTaskProvider.addOrUpdate(ThrowAwayTask(
-        id: null,
-        title: "",
-        done: false,
-        date: widget.date,
-        order: 99999,
-      ));
-    }
-
-    // _dayPlanTasks = backlogTaskProvider
-    //     .getByDate(widget.date, includeOutstanding: _includeOutstanding)
-    //     .map((e) => DayPlanBacklogTask(task: e))
-    //     .toList();
-
-    // _dayPlanRoutines = routineProvider.items
-    //     .where((r) =>
-    //         r.dueDate.isAtSameMomentAs(widget.date) ||
-    //         (_includeOutstanding && r.dueDate.isBefore(widget.date)))
-    //     .map((e) => DayPlanRoutine(routine: e))
-    //     .toList();
-
-    _dayPlanItems = [];
-
-    for (var element in _dayPlanToDos) {
-      _dayPlanItems.add(element);
-    }
-    // for (var element in _dayPlanTasks) {
-    //   _dayPlanItems.add(element);
-    // }
-    // for (var element in _dayPlanRoutines) {
-    //   _dayPlanItems.add(element);
-    // }
+    var items = throwAwayTaskProvider.getByDate(widget.date);
+    _dayPlanItems = items.map<DayPlanBase>((e) {
+      if (e.taskId != null) {
+        return DayPlanTaskPtr(
+          todo: e,
+          task: taskProvider.getItemById(
+              e.taskId!), // TODO move this into the DayPlanTaskPtr class?
+        );
+      } else if (e.routineId != null) {
+        return DayPlanRoutinePtr(
+          todo: e,
+          routine: routineProvider.getItemById(e.routineId!),
+        );
+      } else {
+        return DayPlanToDo(todo: e);
+      }
+    }).toList();
 
     _dayPlanItems.sort((a, b) => a.order.compareTo(b.order)); // descending
     _dayPlanItems.sort((a, b) => b.isFlagged ? 1 : 0); // flagged first
@@ -112,37 +88,17 @@ class DayPlanListState extends State<DayPlanList> {
 
     var next = 0;
     List<ThrowAwayTask> updatedToDos = [];
-    List<Task> updatedTasks = [];
-    List<Routine> updatedRoutines = [];
 
     for (var item in _dayPlanItems) {
       debugPrint("${item.toString()} is now $next");
 
-      switch (item.runtimeType) {
-        case DayPlanToDo:
-          ThrowAwayTask todo = (item as DayPlanToDo).item;
-          updatedToDos.add(todo.copyWith(order: next));
-          break;
-        case DayPlanBacklogTask:
-          Task task = (item as DayPlanBacklogTask).item;
-          updatedTasks.add(task.copyWith(order: next));
-          break;
-        case DayPlanRoutine:
-          Routine routine = (item as DayPlanRoutine).item;
-          updatedRoutines.add(routine.copyWith(order: next));
-          break;
-        default:
-          throw ("Unknown type for day plan list!");
-      }
+      updatedToDos.add(item.item.copyWith(order: next));
 
       next++;
     }
 
     Provider.of<ThrowAwayTaskProvider>(context, listen: false)
         .updateAll(updatedToDos);
-    Provider.of<TaskProvider>(context, listen: false).updateAll(updatedTasks);
-    Provider.of<RoutineProvider>(context, listen: false)
-        .updateAll(updatedRoutines);
   }
 
   String _toStringCustom() =>

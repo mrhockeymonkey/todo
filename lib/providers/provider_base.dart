@@ -10,9 +10,7 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
 
   ProviderBase({
     required this.tableName,
-  }) {
-    _fetch();
-  }
+  });
 
   List<T> get items {
     var items = [..._items.values];
@@ -31,7 +29,7 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
   // extending class must provide a way to convert json to T
   T parse(Map<String, dynamic> json);
 
-  Future _fetch() async {
+  Future fetch() async {
     debugPrint("fetching data from '$tableName' table");
     var fetched = await db.collection(tableName).get();
 

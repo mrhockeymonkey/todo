@@ -1,3 +1,4 @@
+import 'package:todo/models/routine.dart';
 import 'package:todo/providers/provider_base.dart';
 
 import '../date.dart';
@@ -46,8 +47,21 @@ class ThrowAwayTaskProvider extends ProviderBase<ThrowAwayTask> {
     _stash.clear();
   }
 
-  Future AddFromTask(Task task, Date date) async => await addOrUpdate(
-      ThrowAwayTask(id: null, title: task.title, done: false, date: date));
+  Future addFromTask(Task task, Date date) async =>
+      await addOrUpdate(ThrowAwayTask(
+          id: null,
+          title: task.title,
+          isDone: false,
+          date: date,
+          taskId: task.id));
+
+  Future addFromRoutine(Routine routine, Date date) async =>
+      await addOrUpdate(ThrowAwayTask(
+          id: null,
+          title: routine.title,
+          isDone: false,
+          date: date,
+          routineId: routine.id));
 
   // @override
   // Future addOrUpdate(ThrowAwayTask item, {bool notify = true}) async {

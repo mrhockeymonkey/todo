@@ -4,49 +4,54 @@ import 'package:todo/providers/db_item.dart';
 import '../date.dart';
 
 class ThrowAwayTask implements DbItem {
+  // TODO DayPlanItem
   @override
   final String? id;
   final String title;
-  final bool done;
+  final bool isDone;
   final Date date;
   final int order;
   final bool isFlagged;
-  final String?
-      taskId; // this is where we now start neededing a relational model...
+  final String? taskId;
+  final String? routineId;
 
   const ThrowAwayTask({
     required this.id,
     required this.title,
-    required this.done,
+    required this.isDone,
     required this.date,
     this.order = 0,
     this.isFlagged = false,
     this.taskId,
+    this.routineId,
   });
 
   factory ThrowAwayTask.fromJson(Map<String, dynamic> map) => ThrowAwayTask(
-      id: map['id'],
-      title: map['title'],
-      done: map['done'],
-      date: Date.fromMillisecondsSinceEpoch(map['date']),
-      order: map['order'] ?? 0,
-      isFlagged: map['isFlagged'] ?? false,
-      taskId: map['taskId']);
+        id: map['id'],
+        title: map['title'],
+        isDone: map['done'],
+        date: Date.fromMillisecondsSinceEpoch(map['date']),
+        order: map['order'] ?? 0,
+        isFlagged: map['isFlagged'] ?? false,
+        taskId: map['taskId'],
+        routineId: map['routineId'],
+      );
 
   @override
   Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
-        'done': done,
+        'done': isDone,
         'date': date.millisecondsSinceEpoch,
         'order': order,
         'isFlagged': isFlagged,
-        'taskId': taskId
+        'taskId': taskId,
+        'routineId': routineId,
       };
 
   ThrowAwayTask copyWith({
     String? title,
-    bool? done,
+    bool? isDone,
     Date? date,
     int? order,
     bool? isFlagged,
@@ -54,14 +59,15 @@ class ThrowAwayTask implements DbItem {
       ThrowAwayTask(
           id: id,
           title: title ?? this.title,
-          done: done ?? this.done,
+          isDone: isDone ?? this.isDone,
           date: date ?? this.date,
           order: order ?? this.order,
           isFlagged: isFlagged ?? this.isFlagged,
-          taskId: taskId);
+          taskId: taskId,
+          routineId: routineId);
 
-  ThrowAwayTask donee() {
-    return copyWith(done: true);
+  ThrowAwayTask done() {
+    return copyWith(isDone: true);
   }
 
   ThrowAwayTask tomorrow() {

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:todo/models/throw_away_task.dart';
 
-abstract class DayPlanBase<TItem> {
+abstract class DayPlanBase {
+  final ThrowAwayTask item;
+
+  DayPlanBase({required this.item});
+
   Widget build(BuildContext context);
 
-  int get order;
+  int get order => item.order;
 
-  TItem get item;
+  // TItem get item;
 
-  Type get itemtype;
+  // Type get itemtype;
 
-  bool get isDone;
+  bool get isDone => item.isDone;
 
-  bool get isFlagged;
+  bool get isFlagged => item.isFlagged;
 }

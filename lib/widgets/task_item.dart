@@ -88,7 +88,7 @@ class TaskItem extends StatelessWidget {
                         Navigator.of(context).pop();
                         _handleAddToPlan(context);
                       },
-                      icon: const Icon(Icons.fork_right))
+                      icon: const Icon(Entypo.add_to_list))
                 ],
               ),
             ),
@@ -111,5 +111,5 @@ class TaskItem extends StatelessWidget {
 
   void _handleAddToPlan(BuildContext context) =>
       Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-          .AddFromTask(task, Date.now());
+          .addFromTask(task, Date.now());
 }

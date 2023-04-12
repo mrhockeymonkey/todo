@@ -10,10 +10,8 @@ import 'package:uuid/uuid.dart';
 import '../providers/throw_away_task_provider.dart';
 import 'day_plan_actions.dart';
 
-class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
-  ThrowAwayTask todo;
-
-  DayPlanToDo({required this.todo});
+class DayPlanToDo extends DayPlanBase {
+  DayPlanToDo({required ThrowAwayTask todo}) : super(item: todo);
 
   @override
   Widget build(BuildContext context) => Dismissible(
@@ -21,11 +19,11 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
         direction: DismissDirection.startToEnd,
         onDismissed: (direction) => _handleDismiss(context, direction),
         child: ListTile(
-          leading: todo.done
+          leading: super.item.isDone
               ? Icon(Icons.check, color: Colors.grey[350])
               : FlaggedIcon(
                   icon: Entypo.minus,
-                  showFlag: todo.isFlagged,
+                  showFlag: super.item.isFlagged,
                   color: AppColour.colorCustom,
                 ),
           // const Icon(
@@ -38,16 +36,16 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
           ),
           title: TextFormField(
             textCapitalization: TextCapitalization.words,
-            initialValue: todo.title.isEmpty ? null : item.title,
-            enabled: !todo.done,
-            autofocus: todo.title == "",
+            initialValue: super.item.title.isEmpty ? null : item.title,
+            enabled: !super.item.isDone,
+            autofocus: super.item.title == "",
             onEditingComplete: () async =>
                 await Provider.of<ThrowAwayTaskProvider>(context, listen: false)
                     .saveStashed(),
             onChanged: (String newValue) =>
                 Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-                    .stash(todo.copyWith(title: newValue)),
-            style: todo.done
+                    .stash(super.item.copyWith(title: newValue)),
+            style: super.item.isDone
                 ? const TextStyle(
                     decoration: TextDecoration.lineThrough,
                     color: Colors.grey,
@@ -68,11 +66,12 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
     DismissDirection direction,
   ) =>
       Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-          .addOrUpdate(todo.donee());
+          .addOrUpdate(super.item.done());
 
   void _handleSnooze(BuildContext context) {
     var oneDay = const Duration(days: 1);
-    var snoozedTodo = todo.copyWith(date: todo.date.addFromNow(oneDay));
+    var snoozedTodo =
+        super.item.copyWith(date: super.item.date.addFromNow(oneDay));
 
     Provider.of<ThrowAwayTaskProvider>(context, listen: false)
         .addOrUpdate(snoozedTodo);
@@ -80,23 +79,5 @@ class DayPlanToDo extends DayPlanBase<ThrowAwayTask> {
 
   void _handleFlag(BuildContext context) =>
       Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-          .addOrUpdate(todo.copyWith(isFlagged: !todo.isFlagged));
-
-  @override
-  int get order => todo.order;
-
-  @override
-  String toString() => "$runtimeType: ${todo.title}";
-
-  @override
-  Type get itemtype => runtimeType;
-
-  @override
-  ThrowAwayTask get item => todo;
-
-  @override
-  bool get isDone => todo.done;
-
-  @override
-  bool get isFlagged => todo.isFlagged;
+          .addOrUpdate(super.item.copyWith(isFlagged: !super.item.isFlagged));
 }
