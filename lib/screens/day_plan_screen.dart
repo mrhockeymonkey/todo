@@ -47,7 +47,7 @@ class _DailyScreenState extends State<DailyScreen> {
         ..addOrUpdate(ThrowAwayTask(
           id: null,
           title: "",
-          done: false,
+          isDone: false,
           date: date,
           order: 99999,
         ));

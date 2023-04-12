@@ -14,11 +14,12 @@ flutter pub run flutter_launcher_icons
 
 ...until finished:
 
+- clean slate feature
+- - flagged section for tasks list
 - ui fixes
-- - routine period select bold for chosen values
 - - add buttons are awful, redo 
 - - pretty print json in export?
-- - change flat for arrow up?
+- - change flag for arrow up?
 - configurable days ahead, 
 - group tasks by category in task list
 - refactor structure
