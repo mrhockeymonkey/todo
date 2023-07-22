@@ -10,6 +10,7 @@ import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/providers/throw_away_task_provider.dart';
 import 'package:todo/screens/task_detail_screen.dart';
+import 'package:todo/widgets/add_to_dayplan_icon.dart';
 
 import '../date.dart';
 
@@ -88,7 +89,7 @@ class TaskItem extends StatelessWidget {
                         Navigator.of(context).pop();
                         _handleAddToPlan(context);
                       },
-                      icon: const Icon(Entypo.add_to_list))
+                      icon: const AddToDayPlanIcon())
                 ],
               ),
             ),

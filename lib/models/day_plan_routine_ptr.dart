@@ -8,6 +8,7 @@ import 'package:todo/models/throw_away_task.dart';
 import 'package:uuid/uuid.dart';
 
 import '../providers/routine_provider.dart';
+import '../providers/throw_away_task_provider.dart';
 import '../screens/routine_detail_screen.dart';
 import '../widgets/flagged_icon.dart';
 import '../widgets/routine_icon.dart';
@@ -27,15 +28,25 @@ class DayPlanRoutinePtr extends DayPlanBase {
         direction: DismissDirection.startToEnd,
         onDismissed: (direction) => _handleDismiss(context, direction),
         child: ListTile(
-          leading: RoutineIcon(
-            color: AppColour.colorCustom,
-            isFlagged: routine.isFlagged,
+          leading: !routine.isDue
+              ? Icon(Icons.check, color: Colors.grey[350])
+              : RoutineIcon(
+                  color: AppColour.colorCustom,
+                  isFlagged: routine.isFlagged,
+                ),
+          title: Text(
+            routine.title,
+            style: !routine.isDue
+                ? const TextStyle(
+                    decoration: TextDecoration.lineThrough,
+                    color: Colors.grey,
+                  )
+                : null,
           ),
-          // leading: const RoutineIcon(color: AppColour.colorCustom),
-          title: Text(routine.title),
           trailing: DayPlanActions(
-            handleSnooze: _handleSnooze,
-            handleFlag: _handleFlag,
+            // handleSnooze: _handleSnooze,
+            // handleFlag: _handleFlag,
+            handleRemove: _handleRemove,
           ),
           isThreeLine: false,
           onTap: () => Navigator.of(context).pushNamed(
@@ -49,20 +60,26 @@ class DayPlanRoutinePtr extends DayPlanBase {
     BuildContext context,
     DismissDirection direction,
   ) {
+    Provider.of<ThrowAwayTaskProvider>(context, listen: false)
+        .addOrUpdate(super.item.done());
     Provider.of<RoutineProvider>(context, listen: false)
         .addOrUpdate(routine.done());
   }
 
-  void _handleSnooze(BuildContext context) {
-    var oneDay = const Duration(days: 1);
-    var snoozedRoutine =
-        routine.copyWith(nextDueDateTime: routine.dueDate.addFromNow(oneDay));
+  // void _handleSnooze(BuildContext context) {
+  //   var oneDay = const Duration(days: 1);
+  //   var snoozedRoutine =
+  //       routine.copyWith(nextDueDateTime: routine.dueDate.addFromNow(oneDay));
 
-    Provider.of<RoutineProvider>(context, listen: false)
-        .addOrUpdate(snoozedRoutine);
-  }
+  //   Provider.of<RoutineProvider>(context, listen: false)
+  //       .addOrUpdate(snoozedRoutine);
+  // }
 
-  void _handleFlag(BuildContext context) =>
-      Provider.of<RoutineProvider>(context, listen: false)
-          .addOrUpdate(routine.copyWith(isFlagged: !routine.isFlagged));
+  // void _handleFlag(BuildContext context) =>
+  //     Provider.of<RoutineProvider>(context, listen: false)
+  //         .addOrUpdate(routine.copyWith(isFlagged: !routine.isFlagged));
+
+  void _handleRemove(BuildContext context) =>
+      Provider.of<ThrowAwayTaskProvider>(context, listen: false)
+          .delete(super.item.id!);
 }

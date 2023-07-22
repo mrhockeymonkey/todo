@@ -14,17 +14,16 @@ flutter pub run flutter_launcher_icons
 
 ...until finished:
 
-- clean slate feature
-- - flagged section for tasks list
+- lost and found feature
+- - should be able to reover missed tasks from the previous x days
 - ui fixes
 - - add buttons are awful, redo 
 - - pretty print json in export?
-- - change flag for arrow up?
-- configurable days ahead, 
-- group tasks by category in task list
+- - change flag for arrow up? or remove flags???
 - refactor structure
 - publish to play store
 
 ...someday maybe:
 
 - animated loading bar for daily progress
+- group tasks by category in task list

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/providers/throw_away_task_provider.dart';
@@ -20,6 +21,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Future? _dbFetch;
   int _selectedIndex = 1;
+  int taskCount = 0;
+  int routineCount = 0;
   final List<Widget> _pages = [
     const TasksScreen(),
     const DailyScreen(),
@@ -29,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didChangeDependencies() {
     _dbFetch ??= _dbFetch = Future.wait([
+      Provider.of<CategoryProvider>(context).fetch(),
       Provider.of<TaskProvider>(context).fetch(),
       Provider.of<RoutineProvider>(context).fetch(),
       Provider.of<ThrowAwayTaskProvider>(context).fetch(),
@@ -50,6 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) return Container();
 
+          taskCount = Provider.of<TaskProvider>(context).isDueCount;
+          routineCount = Provider.of<RoutineProvider>(context).isDueCount;
+
           return WillPopScope(
             onWillPop: () async => false,
             child: Scaffold(
@@ -57,18 +64,20 @@ class _HomeScreenState extends State<HomeScreen> {
               bottomNavigationBar: BottomNavigationBar(
                 currentIndex: _selectedIndex,
                 onTap: _selectScreen,
-                items: const [
+                items: [
                   BottomNavigationBarItem(
                     label: '',
-                    icon: Icon(Entypo.pin),
+                    icon: BadgeIcon(
+                        icon: Icon(Entypo.pin), badgeCount: taskCount),
                   ),
-                  BottomNavigationBarItem(
+                  const BottomNavigationBarItem(
                     label: '',
                     icon: Icon(Entypo.list),
                   ),
                   BottomNavigationBarItem(
                     label: '',
-                    icon: RoutineIcon(),
+                    icon: BadgeIcon(
+                        icon: RoutineIcon(), badgeCount: routineCount),
                   ),
                 ],
               ),

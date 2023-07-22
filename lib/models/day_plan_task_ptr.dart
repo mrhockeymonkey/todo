@@ -54,6 +54,7 @@ class DayPlanTaskPtr extends DayPlanBase {
         trailing: DayPlanActions(
           handleSnooze: _handleSnooze,
           handleFlag: _handleFlag,
+          handleRemove: _handleRemove,
         ),
         isThreeLine: false,
         onTap: () => Navigator.of(context)
@@ -66,18 +67,26 @@ class DayPlanTaskPtr extends DayPlanBase {
     Provider.of<ThrowAwayTaskProvider>(context, listen: false)
         .addOrUpdate(super.item.done());
     Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task.done());
+    //TODO notify after both?
   }
 
   void _handleSnooze(BuildContext context) {
-    if (task.dueDate == null) return;
-
     var oneDay = const Duration(days: 1);
-    var snoozedTask = task.copyWith(dueDate: task.dueDate!.addFromNow(oneDay));
+    var newDate = super.item.date.addFromNow(oneDay);
 
+    var snoozedToDo = super.item.copyWith(date: newDate);
+    var snoozedTask = task.copyWith(dueDate: newDate);
+
+    Provider.of<ThrowAwayTaskProvider>(context, listen: false)
+        .addOrUpdate(snoozedToDo);
     Provider.of<TaskProvider>(context, listen: false).addOrUpdate(snoozedTask);
   }
 
   void _handleFlag(BuildContext context) =>
       Provider.of<TaskProvider>(context, listen: false)
           .addOrUpdate(task.copyWith(isFlagged: !task.isFlagged));
+
+  void _handleRemove(BuildContext context) =>
+      Provider.of<ThrowAwayTaskProvider>(context, listen: false)
+          .delete(super.item.id!);
 }
