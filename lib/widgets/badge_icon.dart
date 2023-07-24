@@ -13,7 +13,12 @@ class BadgeIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Stack(
         children: <Widget>[
-          icon,
+          SizedBox(
+            height: 35,
+            width: 35,
+            child: icon,
+          ),
+          // icon,
           badgeCount <= 0
               ? const SizedBox(
                   height: 1,
@@ -21,6 +26,7 @@ class BadgeIcon extends StatelessWidget {
                 )
               : Positioned(
                   right: 0,
+                  bottom: 0,
                   child: Container(
                     padding: const EdgeInsets.all(1),
                     decoration: BoxDecoration(

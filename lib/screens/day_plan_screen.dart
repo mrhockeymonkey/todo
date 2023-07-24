@@ -23,9 +23,9 @@ class _DailyScreenState extends State<DailyScreen> {
         appBar: AppBar(
           title: Row(
             children: [
-              const Icon(Entypo.pin),
+              const Icon(Entypo.list),
               Container(width: 10),
-              const Text("Day Plan"),
+              const Text("Sennight"),
             ],
           ),
           actions: [
@@ -53,54 +53,27 @@ class _DailyScreenState extends State<DailyScreen> {
         ));
 
   Widget _buildBody() {
-    var today = DateTime.now();
-    var tomorrow = DateTime.now().add(const Duration(days: 1));
-    var dayAfterNext = DateTime.now().add(const Duration(days: 2));
+    var numberDays = 7;
+    var days = List<int>.generate(numberDays, (index) => index);
+
+    var sections = <Widget>[];
+
+    for (var day in days) {
+      var date = DateTime.now().add(Duration(days: day));
+      sections.add(SliverToBoxAdapter(
+        child: TextHeader(text: Jiffy(date).MMMMEEEEd.toString()),
+      ));
+      sections.add(DayPlanList(date: Date(date)));
+      sections.add(_buildAddButton(Date(date)));
+
+      if (day == 0) {
+        sections.add(const SliverFillRemaining());
+      }
+    }
 
     return CustomScrollView(
       controller: PrimaryScrollController.of(context) ?? ScrollController(),
-      slivers: [
-        // TODAY
-        SliverToBoxAdapter(
-            child: TextHeader(text: Jiffy(today).MMMMEEEEd.toString())),
-        DayPlanList(date: Date(today)),
-        _buildAddButton(Date(today)),
-        const SliverFillRemaining(),
-
-        //TOMORROW
-        SliverToBoxAdapter(
-            child: TextHeader(text: Jiffy(tomorrow).MMMMEEEEd.toString())),
-        DayPlanList(
-          date: Date(tomorrow),
-        ),
-        _buildAddButton(Date(tomorrow)),
-        // SliverToBoxAdapter(
-        //   child: Row(
-        //     children: [
-        //       IconButton(
-        //           onPressed: () => _newThrowAwayTask(Date(tomorrow)),
-        //           icon: const Icon(Icons.add)),
-        //     ],
-        //   ),
-        // ),
-
-        // DAY AFTER
-        SliverToBoxAdapter(
-            child: TextHeader(text: Jiffy(dayAfterNext).MMMMEEEEd.toString())),
-        DayPlanList(
-          date: Date(dayAfterNext),
-        ),
-        _buildAddButton(Date(dayAfterNext)),
-        // SliverToBoxAdapter(
-        //   child: Row(
-        //     children: [
-        //       IconButton(
-        //           onPressed: () => _newThrowAwayTask(Date(dayAfterNext)),
-        //           icon: const Icon(Icons.add)),
-        //     ],
-        //   ),
-        // )
-      ],
+      slivers: sections,
     );
   }
 

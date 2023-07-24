@@ -33,6 +33,7 @@ class DayPlanToDo extends DayPlanBase {
           trailing: DayPlanActions(
             handleSnooze: _handleSnooze,
             handleFlag: _handleFlag,
+            handleRemove: _handleRemove,
           ),
           title: TextFormField(
             textCapitalization: TextCapitalization.words,
@@ -80,4 +81,8 @@ class DayPlanToDo extends DayPlanBase {
   void _handleFlag(BuildContext context) =>
       Provider.of<ThrowAwayTaskProvider>(context, listen: false)
           .addOrUpdate(super.item.copyWith(isFlagged: !super.item.isFlagged));
+
+  void _handleRemove(BuildContext context) =>
+      Provider.of<ThrowAwayTaskProvider>(context, listen: false)
+          .delete(super.item.id!);
 }

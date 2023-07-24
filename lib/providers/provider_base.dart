@@ -22,7 +22,7 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
   T getItemById(String id) {
     T? item = _items[id];
 
-    if (item == null) throw "No item found with id $id";
+    if (item == null) throw "No item of type $T found with id $id";
     return item;
   }
 

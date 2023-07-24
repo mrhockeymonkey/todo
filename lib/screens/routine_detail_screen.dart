@@ -9,6 +9,7 @@ import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/widgets/repeat_picker.dart';
 
 import '../app_colour.dart';
+import '../date.dart';
 
 class RoutineDetailScreen extends StatefulWidget {
   static const String routeName = '/routine-detail';
@@ -29,6 +30,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
   RepeatSchedule _schedule = RepeatSchedule();
   String _notesValue = "";
   bool _displayOnPinned = false;
+  Date? _lastCompletedDate;
 
   @override
   void initState() {
@@ -49,6 +51,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
         _shouldFocusTitleField = false;
         _notesValue = routine.notes;
         _displayOnPinned = routine.displayOnPinned;
+        _lastCompletedDate = routine.lastCompletedDate;
       }
 
       _isInit = true;
@@ -97,6 +100,7 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
       schedule: _schedule,
       notes: _notesValue,
       displayOnPinned: _displayOnPinned,
+      lastCompletedDate: _lastCompletedDate,
     );
     await Provider.of<RoutineProvider>(context, listen: false)
         .addOrUpdate(routine);

@@ -21,7 +21,7 @@ class _TaskScreenState extends State<TasksScreen> {
         appBar: AppBar(
           title: Row(
             children: [
-              const Icon(Entypo.list),
+              const Icon(Entypo.pin),
               Container(width: 10),
               const Text("Tasks"),
             ],
