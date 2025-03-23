@@ -71,6 +71,7 @@ android {
             dimension "app"
         }
     }
+    namespace 'io.github.mrhockeymonkey.todo'
 }
 
 flutter {

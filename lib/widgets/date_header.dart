@@ -19,7 +19,7 @@ class DateHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    Jiffy().MMMMEEEEd.toString(),
+                    Jiffy.now().MMMMEEEEd.toString(),
                     //DateFormat.MMMMEEEEd().format(DateTime.now()),
                     style: const TextStyle(color: Colors.white),
                   ),

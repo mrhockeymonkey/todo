@@ -78,7 +78,7 @@ class RepeatSchedule {
   }
 
   Date _calculateOnDatesNext(Date lastCompleted) {
-    var jiffy = Jiffy(lastCompleted.dateTime);
+    var jiffy = Jiffy.parseFromDateTime(lastCompleted.dateTime);
     var lastCompletedDate = jiffy.date;
     dates.sort();
     var nextDateIndex = dates.indexWhere((date) => date > lastCompletedDate);
@@ -93,7 +93,7 @@ class RepeatSchedule {
   }
 
   Date _calculatePeriodicNext(Date lastCompleted) {
-    var jiffy = Jiffy(lastCompleted.dateTime);
+    var jiffy = Jiffy.parseFromDateTime(lastCompleted.dateTime);
     var pt = periodType.value;
     if (pt == const PeriodType.days().value) {
       return Date(jiffy.add(days: period).dateTime);

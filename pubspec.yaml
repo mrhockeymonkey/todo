@@ -35,14 +35,14 @@ dependencies:
     sdk: flutter
   localstore: ^1.2.3
   provider: ^6.0.3
-  jiffy: ^5.0.0
+  jiffy: ^6.0.0
   flutter_vector_icons: ^2.0.0
   collection: ^1.15.0
   reorderables: ^0.5.0
   uuid: ^3.0.6
   wheel_chooser: ^1.0.0
   flutter_material_color_picker: ^1.1.0+2
-  intl: ^0.17.0
+  intl: ^0.19.0
   flutter_launcher_icons: ^0.11.0
 
 flutter_icons:
