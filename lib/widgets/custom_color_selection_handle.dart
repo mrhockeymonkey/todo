@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/change_notifier.dart';
 
 class CustomColorSelectionHandle extends TextSelectionControls {
   CustomColorSelectionHandle(this.handleColor)
@@ -42,23 +43,38 @@ class CustomColorSelectionHandle extends TextSelectionControls {
 
   @override
   Widget buildToolbar(
-      BuildContext context,
-      Rect globalEditableRegion,
-      double textLineHeight,
-      Offset selectionMidpoint,
-      List<TextSelectionPoint> endpoints,
-      TextSelectionDelegate delegate,
-      ClipboardStatusNotifier? clipboardStatus,
-      Offset? lastSecondaryTapDownPosition) {
-    // ignore: deprecated_member_use
-    return _controls.buildToolbar(
-        context,
-        globalEditableRegion,
-        textLineHeight,
-        selectionMidpoint,
-        endpoints,
-        delegate,
-        clipboardStatus,
-        lastSecondaryTapDownPosition);
+    BuildContext context, 
+    Rect globalEditableRegion, 
+    double textLineHeight, 
+    Offset selectionMidpoint, 
+    List<TextSelectionPoint> endpoints, 
+    TextSelectionDelegate delegate, 
+    ValueListenable<ClipboardStatus>? clipboardStatus, 
+    Offset? lastSecondaryTapDownPosition) {
+    return _controls.buildToolbar(context, globalEditableRegion, textLineHeight, selectionMidpoint, endpoints, delegate, clipboardStatus, lastSecondaryTapDownPosition);
   }
+
+
+
+  // @override
+  // Widget buildToolbar(
+  //     BuildContext context,
+  //     Rect globalEditableRegion,
+  //     double textLineHeight,
+  //     Offset selectionMidpoint,
+  //     List<TextSelectionPoint> endpoints,
+  //     TextSelectionDelegate delegate,
+  //     ClipboardStatusNotifier? clipboardStatus,
+  //     Offset? lastSecondaryTapDownPosition) {
+  //   // ignore: deprecated_member_use
+  //   return _controls.buildToolbar(
+  //       context,
+  //       globalEditableRegion,
+  //       textLineHeight,
+  //       selectionMidpoint,
+  //       endpoints,
+  //       delegate,
+  //       clipboardStatus,
+  //       lastSecondaryTapDownPosition);
+  // }
 }

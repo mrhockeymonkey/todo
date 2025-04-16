@@ -123,5 +123,5 @@ class Routine implements DbItem {
 
   String get dueWhen => isDue
       ? "due"
-      : Jiffy(_nextDueDateTime.dateTime).from(DateTime.now()).toString();
+      : Jiffy.parseFromDateTime(_nextDueDateTime.dateTime).from(Jiffy.now()).toString();
 }

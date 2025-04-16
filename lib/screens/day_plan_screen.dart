@@ -61,7 +61,7 @@ class _DailyScreenState extends State<DailyScreen> {
     for (var day in days) {
       var date = DateTime.now().add(Duration(days: day));
       sections.add(SliverToBoxAdapter(
-        child: TextHeader(text: Jiffy(date).MMMMEEEEd.toString()),
+        child: TextHeader(text: Jiffy.parseFromDateTime(date).MMMMEEEEd.toString()),
       ));
       sections.add(DayPlanList(date: Date(date)));
       sections.add(_buildAddButton(Date(date)));
