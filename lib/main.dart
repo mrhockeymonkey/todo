@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
           Locale('en', 'GB'),
         ],
         theme: ThemeData(
+          useMaterial3: false,
           primarySwatch: AppColour.colorCustom,
           appBarTheme: const AppBarTheme(
             elevation: 0.0,
