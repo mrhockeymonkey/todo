@@ -43,6 +43,8 @@ class DayPlanListState extends State<DayPlanList> {
     final taskProvider = Provider.of<TaskProvider>(context);
     final routineProvider = Provider.of<RoutineProvider>(context);
 
+    var tasks = taskProvider.getByDate(widget.date, includeOutstanding: true).toList();
+
     var items = throwAwayTaskProvider.getByDate(widget.date);
     _dayPlanItems = items.map<DayPlanBase>((e) {
       if (e.taskId != null) {

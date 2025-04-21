@@ -25,7 +25,7 @@ class ThrowAwayTaskProvider extends ProviderBase<ThrowAwayTask> {
   }
 
   void clean() => items
-      .where((i) => i.date.isBefore(Date.now()))
+      .where((i) => i.date.dateTime.isBefore(DateTime.now().add(const Duration(days: 2))))
       .where((i) => i.id != null)
       .forEach((i) => delete(i.id!));
 
