@@ -4,6 +4,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/throw_away_task.dart';
 import 'package:todo/widgets/day_plan_list.dart';
+import 'package:todo/widgets/routine_peek.dart';
 
 import '../app_actions.dart';
 import '../date.dart';
@@ -18,6 +19,20 @@ class DailyScreen extends StatefulWidget {
 }
 
 class _DailyScreenState extends State<DailyScreen> {
+
+  final GlobalKey targetKey = GlobalKey();
+  final GlobalKey scrollViewKey = GlobalKey();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // call back runs after widget has rendered
+      _scrollToTarget();
+    });
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -54,26 +69,38 @@ class _DailyScreenState extends State<DailyScreen> {
 
   Widget _buildBody() {
     var numberDays = 7;
-    var days = List<int>.generate(numberDays, (index) => index);
-
+    var days = List<int>.generate(numberDays, (index) => index - 1);
+    var now = DateTime.now();
+    var targetDay = now.hour < 3 ? -1 : 0;
     var sections = <Widget>[];
 
     for (var day in days) {
-      var date = DateTime.now().add(Duration(days: day));
+      var datetime = now.add(Duration(days: day));
+      var date = Date(datetime);
       sections.add(SliverToBoxAdapter(
-        child: TextHeader(text: Jiffy.parseFromDateTime(date).MMMMEEEEd.toString()),
+        child: TextHeader(
+          key: day == targetDay ? targetKey : null,
+          text: Jiffy.parseFromDateTime(datetime).MMMMEEEEd.toString(),),
       ));
-      sections.add(DayPlanList(date: Date(date)));
-      sections.add(_buildAddButton(Date(date)));
+      sections.add(DayPlanList(date: date));
+      sections.add(_buildAddButton(date));
 
-      if (day == 0) {
+      if (day == targetDay) {
         sections.add(const SliverFillRemaining());
       }
     }
 
-    return CustomScrollView(
-      controller: PrimaryScrollController.of(context) ?? ScrollController(),
-      slivers: sections,
+    return Column(
+      children: [
+        Expanded(
+          child: CustomScrollView(
+            key: scrollViewKey,
+            controller: _scrollController,
+            slivers: sections,
+          ),
+        ),
+        const RoutinePeek()
+      ],
     );
   }
 
@@ -91,12 +118,19 @@ class _DailyScreenState extends State<DailyScreen> {
             )
           ],
         ),
-        // Row(
-        //   children: [
-        //     IconButton(
-        //         onPressed: () => _newThrowAwayTask(Date(today)),
-        //         icon: const Icon(Icons.add)),
-        //   ],
-        // ),
       );
+
+  void _scrollToTarget() {
+    final RenderBox renderBox = targetKey.currentContext?.findRenderObject() as RenderBox;
+    final RenderBox scrollViewBox = scrollViewKey.currentContext?.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero, ancestor: scrollViewBox);
+    final offset = position.dy + _scrollController.offset;
+
+    _scrollController.animateTo(
+      offset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
 }

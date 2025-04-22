@@ -101,7 +101,7 @@ class TaskItem extends StatelessWidget {
     if (task.dueDate == null) return;
 
     var oneDay = const Duration(days: 1);
-    var snoozedTask = task.copyWith(dueDate: task.dueDate!.addFromNow(oneDay));
+    var snoozedTask = task.copyWith(dueDate: task.dueDate!.add(oneDay));
 
     Provider.of<TaskProvider>(context, listen: false).addOrUpdate(snoozedTask);
   }

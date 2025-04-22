@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
-
 import 'package:todo/gauge/animated_gauge.dart';
 import 'package:todo/screens/routine_detail_screen.dart';
 import 'package:todo/models/routine.dart';
 import 'package:todo/widgets/add_to_dayplan_icon.dart';
-
 import '../date.dart';
 import '../providers/throw_away_task_provider.dart';
 

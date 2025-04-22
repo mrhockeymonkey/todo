@@ -39,15 +39,15 @@ class Date {
   }
 
   // Adds a day tothe given date or returns tomorrow if given date is in the past
-  Date addFromNow(Duration duration) {
-    var now = Date.now();
+  // Date addFromNow(Duration duration) {
+  //   var now = Date.now();
 
-    return isBefore(now) ? now.add(duration) : add(duration);
-    // if (this.isBefore(now)) {
-    //   return now.add(duration);
-    // }
-    // return this.add(duration);
-  }
+  //   return isBefore(now) ? now.add(duration) : add(duration);
+  //   // if (this.isBefore(now)) {
+  //   //   return now.add(duration);
+  //   // }
+  //   // return this.add(duration);
+  // }
 
   @override
   String toString() => "Date: $day/$month/$year";

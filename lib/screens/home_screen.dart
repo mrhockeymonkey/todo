@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   BottomNavigationBarItem(
                     label: '',
                     icon: BadgeIcon(
-                        icon: Icon(Entypo.pin), badgeCount: taskCount),
+                        icon: const Icon(Entypo.pin), badgeCount: taskCount),
                   ),
                   const BottomNavigationBarItem(
                     label: '',
@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   BottomNavigationBarItem(
                     label: '',
                     icon: BadgeIcon(
-                        icon: RoutineIcon(), badgeCount: routineCount),
+                        icon: const RoutineIcon(), badgeCount: routineCount),
                   ),
                 ],
               ),
