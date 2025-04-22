@@ -4,6 +4,7 @@ import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/throw_away_task.dart';
 import 'package:todo/widgets/day_plan_list.dart';
+import 'package:todo/widgets/routine_peek.dart';
 
 import '../app_actions.dart';
 import '../date.dart';
@@ -89,10 +90,17 @@ class _DailyScreenState extends State<DailyScreen> {
       }
     }
 
-    return CustomScrollView(
-      key: scrollViewKey,
-      controller: _scrollController,
-      slivers: sections,
+    return Column(
+      children: [
+        Expanded(
+          child: CustomScrollView(
+            key: scrollViewKey,
+            controller: _scrollController,
+            slivers: sections,
+          ),
+        ),
+        const RoutinePeek()
+      ],
     );
   }
 
@@ -110,13 +118,6 @@ class _DailyScreenState extends State<DailyScreen> {
             )
           ],
         ),
-        // Row(
-        //   children: [
-        //     IconButton(
-        //         onPressed: () => _newThrowAwayTask(Date(today)),
-        //         icon: const Icon(Icons.add)),
-        //   ],
-        // ),
       );
 
   void _scrollToTarget() {
@@ -127,7 +128,7 @@ class _DailyScreenState extends State<DailyScreen> {
 
     _scrollController.animateTo(
       offset,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
   }

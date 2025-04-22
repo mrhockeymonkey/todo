@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
 import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/routine.dart';
-import 'package:todo/models/throw_away_task.dart';
 import 'package:uuid/uuid.dart';
 
 import '../providers/routine_provider.dart';
-import '../providers/throw_away_task_provider.dart';
 import '../screens/routine_detail_screen.dart';
-import '../widgets/flagged_icon.dart';
 import '../widgets/routine_icon.dart';
 import 'day_plan_actions.dart';
 
@@ -18,9 +14,8 @@ class DayPlanRoutinePtr extends DayPlanBase {
   final Routine routine;
 
   DayPlanRoutinePtr({
-    required ThrowAwayTask todo,
     required this.routine,
-  }) : super(item: todo);
+  });
 
   @override
   Widget build(BuildContext context) => Dismissible(
@@ -46,7 +41,7 @@ class DayPlanRoutinePtr extends DayPlanBase {
           trailing: DayPlanActions(
             // handleSnooze: _handleSnooze,
             // handleFlag: _handleFlag,
-            handleRemove: _handleRemove,
+              //handleRemove: _handleRemove,
           ),
           isThreeLine: false,
           onTap: () => Navigator.of(context).pushNamed(
@@ -60,11 +55,21 @@ class DayPlanRoutinePtr extends DayPlanBase {
     BuildContext context,
     DismissDirection direction,
   ) {
-    Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-        .addOrUpdate(super.item.done());
     Provider.of<RoutineProvider>(context, listen: false)
         .addOrUpdate(routine.done());
   }
+  
+  @override
+  // TODO: implement isDone
+  bool get isDone => throw UnimplementedError();
+
+  @override
+  // TODO: implement isFlagged
+  bool get isFlagged => throw UnimplementedError();
+
+  @override
+  // TODO: implement order
+  int get order => throw UnimplementedError();
 
   // void _handleSnooze(BuildContext context) {
   //   var oneDay = const Duration(days: 1);
@@ -79,7 +84,7 @@ class DayPlanRoutinePtr extends DayPlanBase {
   //     Provider.of<RoutineProvider>(context, listen: false)
   //         .addOrUpdate(routine.copyWith(isFlagged: !routine.isFlagged));
 
-  void _handleRemove(BuildContext context) =>
-      Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-          .delete(super.item.id!);
+  // void _handleRemove(BuildContext context) =>
+  //     Provider.of<ThrowAwayTaskProvider>(context, listen: false)
+  //         .delete(super.item.id!);
 }

@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reorderables/reorderables.dart';
-
 import 'package:todo/models/daily_plan_todo.dart';
 import 'package:todo/models/day_plan_task_ptr.dart';
 import 'package:todo/models/day_plan_base.dart';
-import 'package:todo/models/day_plan_routine_ptr.dart';
-import 'package:todo/models/routine.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/models/throw_away_task.dart';
-import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/providers/throw_away_task_provider.dart';
 import 'package:todo/date.dart';
@@ -41,27 +37,16 @@ class DayPlanListState extends State<DayPlanList> {
 
     final throwAwayTaskProvider = Provider.of<ThrowAwayTaskProvider>(context);
     final taskProvider = Provider.of<TaskProvider>(context);
-    final routineProvider = Provider.of<RoutineProvider>(context);
 
-    var tasks = taskProvider.getByDate(widget.date, includeOutstanding: true).toList();
+    var tasks = taskProvider
+        .getByDate(widget.date)
+        .map<DayPlanBase>((task) => DayPlanTaskPtr(task: task));
+    var items = throwAwayTaskProvider
+        .getByDate(widget.date)
+        .map<DayPlanBase>((todo) => DayPlanToDo(todo: todo));
+    
 
-    var items = throwAwayTaskProvider.getByDate(widget.date);
-    _dayPlanItems = items.map<DayPlanBase>((e) {
-      if (e.taskId != null) {
-        return DayPlanTaskPtr(
-          todo: e,
-          task: taskProvider.getItemById(
-              e.taskId!), // TODO move this into the DayPlanTaskPtr class?
-        );
-      } else if (e.routineId != null) {
-        return DayPlanRoutinePtr(
-          todo: e,
-          routine: routineProvider.getItemById(e.routineId!),
-        );
-      } else {
-        return DayPlanToDo(todo: e);
-      }
-    }).toList();
+    _dayPlanItems = [...tasks, ...items];
 
     _dayPlanItems.sort((a, b) => a.order.compareTo(b.order)); // descending
     _dayPlanItems.sort((a, b) => b.isFlagged ? 1 : 0); // flagged first
@@ -89,16 +74,22 @@ class DayPlanListState extends State<DayPlanList> {
     _dayPlanItems.insert(newIndex, moved);
 
     var next = 0;
+    List<Task> updatedTasks = [];
     List<ThrowAwayTask> updatedToDos = [];
 
     for (var item in _dayPlanItems) {
       debugPrint("${item.toString()} is now $next");
 
-      updatedToDos.add(item.item.copyWith(order: next));
+      if (item is DayPlanTaskPtr) {
+        updatedTasks.add(item.task.copyWith(order: next));
+      } else if (item is DayPlanToDo) {
+        updatedToDos.add(item.todo.copyWith(order: next));
+      }
 
       next++;
     }
 
+    Provider.of<TaskProvider>(context, listen: false).updateAll(updatedTasks);
     Provider.of<ThrowAwayTaskProvider>(context, listen: false)
         .updateAll(updatedToDos);
   }

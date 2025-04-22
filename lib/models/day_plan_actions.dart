@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:provider/provider.dart';
-import 'package:todo/widgets/add_to_dayplan_icon.dart';
-
-import '../providers/throw_away_task_provider.dart';
 import '../widgets/remove_from_dayplan_icon.dart';
 
 class DayPlanActions extends StatelessWidget {

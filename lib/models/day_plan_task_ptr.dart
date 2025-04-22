@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/task.dart';
-import 'package:todo/models/throw_away_task.dart';
 import 'package:todo/widgets/flagged_icon.dart';
 import 'package:uuid/uuid.dart';
-
-import '../app_colour.dart';
 import '../providers/category_provider.dart';
 import '../providers/task_provider.dart';
-import '../providers/throw_away_task_provider.dart';
 import '../screens/task_detail_screen.dart';
 import 'category.dart';
 import 'day_plan_actions.dart';
@@ -19,9 +14,8 @@ class DayPlanTaskPtr extends DayPlanBase {
   final Task task;
 
   DayPlanTaskPtr({
-    required ThrowAwayTask todo,
     required this.task,
-  }) : super(item: todo);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +48,7 @@ class DayPlanTaskPtr extends DayPlanBase {
         trailing: DayPlanActions(
           handleSnooze: _handleSnooze,
           handleFlag: _handleFlag,
-          handleRemove: _handleRemove,
+          //handleRemove: _handleRemove,
         ),
         isThreeLine: false,
         onTap: () => Navigator.of(context)
@@ -64,29 +58,32 @@ class DayPlanTaskPtr extends DayPlanBase {
   }
 
   void _handleDismiss(BuildContext context, DismissDirection direction) {
-    Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-        .addOrUpdate(super.item.done());
     Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task.done());
-    //TODO notify after both?
   }
 
   void _handleSnooze(BuildContext context) {
     var oneDay = const Duration(days: 1);
-    var newDate = super.item.date.addFromNow(oneDay);
+    var newDate = task.dueDate?.add(oneDay);
 
-    var snoozedToDo = super.item.copyWith(date: newDate);
     var snoozedTask = task.copyWith(dueDate: newDate);
 
-    Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-        .addOrUpdate(snoozedToDo);
     Provider.of<TaskProvider>(context, listen: false).addOrUpdate(snoozedTask);
   }
 
   void _handleFlag(BuildContext context) =>
       Provider.of<TaskProvider>(context, listen: false)
           .addOrUpdate(task.copyWith(isFlagged: !task.isFlagged));
+          
+  @override
+  bool get isDone => task.isDone;
 
-  void _handleRemove(BuildContext context) =>
-      Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-          .delete(super.item.id!);
+  @override
+  bool get isFlagged => task.isFlagged;
+
+  @override
+  int get order => task.order;
+
+  // void _handleRemove(BuildContext context) =>
+  //     Provider.of<ThrowAwayTaskProvider>(context, listen: false)
+  //         .delete(super.item.id!);
 }
