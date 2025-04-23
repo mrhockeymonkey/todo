@@ -38,7 +38,7 @@ class DayPlanRoutinePtr extends DayPlanBase {
                   )
                 : null,
           ),
-          trailing: DayPlanActions(
+          trailing: const DayPlanActions(
             // handleSnooze: _handleSnooze,
             // handleFlag: _handleFlag,
               //handleRemove: _handleRemove,

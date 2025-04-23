@@ -80,7 +80,7 @@ class Routine implements DbItem {
       Routine(
         id: id,
         title: title ?? this.title,
-        schedule: this.schedule,
+        schedule: schedule,
         lastCompletedDate: lastCompletedDate ?? this.lastCompletedDate,
         nextDueDateTime: nextDueDateTime ?? _nextDueDateTime,
         color: color,
@@ -95,7 +95,7 @@ class Routine implements DbItem {
     Date lastCompletedDate = now;
     Date nextDueDateTime = schedule.calculateNextDueDate(now);
     debugPrint(
-        "Routine: '$title', Completed: '${lastCompletedDate}', NextDue: '${_nextDueDateTime}'");
+        "Routine: '$title', Completed: '$lastCompletedDate', NextDue: '$_nextDueDateTime'");
 
     return copyWith(
       lastCompletedDate: lastCompletedDate,
