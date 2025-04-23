@@ -61,11 +61,13 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        AppColour.resetStatusBarColor();
-        return true;
-      },
+    return PopScope(
+      canPop: true,
+      // TODO we used to change the appbar color
+      // onWillPop: () async {
+      //   AppColour.resetStatusBarColor();
+      //   return true;
+      // },
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Category"),

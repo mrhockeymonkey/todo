@@ -14,8 +14,11 @@ flutter pub run flutter_launcher_icons
 
 ...until finished:
 
-- lost and found feature
-- - should be able to reover missed tasks from the previous x days
+- make routines orderable by priority
+- routine peek shoudl pick top priority && isDue
+- ?? swap categories for ike style urgent x important ??
+- migrate to material 3
+- fix all build warnings and vscode problems
 - ui fixes
 - - add buttons are awful, redo 
 - - pretty print json in export?

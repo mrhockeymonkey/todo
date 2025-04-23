@@ -1,10 +1,8 @@
-import 'package:todo/models/task.dart';
 import 'package:todo/providers/db_item.dart';
 
 import '../date.dart';
 
 class ThrowAwayTask implements DbItem {
-  // TODO DayPlanItem
   @override
   final String? id;
   final String title;

@@ -26,8 +26,6 @@ class AppActionsHelper {
       case AppActions.clearCompleted:
         return AppAction(
             friendlyName: "Clear Completed", iconData: Icons.delete);
-      default:
-        throw "Unknown action!";
     }
   }
 
@@ -40,8 +38,6 @@ class AppActionsHelper {
       case AppActions.settings:
         Navigator.of(context).pushNamed(SettingsScreen.routeName);
         break;
-      default:
-        throw "Unknown action!";
     }
   }
 

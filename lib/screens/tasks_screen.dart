@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:todo/screens/task_detail_screen.dart';
-import 'package:todo/widgets/date_header.dart';
 import 'package:provider/provider.dart';
 import '../app_actions.dart';
 import '../widgets/task_list.dart';

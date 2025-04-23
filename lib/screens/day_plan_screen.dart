@@ -82,26 +82,41 @@ class _DailyScreenState extends State<DailyScreen> {
           key: day == targetDay ? targetKey : null,
           text: Jiffy.parseFromDateTime(datetime).MMMMEEEEd.toString(),),
       ));
+      
+      if (day == targetDay) {
+        sections.add(const SliverToBoxAdapter(
+          child: RoutinePeek(),
+        ));
+      }
+
       sections.add(DayPlanList(date: date));
       sections.add(_buildAddButton(date));
+
+      
 
       if (day == targetDay) {
         sections.add(const SliverFillRemaining());
       }
     }
 
-    return Column(
-      children: [
-        Expanded(
-          child: CustomScrollView(
-            key: scrollViewKey,
-            controller: _scrollController,
-            slivers: sections,
-          ),
-        ),
-        const RoutinePeek()
-      ],
+    return CustomScrollView(
+      key: scrollViewKey,
+      controller: _scrollController,
+      slivers: sections,
     );
+
+    // return Column(
+    //   children: [
+    //     Expanded(
+    //       child: CustomScrollView(
+    //         key: scrollViewKey,
+    //         controller: _scrollController,
+    //         slivers: sections,
+    //       ),
+    //     ),
+    //     const RoutinePeek()
+    //   ],
+    // );
   }
 
   Widget _buildAddButton(Date date) => SliverToBoxAdapter(
