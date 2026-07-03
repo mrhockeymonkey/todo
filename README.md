@@ -14,8 +14,6 @@ flutter pub run flutter_launcher_icons
 
 ...until finished:
 
-- make routines orderable by priority
-- routine peek shoudl pick top priority && isDue
 - ?? swap categories for ike style urgent x important ??
 - migrate to material 3
 - fix all build warnings and vscode problems
@@ -25,6 +23,7 @@ flutter pub run flutter_launcher_icons
 - - change flag for arrow up? or remove flags???
 - refactor structure
 - publish to play store
+- fix ndk version error, see https://github.com/flutter/flutter/issues/168906
 
 ...someday maybe:
 
