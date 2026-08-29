@@ -1,0 +1,49 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    name: Android APK (${{ matrix.flavor }})
+    runs-on: ubuntu-latest
+    if: |
+      (matrix.flavor == 'dev' && github.ref != 'refs/heads/master') ||
+      (matrix.flavor == 'prod' && github.ref == 'refs/heads/master')
+    strategy:
+      matrix:
+        include:
+          - flavor: dev
+            build_type: debug
+            retention_days: '10'
+          - flavor: prod
+            build_type: release
+            retention_days: ''
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.6'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK
+        run: flutter build apk --flavor ${{ matrix.flavor }} --${{ matrix.build_type }}
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: todo-${{ matrix.flavor }}
+          path: build/app/outputs/flutter-apk/app-${{ matrix.flavor }}-${{ matrix.build_type }}.apk
+          retention-days: ${{ matrix.retention_days }}
