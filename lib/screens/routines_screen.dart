@@ -15,6 +15,7 @@ class RoutinesScreen extends StatefulWidget {
 }
 
 class _RoutinesScreenState extends State<RoutinesScreen> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +37,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
                 AppActionsHelper.handleAction(value, context),
             itemBuilder: (context) => <PopupMenuEntry<AppActions>>[
               AppActionsHelper.buildAction(AppActions.settings),
+              AppActionsHelper.buildAction(AppActions.tools),
             ],
           )
         ],
@@ -49,10 +51,13 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
     );
   }
 
-  Widget _buildBody() => CustomScrollView(
+  Widget _buildBody() => const CustomScrollView(
         slivers: [
-          SliverList(delegate: SliverChildListDelegate([const DateHeader()])),
-          const RoutineList(),
+          SliverToBoxAdapter(
+            child: DateHeader(),
+          ),
+          RoutineList(),
+          SliverFillRemaining()
         ],
       );
 }

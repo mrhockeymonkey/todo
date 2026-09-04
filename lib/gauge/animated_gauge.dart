@@ -26,12 +26,12 @@ class GaugeState extends State<AnimatedGauge>
 
   @override
   void initState() {
+    super.initState();
     //begin = 0.0;
     //end = widget.percent;
     _controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 1000));
     //_animation = Tween<double>(begin: begin, end: end).animate(_controller);
-    super.initState();
     //widget.driver.listen(on);
   }
 

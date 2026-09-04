@@ -31,10 +31,8 @@ class Routine implements DbItem {
     this.displayOnPinned = false,
     this.order = 0,
     this.isFlagged = false,
-  })  : lastCompletedDate = lastCompletedDate == null ||
-                lastCompletedDate == Date.fromMillisecondsSinceEpoch(0)
-            ? Date.now()
-            : lastCompletedDate,
+  })  : lastCompletedDate =
+            lastCompletedDate ?? Date.fromMillisecondsSinceEpoch(0),
         _nextDueDateTime = nextDueDateTime == null ||
                 nextDueDateTime == Date.fromMillisecondsSinceEpoch(0)
             ? schedule.calculateNextDueDate(Date.now())
@@ -80,7 +78,7 @@ class Routine implements DbItem {
       Routine(
         id: id,
         title: title ?? this.title,
-        schedule: this.schedule,
+        schedule: schedule,
         lastCompletedDate: lastCompletedDate ?? this.lastCompletedDate,
         nextDueDateTime: nextDueDateTime ?? _nextDueDateTime,
         color: color,
@@ -95,7 +93,7 @@ class Routine implements DbItem {
     Date lastCompletedDate = now;
     Date nextDueDateTime = schedule.calculateNextDueDate(now);
     debugPrint(
-        "Routine: '$title', Completed: '${lastCompletedDate}', NextDue: '${_nextDueDateTime}'");
+        "Routine: '$title', Completed: '$lastCompletedDate', NextDue: '$_nextDueDateTime'");
 
     return copyWith(
       lastCompletedDate: lastCompletedDate,
@@ -112,6 +110,10 @@ class Routine implements DbItem {
   Date get dueDate => _nextDueDateTime;
 
   double get percent {
+    if (lastCompletedDate.millisecondsSinceEpoch == 0) {
+      return 1.0;
+    }
+    
     var elapsed = DateTime.now().difference(lastCompletedDate.dateTime);
     var total =
         _nextDueDateTime.dateTime.difference(lastCompletedDate.dateTime);

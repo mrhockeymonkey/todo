@@ -20,7 +20,7 @@ class _RepeatPickerState extends State<RepeatPicker> {
   final List<int> repeatAmmountChoice = List<int>.generate(31, (i) => (i + 1));
   final List<PeriodType> periodTypeOptions = PeriodType.all;
 
-  late final double width; //= MediaQuery.of(context).size.width * 0.8;
+  late final double width = MediaQuery.of(context).size.width * 0.8;
   late final List<RepeatPickerDateChoice> dateChoices;
 
   int _selectedTab = 0;
@@ -43,7 +43,7 @@ class _RepeatPickerState extends State<RepeatPicker> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    width = MediaQuery.of(context).size.width * 0.8;
+    //width = MediaQuery.of(context).size.width * 0.8;
   }
 
   @override

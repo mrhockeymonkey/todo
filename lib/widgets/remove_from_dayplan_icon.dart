@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:todo/app_colour.dart';
 
 class RemoveFromDayPlanIcon extends StatelessWidget {
   const RemoveFromDayPlanIcon({super.key});
