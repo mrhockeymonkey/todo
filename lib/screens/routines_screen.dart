@@ -37,6 +37,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
                 AppActionsHelper.handleAction(value, context),
             itemBuilder: (context) => <PopupMenuEntry<AppActions>>[
               AppActionsHelper.buildAction(AppActions.settings),
+              AppActionsHelper.buildAction(AppActions.tools),
             ],
           )
         ],

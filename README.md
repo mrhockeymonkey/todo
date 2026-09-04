@@ -2,7 +2,12 @@
 
 A "To Do" app catering to my own preferred way of tracking tasks and routines. 
 
-```
+```bash
+# run emulator
+__NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia __VK_LAYER_NV_optimus=NVIDIA_only ~/Android/Sdk/emulator/emulator -avd DEV_Oppo_API_31
+
+#Swap DEV_Oppo_API_31 for another AVD name if needed — ~/Android/Sdk/emulator/emulator -list-avds shows the options (you also have Pixel_8_Pro_API_35).
+
 flutter run --flavor dev
 flutter run --flavor prod --release
 

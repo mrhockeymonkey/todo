@@ -49,6 +49,7 @@ class _DailyScreenState extends State<DailyScreen> {
                   AppActionsHelper.handleAction(value, context),
               itemBuilder: (context) => <PopupMenuEntry<AppActions>>[
                 AppActionsHelper.buildAction(AppActions.settings),
+                AppActionsHelper.buildAction(AppActions.tools),
               ],
             )
           ],
