@@ -25,7 +25,7 @@ class RoutineItem extends StatelessWidget {
           percent: routine.percent,
         ),
       ),
-      title: Text(routine.title),
+      title: Text("${routine.order} ${routine.title}"),
       subtitle: Text(routine.dueWhen),
       trailing: _buildPopupMenu(context),
       onTap: () => Navigator.of(context).pushNamed(

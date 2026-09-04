@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:todo/providers/task_provider.dart';
 
 import './screens/settings_screen.dart';
+import './tools/tools_screen.dart';
 
 enum AppActions {
   settings,
+  tools,
   clearCompleted,
 }
 
@@ -23,11 +25,11 @@ class AppActionsHelper {
     switch (action) {
       case AppActions.settings:
         return AppAction(friendlyName: "Settings", iconData: Icons.settings);
+      case AppActions.tools:
+        return AppAction(friendlyName: "Tools", iconData: Icons.handyman);
       case AppActions.clearCompleted:
         return AppAction(
             friendlyName: "Clear Completed", iconData: Icons.delete);
-      default:
-        throw "Unknown action!";
     }
   }
 
@@ -40,8 +42,9 @@ class AppActionsHelper {
       case AppActions.settings:
         Navigator.of(context).pushNamed(SettingsScreen.routeName);
         break;
-      default:
-        throw "Unknown action!";
+      case AppActions.tools:
+        Navigator.of(context).pushNamed(ToolsScreen.routeName);
+        break;
     }
   }
 

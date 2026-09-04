@@ -13,6 +13,9 @@ import 'package:todo/screens/import_json_screen.dart';
 import 'package:todo/screens/routine_detail_screen.dart';
 import 'package:todo/screens/settings_screen.dart';
 import 'package:todo/screens/task_detail_screen.dart';
+import 'package:todo/tools/kegels/kegel_session_screen.dart';
+import 'package:todo/tools/kegels/kegel_training_screen.dart';
+import 'package:todo/tools/tools_screen.dart';
 import 'app_colour.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -77,6 +80,11 @@ class MyApp extends StatelessWidget {
               const CategoryDetailScreen(),
           ExportJsonPage.routeName: (context) => const ExportJsonPage(),
           ImportJsonScreen.routeName: (context) => const ImportJsonScreen(),
+          ToolsScreen.routeName: (context) => const ToolsScreen(),
+          KegelTrainingScreen.routeName: (context) =>
+              const KegelTrainingScreen(),
+          KegelSessionScreen.routeName: (context) =>
+              const KegelSessionScreen(),
         },
       ),
     );

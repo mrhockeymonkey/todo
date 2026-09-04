@@ -12,7 +12,7 @@ class RoutineProvider extends ProviderBase<Routine> {
   @override
   List<Routine> get items {
     var items = [...super.items];
-    items.sort((a, b) => b.percent.compareTo(a.percent));
+    items.sort((a, b) => a.order.compareTo(b.order));
     return items;
   }
 

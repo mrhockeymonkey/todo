@@ -57,8 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
           taskCount = Provider.of<TaskProvider>(context).isDueCount;
           routineCount = Provider.of<RoutineProvider>(context).isDueCount;
 
-          return WillPopScope(
-            onWillPop: () async => false,
+          return PopScope(
+            canPop: false,
+            //onWillPop: () async => false,
             child: Scaffold(
               body: _pages[_selectedIndex],
               bottomNavigationBar: BottomNavigationBar(
