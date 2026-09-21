@@ -127,9 +127,9 @@ class _DailyScreenState extends State<DailyScreen> {
             Container(
               padding: const EdgeInsets.all(10.0),
               child: FloatingActionButton.small(
-                child: const Icon(Icons.add),
                 onPressed: () => _newThrowAwayTask(date),
                 heroTag: date,
+                child: const Icon(Icons.add),
               ),
             )
           ],

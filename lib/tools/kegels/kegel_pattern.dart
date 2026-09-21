@@ -41,11 +41,11 @@ const KegelPattern _calmWave = KegelPattern(
   name: "Calm Wave",
   description: "Slow, even waves. Contract, hold and release over "
       "four seconds each, then rest before the next wave.",
-  contractSeconds: 4,
-  holdSeconds: 4,
-  relaxSeconds: 4,
-  waitSeconds: 4,
-  reps: 4,
+  contractSeconds: 3.2,
+  holdSeconds: 3,
+  relaxSeconds: 0.5,
+  waitSeconds: 1.5,
+  reps: 8,
 );
 
 /// The training session: exercises run in order with a rest between each.
@@ -54,34 +54,34 @@ const List<KegelPattern> kKegelTraining = [
     name: "Gentle Pulses",
     description: "Quick, light squeezes to warm up. "
         "Contract for a second, then release.",
-    contractSeconds: 1,
-    holdSeconds: 0,
-    relaxSeconds: 1,
-    waitSeconds: 1,
-    reps: 6,
+    contractSeconds: .5,
+    holdSeconds: .7,
+    relaxSeconds: .7,
+    waitSeconds: .5,
+    reps: 10,
   ),
   _calmWave,
   KegelPattern(
     name: "Soft Beats",
     description: "A steady rhythm of short squeezes with a brief hold.",
     contractSeconds: 1,
-    holdSeconds: 1,
-    relaxSeconds: 1,
+    holdSeconds: 2,
+    relaxSeconds: 0.5,
     waitSeconds: 1,
-    reps: 9,
+    reps: 10,
   ),
   KegelPattern(
     name: "Core Beat",
     description: "Continuous medium-paced beats with no pause "
         "between reps.",
-    contractSeconds: 2,
-    holdSeconds: 1,
-    relaxSeconds: 2,
-    waitSeconds: 0,
+    contractSeconds: .3,
+    holdSeconds: 1.9,
+    relaxSeconds: .3,
+    waitSeconds: 2,
     reps: 8,
   ),
   KegelPattern(
-    name: "Front Hold",
+    name: "Front Hold", // TODO
     description: "Squeeze and hold at full strength, focusing on the "
         "front muscles, then release quickly.",
     contractSeconds: 2,
@@ -92,7 +92,7 @@ const List<KegelPattern> kKegelTraining = [
   ),
   _calmWave,
   KegelPattern(
-    name: "Endurance Squeeze",
+    name: "Endurance Squeeze", // TODO
     description: "A long, sustained hold to build endurance. "
         "Release slowly and with control.",
     contractSeconds: 2,
