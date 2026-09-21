@@ -26,9 +26,14 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # .fvm/fvm_config.json is the single source of truth for the SDK version
+      - name: Read pinned Flutter version
+        id: flutter
+        run: echo "version=$(python3 -c "import json;print(json.load(open('.fvm/fvm_config.json'))['flutterSdkVersion'])")" >> "$GITHUB_OUTPUT"
+
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.3'
+          flutter-version: ${{ steps.flutter.outputs.version }}
           channel: stable
           cache: true
 
