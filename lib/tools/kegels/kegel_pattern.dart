@@ -2,7 +2,7 @@
 const double kGetReadySeconds = 3;
 
 /// Seconds of rest between exercises in a training session.
-const double kRestSeconds = 15;
+const double kRestSeconds = 10;
 
 /// A single kegel exercise pattern.
 ///
@@ -84,8 +84,8 @@ const List<KegelPattern> kKegelTraining = [
     name: "Front Hold", // TODO
     description: "Squeeze and hold at full strength, focusing on the "
         "front muscles, then release quickly.",
-    contractSeconds: 2,
-    holdSeconds: 8,
+    contractSeconds: .5,
+    holdSeconds: 5,
     relaxSeconds: 1,
     waitSeconds: 0,
     reps: 2,
@@ -96,7 +96,7 @@ const List<KegelPattern> kKegelTraining = [
     description: "A long, sustained hold to build endurance. "
         "Release slowly and with control.",
     contractSeconds: 2,
-    holdSeconds: 8,
+    holdSeconds: 10,
     relaxSeconds: 2,
     waitSeconds: 0,
     reps: 2,
