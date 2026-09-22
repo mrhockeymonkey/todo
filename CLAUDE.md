@@ -1,0 +1,2 @@
+> **REMINDER: Check https://github.com/fluttercommunity/plus_plugins/issues/3944 periodically.**
+> `device_info_plus` (transitive, via `vibration` -> `vibration_platform_interface`) still applies the Kotlin Gradle Plugin, which blocks setting `android.builtInKotlin=true` in `android/gradle.properties`. Once that issue is resolved and a fixed release is available, upgrade the plugin and finish the Built-in Kotlin migration: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers
