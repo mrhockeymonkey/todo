@@ -2,11 +2,19 @@ import 'dart:async';
 
 import 'package:vibration/vibration.dart';
 
-/// Vibrates the phone in proportion to how full the contraction is.
+/// Constant knock rate: how many vibration pulses fire per second.
+const double kVibrationBeatsPerSecond = 8;
+
+/// Duration of each individual knock pulse, in ms. Kept well under the beat
+/// period so there's a felt gap between knocks rather than one long buzz.
+const int kVibrationPulseMs = 60;
+
+/// Vibrates the phone in a steady "knocking" pattern while contracting.
 ///
-/// Polls [fillGetter] every 100ms and fires overlapping 130ms pulses whose
-/// amplitude tracks the fill, which feels continuous without spamming the
-/// platform channel. Devices without amplitude control get a fixed buzz
+/// Fires a short [kVibrationPulseMs] pulse every beat (at
+/// [kVibrationBeatsPerSecond]), polling [fillGetter] each beat so only the
+/// pulse *amplitude* tracks the fill — the cadence itself stays constant.
+/// Devices without amplitude control still knock at the same cadence, but
 /// only in the upper half of the contraction.
 class VibrationDriver {
   final double Function() fillGetter;
@@ -23,7 +31,10 @@ class VibrationDriver {
     _hasVibrator = await Vibration.hasVibrator();
     _hasAmplitude = await Vibration.hasAmplitudeControl();
     if (_hasVibrator) {
-      _timer = Timer.periodic(const Duration(milliseconds: 100), _tick);
+      final beatPeriod = Duration(
+        milliseconds: (1000 / kVibrationBeatsPerSecond).round(),
+      );
+      _timer = Timer.periodic(beatPeriod, _tick);
     }
   }
 
@@ -32,9 +43,12 @@ class VibrationDriver {
     final fill = fillGetter();
     if (fill < 0.05) return;
     if (_hasAmplitude) {
-      Vibration.vibrate(duration: 130, amplitude: (1 + fill * 254).round());
+      Vibration.vibrate(
+        duration: kVibrationPulseMs,
+        amplitude: (1 + fill * 254).round(),
+      );
     } else if (fill >= 0.5) {
-      Vibration.vibrate(duration: 60);
+      Vibration.vibrate(duration: kVibrationPulseMs);
     }
   }
 

@@ -81,7 +81,7 @@ const List<KegelPattern> kKegelTraining = [
     reps: 8,
   ),
   KegelPattern(
-    name: "Front Hold", // TODO
+    name: "Front Hold",
     description: "Squeeze and hold at full strength, focusing on the "
         "front muscles, then release quickly.",
     contractSeconds: .5,
@@ -92,7 +92,7 @@ const List<KegelPattern> kKegelTraining = [
   ),
   _calmWave,
   KegelPattern(
-    name: "Endurance Squeeze", // TODO
+    name: "Endurance Squeeze",
     description: "A long, sustained hold to build endurance. "
         "Release slowly and with control.",
     contractSeconds: 2,
