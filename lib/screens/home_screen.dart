@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/journey/journey_screen.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/providers/throw_away_task_provider.dart';
 import 'package:todo/screens/day_plan_screen.dart';
-import 'package:todo/screens/routines_screen.dart';
 import 'package:todo/screens/tasks_screen.dart';
-import 'package:todo/widgets/routine_icon.dart';
 import 'package:todo/widgets/badge_icon.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,11 +21,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Future? _dbFetch;
   int _selectedIndex = 1;
   int taskCount = 0;
-  int routineCount = 0;
   final List<Widget> _pages = [
     const TasksScreen(),
     const DailyScreen(),
-    const RoutinesScreen(),
+    const JourneyScreen(),
   ];
 
   @override
@@ -55,7 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
           if (!snapshot.hasData) return Container();
 
           taskCount = Provider.of<TaskProvider>(context).isDueCount;
-          routineCount = Provider.of<RoutineProvider>(context).isDueCount;
 
           return PopScope(
             canPop: false,
@@ -75,10 +72,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     label: '',
                     icon: Icon(Entypo.list),
                   ),
-                  BottomNavigationBarItem(
+                  const BottomNavigationBarItem(
                     label: '',
-                    icon: BadgeIcon(
-                        icon: const RoutineIcon(), badgeCount: routineCount),
+                    icon: Icon(Icons.route),
                   ),
                 ],
               ),

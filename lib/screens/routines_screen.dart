@@ -8,6 +8,8 @@ import 'package:todo/screens/routine_detail_screen.dart';
 import 'package:todo/app_actions.dart';
 
 class RoutinesScreen extends StatefulWidget {
+  static const String routeName = '/routines';
+
   const RoutinesScreen({super.key});
 
   @override

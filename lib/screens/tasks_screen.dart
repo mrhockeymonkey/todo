@@ -32,6 +32,7 @@ class _TaskScreenState extends State<TasksScreen> {
               itemBuilder: (BuildContext context) =>
                   <PopupMenuEntry<AppActions>>[
                 AppActionsHelper.buildAction(AppActions.clearCompleted),
+                AppActionsHelper.buildAction(AppActions.routines),
                 AppActionsHelper.buildAction(AppActions.settings),
                 AppActionsHelper.buildAction(AppActions.tools),
               ],
