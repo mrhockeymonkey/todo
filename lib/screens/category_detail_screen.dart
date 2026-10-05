@@ -27,7 +27,6 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
   String? _categoryIconName = Category.defaultIconName;
   Color _categoryColor = AppColour.colorCustom;
   int? _categoryOrder;
-  String? _iconChoice;
 
   @override
   void initState() {
@@ -49,8 +48,6 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
         _categoryIconName = category.iconName;
         _categoryOrder = category.order;
         _shouldFocusTitleField = false;
-
-        _iconChoice = _categoryIconName;
       }
 
       _isInit = true;
