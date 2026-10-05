@@ -9,8 +9,8 @@ class ThrowAwayTaskProvider extends ProviderBase<ThrowAwayTask> {
   final Map<String, ThrowAwayTask> _stash = {};
 
   ThrowAwayTaskProvider({
-    required String tableName,
-  }) : super(tableName: tableName) {
+    required super.tableName,
+  }) {
     clean();
   }
 
