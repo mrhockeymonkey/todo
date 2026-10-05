@@ -6,8 +6,8 @@ import '../date.dart';
 
 class TaskProvider extends ProviderBase<Task> {
   TaskProvider({
-    required String tableName,
-  }) : super(tableName: tableName);
+    required super.tableName,
+  });
 
   @override
   Task parse(Map<String, dynamic> json) => Task.fromJson(json);

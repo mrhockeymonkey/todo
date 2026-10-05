@@ -3,8 +3,8 @@ import 'package:todo/providers/provider_base.dart';
 
 class CategoryProvider extends ProviderBase<Category> {
   CategoryProvider({
-    required String tableName,
-  }) : super(tableName: tableName);
+    required super.tableName,
+  });
 
   @override
   Category parse(Map<String, dynamic> json) => Category.fromJson(json);

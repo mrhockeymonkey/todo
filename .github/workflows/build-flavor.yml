@@ -40,6 +40,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      # Infos (mostly deprecations) are reported but don't fail the build
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Test
+        run: flutter test
+
       - name: Build APK
         run: flutter build apk --flavor ${{ inputs.flavor }} --${{ inputs.build-type }}
 

@@ -38,22 +38,23 @@ dependencies:
   jiffy: ^6.0.0
   flutter_vector_icons: ^2.0.0
   collection: ^1.15.0
-  reorderables: ^0.5.0
-  uuid: ^3.0.6
+  reorderables: ^0.6.0
+  uuid: ^4.6.0
   wheel_chooser: ^1.0.0
   flutter_material_color_picker: ^1.1.0+2
   intl: ^0.20.3
-  flutter_launcher_icons: ^0.11.0
+  flutter_launcher_icons: ^0.14.4
   vibration: ^3.1.3
   device_info_plus: ^13.2.0
 
-flutter_icons:
+flutter_launcher_icons:
   android: true
   ios: false
   image_path_android: "assets/pin_icon.png"
   min_sdk_android: 21
   adaptive_icon_background: "#ff07618e" # see: AppColor.colorCustom
   adaptive_icon_foreground: "assets/pin_icon.png"
+  adaptive_icon_foreground_inset: 0 # keep pre-0.14 sizing (0.14 defaults to 16)
 
 
 dev_dependencies:
@@ -65,7 +66,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^2.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

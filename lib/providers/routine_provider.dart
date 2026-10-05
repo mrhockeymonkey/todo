@@ -3,8 +3,8 @@ import 'package:todo/providers/provider_base.dart';
 
 class RoutineProvider extends ProviderBase<Routine> {
   RoutineProvider({
-    required String tableName,
-  }) : super(tableName: tableName);
+    required super.tableName,
+  });
 
   @override
   Routine parse(Map<String, dynamic> json) => Routine.fromJson(json);
