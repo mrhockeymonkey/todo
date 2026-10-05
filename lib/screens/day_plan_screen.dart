@@ -48,6 +48,7 @@ class _DailyScreenState extends State<DailyScreen> {
               onSelected: (AppActions value) =>
                   AppActionsHelper.handleAction(value, context),
               itemBuilder: (context) => <PopupMenuEntry<AppActions>>[
+                AppActionsHelper.buildAction(AppActions.routines),
                 AppActionsHelper.buildAction(AppActions.settings),
                 AppActionsHelper.buildAction(AppActions.tools),
               ],

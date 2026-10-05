@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/journey/journey_provider.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/providers/task_provider.dart';
@@ -11,6 +12,7 @@ import 'package:todo/screens/export_json_screen.dart';
 import 'package:todo/screens/home_screen.dart';
 import 'package:todo/screens/import_json_screen.dart';
 import 'package:todo/screens/routine_detail_screen.dart';
+import 'package:todo/screens/routines_screen.dart';
 import 'package:todo/screens/settings_screen.dart';
 import 'package:todo/screens/task_detail_screen.dart';
 import 'package:todo/tools/kegels/kegel_session_screen.dart';
@@ -43,7 +45,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (_) => CategoryProvider(tableName: "categories")),
         ChangeNotifierProvider(
-            create: (_) => ThrowAwayTaskProvider(tableName: "dayplantasks"))
+            create: (_) => ThrowAwayTaskProvider(tableName: "dayplantasks")),
+        ChangeNotifierProvider(create: (_) => JourneyProvider()),
       ],
       child: MaterialApp(
         title: 'Sennight',
@@ -71,6 +74,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (ctx) => const HomeScreen(),
+          RoutinesScreen.routeName: (context) => const RoutinesScreen(),
           RoutineDetailScreen.routeName: (context) =>
               const RoutineDetailScreen(),
           TaskDetailScreen.routeName: (context) => const TaskDetailScreen(),
