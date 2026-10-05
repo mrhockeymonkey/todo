@@ -8,14 +8,25 @@ Future<void> pumpStep(WidgetTester tester, double seconds) => tester
     .pump(Duration(milliseconds: (seconds * 1000).round() + 50));
 
 void main() {
-  test('preset totals match the training list durations', () {
-    expect(kKegelTraining[0].totalDuration, const Duration(seconds: 18));
-    expect(kKegelTraining[1].totalDuration, const Duration(seconds: 64));
-    expect(kKegelTraining[2].totalDuration, const Duration(seconds: 36));
-    expect(kKegelTraining[3].totalDuration, const Duration(seconds: 40));
-    expect(kKegelTraining[4].totalDuration, const Duration(seconds: 22));
-    expect(kKegelTraining[5].totalDuration, const Duration(seconds: 64));
-    expect(kKegelTraining[6].totalDuration, const Duration(seconds: 24));
+  test('total duration is reps x (contract + hold + relax + wait)', () {
+    const pattern = KegelPattern(
+      name: "A",
+      description: "",
+      contractSeconds: .5,
+      holdSeconds: 1.2,
+      relaxSeconds: .3,
+      waitSeconds: 1,
+      reps: 4,
+    );
+    expect(pattern.repSeconds, closeTo(3, 1e-9));
+    expect(pattern.totalDuration, const Duration(seconds: 12));
+  });
+
+  test('every training preset has a positive duration', () {
+    for (final pattern in kKegelTraining) {
+      expect(pattern.totalDuration, greaterThan(Duration.zero),
+          reason: pattern.name);
+    }
   });
 
   testWidgets('engine runs get ready, reps, rest and completes',

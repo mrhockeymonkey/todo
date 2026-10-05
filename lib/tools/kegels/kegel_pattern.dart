@@ -39,8 +39,8 @@ class KegelPattern {
 
 const KegelPattern _calmWave = KegelPattern(
   name: "Calm Wave",
-  description: "Slow, even waves. Contract, hold and release over "
-      "four seconds each, then rest before the next wave.",
+  description: "Slow, flowing waves. Contract, hold and release "
+      "smoothly, then rest briefly before the next wave.",
   contractSeconds: 3.2,
   holdSeconds: 3,
   relaxSeconds: 0.5,
