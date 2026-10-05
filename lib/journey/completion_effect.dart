@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:todo/journey/journey_provider.dart';
 
 const List<Color> kCelebrationColours = [
   Color(0xFFFFC107),
@@ -12,23 +11,22 @@ const List<Color> kCelebrationColours = [
   Color(0xFFEC407A),
 ];
 
-/// A one-shot celebration drawn over the journey, centred on [center]. It
-/// fills its parent (so particles can fly anywhere) and calls [onFinished]
-/// once played so the owner can remove it.
+/// A one-shot celebration drawn over the journey, centred on [center]: a
+/// sparkle burst for a step, or a confetti shower for the [finale]. It fills
+/// its parent (so particles can fly anywhere) and calls [onFinished] once
+/// played so the owner can remove it.
 class CompletionEffect extends StatefulWidget {
-  final JourneyEffect type;
   final Offset center;
   final String label;
-  final bool big;
+  final bool finale;
   final VoidCallback onFinished;
 
   const CompletionEffect({
     super.key,
-    required this.type,
     required this.center,
     required this.label,
     required this.onFinished,
-    this.big = false,
+    this.finale = false,
   });
 
   @override
@@ -40,24 +38,16 @@ class _CompletionEffectState extends State<CompletionEffect>
   late final AnimationController _controller;
   late final List<_Particle> _particles;
 
-  Duration get _duration {
-    switch (widget.type) {
-      case JourneyEffect.confetti:
-        return Duration(milliseconds: widget.big ? 2800 : 2000);
-      case JourneyEffect.shockwave:
-        return const Duration(milliseconds: 1000);
-      case JourneyEffect.burst:
-      case JourneyEffect.hold:
-        return const Duration(milliseconds: 1100);
-    }
-  }
+  Duration get _duration =>
+      widget.finale
+          ? const Duration(milliseconds: 2800)
+          : const Duration(milliseconds: 1100);
 
   @override
   void initState() {
     super.initState();
     final random = Random();
-    final count =
-        widget.type == JourneyEffect.confetti ? (widget.big ? 140 : 70) : 16;
+    final count = widget.finale ? 140 : 16;
     _particles = List.generate(
       count,
       (i) => _Particle.random(random, i, count),
@@ -72,27 +62,15 @@ class _CompletionEffectState extends State<CompletionEffect>
     super.dispose();
   }
 
-  CustomPainter _painter(double t) {
-    switch (widget.type) {
-      case JourneyEffect.confetti:
-        return _ConfettiPainter(
-          t: t,
-          seconds: _duration.inMilliseconds / 1000,
-          center: widget.center,
-          particles: _particles,
-          spread: widget.big ? 1.4 : 1.0,
-        );
-      case JourneyEffect.shockwave:
-        return _ShockwavePainter(t: t, center: widget.center);
-      case JourneyEffect.burst:
-      case JourneyEffect.hold:
-        return _BurstPainter(
-          t: t,
-          center: widget.center,
-          particles: _particles,
-        );
-    }
-  }
+  CustomPainter _painter(double t) =>
+      widget.finale
+          ? _ConfettiPainter(
+            t: t,
+            seconds: _duration.inMilliseconds / 1000,
+            center: widget.center,
+            particles: _particles,
+          )
+          : _BurstPainter(t: t, center: widget.center, particles: _particles);
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
@@ -121,7 +99,7 @@ class _CompletionEffectState extends State<CompletionEffect>
                   widget.label,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: widget.big ? 30 : 24,
+                    fontSize: widget.finale ? 30 : 24,
                     fontWeight: FontWeight.w900,
                     color: const Color(0xFFFFB300),
                     shadows: const [
@@ -258,19 +236,18 @@ class _BurstPainter extends CustomPainter {
 /// Confetti thrown upwards from the node that tumbles back down under gravity.
 class _ConfettiPainter extends CustomPainter {
   static const double _gravity = 1500;
+  static const double _spread = 1.4;
 
   final double t;
   final double seconds;
   final Offset center;
   final List<_Particle> particles;
-  final double spread;
 
   _ConfettiPainter({
     required this.t,
     required this.seconds,
     required this.center,
     required this.particles,
-    required this.spread,
   });
 
   @override
@@ -281,9 +258,9 @@ class _ConfettiPainter extends CustomPainter {
 
     for (final p in particles) {
       // Mostly upwards, fanned out by the particle's angle.
-      final vx = cos(p.angle) * 320 * p.speed * spread;
+      final vx = cos(p.angle) * 320 * p.speed * _spread;
       final vy =
-          -(520 + 380 * p.speed) * spread * (0.75 + 0.25 * sin(p.angle).abs());
+          -(520 + 380 * p.speed) * _spread * (0.75 + 0.25 * sin(p.angle).abs());
       // A bit of air drag on the horizontal so pieces drift rather than fly.
       final drag = 1 - exp(-time * 2.2);
       final x = center.dx + vx * drag / 2.2;
@@ -309,44 +286,4 @@ class _ConfettiPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_ConfettiPainter oldDelegate) => oldDelegate.t != t;
-}
-
-/// A flash and staggered expanding rings, paired with a screen shake by the
-/// journey screen.
-class _ShockwavePainter extends CustomPainter {
-  final double t;
-  final Offset center;
-
-  _ShockwavePainter({required this.t, required this.center});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final flashT = (t / 0.25).clamp(0.0, 1.0);
-    if (flashT < 1) {
-      canvas.drawCircle(
-        center,
-        38 + 40 * flashT,
-        Paint()..color = Colors.white.withValues(alpha: 0.8 * (1 - flashT)),
-      );
-    }
-
-    for (var ring = 0; ring < 3; ring++) {
-      final local = ((t - ring * 0.12) / 0.7).clamp(0.0, 1.0);
-      if (local <= 0 || local >= 1) continue;
-      canvas.drawCircle(
-        center,
-        38 + 170 * Curves.easeOutCubic.transform(local),
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 12 * (1 - local)
-          ..color = (ring == 1
-                  ? const Color(0xFF29B6F6)
-                  : const Color(0xFFFFC107))
-              .withValues(alpha: 1 - local),
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_ShockwavePainter oldDelegate) => oldDelegate.t != t;
 }

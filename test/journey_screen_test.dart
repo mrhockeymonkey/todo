@@ -28,83 +28,79 @@ void main() {
     }
   }
 
+  // The node sits just above its label.
+  Offset nodeFor(WidgetTester tester, String name) =>
+      tester.getCenter(find.text(name)) - const Offset(0, 48);
+
+  Future<void> holdStep(WidgetTester tester, String name) async {
+    final gesture = await tester.startGesture(nodeFor(tester, name));
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump(const Duration(milliseconds: 1000));
+    await gesture.up();
+    await letAnimationsPlay(tester);
+  }
+
   testWidgets('shows every step and starts on the first', (tester) async {
     await pumpJourney(tester);
 
     for (final step in JourneyProvider.steps) {
       expect(find.text(step.name), findsOneWidget);
     }
-    expect(find.text("START"), findsOneWidget);
+    expect(find.text("HOLD"), findsOneWidget);
     expect(journey.completed, 0);
   });
 
-  for (final effect in [
-    JourneyEffect.burst,
-    JourneyEffect.confetti,
-    JourneyEffect.shockwave,
-  ]) {
-    testWidgets('tapping steps in order completes them (${effect.name})', (
-      tester,
-    ) async {
-      await pumpJourney(tester);
-      journey.effect = effect;
+  testWidgets('steps sit in middle, right, middle, left lanes', (tester) async {
+    await pumpJourney(tester);
+    final xs = [
+      for (final name in ["Noji", "Mauril", "Podcast", "Verbs", "Finish"])
+        tester.getCenter(find.text(name)).dx,
+    ];
 
-      for (var i = 0; i < JourneyProvider.steps.length; i++) {
-        // Tap the node itself, which sits just above its label.
-        await tester.tapAt(
-          tester.getCenter(find.text(JourneyProvider.steps[i].name)) -
-              const Offset(0, 50),
-        );
-        await letAnimationsPlay(tester);
-        expect(journey.completed, i + 1);
-      }
+    expect(xs[0], xs[2]);
+    expect(xs[0], xs[4]);
+    expect(xs[1] - xs[0], greaterThan(0));
+    expect(xs[1] - xs[0], closeTo(xs[0] - xs[3], 0.01));
+  });
 
-      expect(journey.isFinished, isTrue);
-      expect(find.text("START"), findsNothing);
-    });
-  }
+  testWidgets('holding steps in order completes the journey', (tester) async {
+    await pumpJourney(tester);
+
+    for (var i = 0; i < JourneyProvider.steps.length; i++) {
+      await holdStep(tester, JourneyProvider.steps[i].name);
+      expect(journey.completed, i + 1);
+    }
+
+    expect(journey.isFinished, isTrue);
+    expect(find.text("HOLD"), findsNothing);
+  });
+
+  testWidgets('a quick tap does not complete a step', (tester) async {
+    await pumpJourney(tester);
+
+    await tester.tapAt(nodeFor(tester, "Noji"));
+    await letAnimationsPlay(tester);
+
+    expect(journey.completed, 0);
+  });
 
   testWidgets('locked steps cannot be skipped to', (tester) async {
     await pumpJourney(tester);
 
-    await tester.tapAt(
-      tester.getCenter(find.text("Podcast")) - const Offset(0, 50),
-    );
-    await letAnimationsPlay(tester);
+    await holdStep(tester, "Podcast");
 
     expect(journey.completed, 0);
-  });
-
-  testWidgets('hold mode needs a long press, not a tap', (tester) async {
-    await pumpJourney(tester);
-    journey.effect = JourneyEffect.hold;
-    await tester.pump();
-    final node = tester.getCenter(find.text("Noji")) - const Offset(0, 50);
-
-    await tester.tapAt(node);
-    await letAnimationsPlay(tester);
-    expect(journey.completed, 0);
-
-    final gesture = await tester.startGesture(node);
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.pump(const Duration(milliseconds: 1000));
-    await gesture.up();
-    await letAnimationsPlay(tester);
-    expect(journey.completed, 1);
   });
 
   testWidgets('reset returns to the first step', (tester) async {
     await pumpJourney(tester);
-    await tester.tapAt(
-      tester.getCenter(find.text("Noji")) - const Offset(0, 50),
-    );
-    await letAnimationsPlay(tester);
+    await holdStep(tester, "Noji");
     expect(journey.completed, 1);
 
     await tester.tap(find.byTooltip("Reset journey"));
     await letAnimationsPlay(tester);
 
     expect(journey.completed, 0);
-    expect(find.text("START"), findsOneWidget);
+    expect(find.text("HOLD"), findsOneWidget);
   });
 }

@@ -18,17 +18,16 @@ class JourneyScreen extends StatefulWidget {
 
 class _JourneyScreenState extends State<JourneyScreen>
     with TickerProviderStateMixin {
-  static const double _topPadding = 120;
-  static const double _spacing = 140;
+  static const double _topPadding = 110;
+  static const double _spacing = 125;
+
+  /// Steps weave between three lanes: middle, right, middle, left, ...
+  static const List<int> _lanes = [0, 1, 0, -1];
   static const double _bottomPadding = 120;
   static const List<String> _cheers = ["Nice!", "Great!", "Bravo!", "Super!"];
 
   /// How far along the road the fill has travelled, in steps.
   late final AnimationController _path;
-  late final AnimationController _shake = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 450),
-  );
 
   /// Effects live in the app overlay so confetti can fly over the app bar
   /// rather than being clipped by the scroll view.
@@ -51,7 +50,6 @@ class _JourneyScreenState extends State<JourneyScreen>
   void dispose() {
     _clearEffects();
     _path.dispose();
-    _shake.dispose();
     super.dispose();
   }
 
@@ -60,13 +58,7 @@ class _JourneyScreenState extends State<JourneyScreen>
     if (index != journey.completed) return;
 
     journey.complete(index);
-    HapticFeedback.heavyImpact();
-    _spawnEffect(
-      journey.effect,
-      _centers[index],
-      _cheers[_random.nextInt(_cheers.length)],
-    );
-    if (journey.effect == JourneyEffect.shockwave) _shake.forward(from: 0);
+    _spawnEffect(_centers[index], _cheers[_random.nextInt(_cheers.length)]);
 
     // Let the node pop first, then run the road to the next stop.
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -81,22 +73,12 @@ class _JourneyScreenState extends State<JourneyScreen>
             if (!mounted || !journey.isFinished) return;
             if (_path.value < JourneyProvider.steps.length) return;
             HapticFeedback.heavyImpact();
-            _spawnEffect(
-              JourneyEffect.confetti,
-              _centers.last,
-              "Journey complete!",
-              big: true,
-            );
+            _spawnEffect(_centers.last, "Journey complete!", finale: true);
           });
     });
   }
 
-  void _spawnEffect(
-    JourneyEffect type,
-    Offset center,
-    String label, {
-    bool big = false,
-  }) {
+  void _spawnEffect(Offset center, String label, {bool finale = false}) {
     final overlay = Overlay.of(context);
     final journeyBox =
         _journeyKey.currentContext?.findRenderObject() as RenderBox?;
@@ -113,10 +95,9 @@ class _JourneyScreenState extends State<JourneyScreen>
               child: Material(
                 type: MaterialType.transparency,
                 child: CompletionEffect(
-                  type: type,
                   center: position,
                   label: label,
-                  big: big,
+                  finale: finale,
                   onFinished: () {
                     if (_effects.remove(entry)) entry.remove();
                   },
@@ -187,88 +168,73 @@ class _JourneyScreenState extends State<JourneyScreen>
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(child: _buildJourney(journey)),
-          _buildEffectPicker(journey),
-        ],
-      ),
+      body: _buildJourney(journey),
     );
   }
 
   Widget _buildJourney(JourneyProvider journey) => LayoutBuilder(
     builder: (context, constraints) {
       final width = constraints.maxWidth;
-      final swing = min(width / 2 - JourneyNode.boxWidth / 2, 110.0);
+      final laneWidth = min(width / 2 - JourneyNode.boxWidth / 2, 90.0);
       const steps = JourneyProvider.steps;
 
-      // One stop per step plus a trophy at the end, weaving left/right.
+      // One stop per step plus a trophy at the end.
       _centers = [
         for (var i = 0; i <= steps.length; i++)
-          Offset(width / 2 + sin(i * 0.9) * swing, _topPadding + i * _spacing),
+          Offset(
+            width / 2 + _lanes[i % _lanes.length] * laneWidth,
+            _topPadding + i * _spacing,
+          ),
       ];
       final height = _centers.last.dy + _bottomPadding;
 
       return SingleChildScrollView(
         child: AnimatedBuilder(
-          animation: Listenable.merge([_path, _shake]),
+          animation: _path,
           builder: (context, _) {
-            final t = _shake.value;
-            final shake =
-                t == 0 || t == 1
-                    ? Offset.zero
-                    : Offset(
-                      sin(t * pi * 10) * 10 * (1 - t),
-                      cos(t * pi * 8) * 4 * (1 - t),
-                    );
-
-            return Transform.translate(
-              offset: shake,
-              child: SizedBox(
-                key: _journeyKey,
-                width: width,
-                height: height,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Positioned.fill(
-                      child: CustomPaint(
-                        painter: JourneyPathPainter(
-                          points: _centers,
-                          progress: _path.value,
-                          trackColor: Colors.grey.shade300,
-                          fillColor: const Color(0xFFFFC107),
-                        ),
+            return SizedBox(
+              key: _journeyKey,
+              width: width,
+              height: height,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Positioned.fill(
+                    child: CustomPaint(
+                      painter: JourneyPathPainter(
+                        points: _centers,
+                        progress: _path.value,
+                        trackColor: Colors.grey.shade300,
+                        fillColor: const Color(0xFFFFC107),
                       ),
                     ),
-                    for (var i = 0; i < steps.length; i++)
-                      _positionNode(
-                        _centers[i],
-                        JourneyNode(
-                          key: ValueKey(steps[i].name),
-                          icon: steps[i].icon,
-                          label: steps[i].name,
-                          state: _stateFor(i, journey.completed),
-                          holdToComplete: journey.effect == JourneyEffect.hold,
-                          onComplete: () => _completeStep(i),
-                        ),
-                      ),
+                  ),
+                  for (var i = 0; i < steps.length; i++)
                     _positionNode(
-                      _centers.last,
+                      _centers[i],
                       JourneyNode(
-                        key: const ValueKey("trophy"),
-                        icon: Icons.emoji_events,
-                        doneIcon: Icons.emoji_events,
-                        label: "Finish",
-                        state:
-                            journey.isFinished &&
-                                    _path.value >= steps.length - 0.001
-                                ? JourneyNodeState.done
-                                : JourneyNodeState.locked,
+                        key: ValueKey(steps[i].name),
+                        icon: steps[i].icon,
+                        label: steps[i].name,
+                        state: _stateFor(i, journey.completed),
+                        onComplete: () => _completeStep(i),
                       ),
                     ),
-                  ],
-                ),
+                  _positionNode(
+                    _centers.last,
+                    JourneyNode(
+                      key: const ValueKey("trophy"),
+                      icon: Icons.emoji_events,
+                      doneIcon: Icons.emoji_events,
+                      label: "Finish",
+                      state:
+                          journey.isFinished &&
+                                  _path.value >= steps.length - 0.001
+                              ? JourneyNodeState.done
+                              : JourneyNodeState.locked,
+                    ),
+                  ),
+                ],
               ),
             );
           },
@@ -281,30 +247,5 @@ class _JourneyScreenState extends State<JourneyScreen>
     left: center.dx - JourneyNode.boxWidth / 2,
     top: center.dy - JourneyNode.size / 2,
     child: node,
-  );
-
-  Widget _buildEffectPicker(JourneyProvider journey) => Material(
-    elevation: 4,
-    child: SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 6,
-          children: [
-            for (final effect in JourneyEffect.values)
-              ChoiceChip(
-                visualDensity: VisualDensity.compact,
-                labelPadding: const EdgeInsets.only(left: 2, right: 6),
-                avatar: Icon(effect.iconData, size: 18),
-                label: Text(effect.friendlyName),
-                selected: journey.effect == effect,
-                onSelected: (_) => journey.effect = effect,
-              ),
-          ],
-        ),
-      ),
-    ),
   );
 }

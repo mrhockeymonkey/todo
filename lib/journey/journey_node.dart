@@ -6,21 +6,17 @@ import 'package:todo/app_colour.dart';
 
 enum JourneyNodeState { locked, current, done }
 
-/// A chunky "3D" button on the journey path. It sits on a darker base and
-/// presses down into it when touched, bounces when it changes state and, for
-/// the current step, pulses with a bobbing call-to-action bubble.
+/// A round, elevated button on the journey path. The current step is
+/// completed by holding it down until a ring fills; it pulses with a bobbing
+/// call-to-action bubble until then. Nodes bounce when they change state.
 class JourneyNode extends StatefulWidget {
-  static const double size = 76;
-  static const double depth = 7;
-  static const double boxWidth = 140;
+  static const double size = 64;
+  static const double boxWidth = 120;
 
   final IconData icon;
   final IconData doneIcon;
   final String label;
   final JourneyNodeState state;
-
-  /// When true the current step must be held down until a ring fills.
-  final bool holdToComplete;
   final VoidCallback? onComplete;
 
   const JourneyNode({
@@ -29,7 +25,6 @@ class JourneyNode extends StatefulWidget {
     required this.label,
     required this.state,
     this.doneIcon = Icons.check_rounded,
-    this.holdToComplete = false,
     this.onComplete,
   });
 
@@ -38,16 +33,18 @@ class JourneyNode extends StatefulWidget {
 }
 
 class _NodePalette {
-  final Color top;
-  final Color base;
+  final Color fill;
   final Color icon;
   final Color label;
 
-  const _NodePalette(this.top, this.base, this.icon, this.label);
+  const _NodePalette(this.fill, this.icon, this.label);
 }
 
 class _JourneyNodeState extends State<JourneyNode>
     with TickerProviderStateMixin {
+  static const double _restingElevation = 6;
+  static const double _pressedElevation = 1;
+
   static final _bounceScale = TweenSequence<double>([
     TweenSequenceItem(
       tween: Tween(
@@ -94,7 +91,6 @@ class _JourneyNodeState extends State<JourneyNode>
   int _holdTick = 0;
 
   bool get _isCurrent => widget.state == JourneyNodeState.current;
-  bool get _isHoldMode => widget.holdToComplete && _isCurrent;
 
   @override
   void initState() {
@@ -149,32 +145,28 @@ class _JourneyNodeState extends State<JourneyNode>
 
   void _onTapDown(TapDownDetails _) {
     setState(() => _pressed = true);
-    if (_isHoldMode) _hold.forward();
+    if (_isCurrent) _hold.forward();
   }
 
-  void _onTapUp(TapUpDetails _) {
+  void _onTapUp(TapUpDetails _) => _release();
+
+  void _onTapCancel() => _release();
+
+  void _release() {
     setState(() => _pressed = false);
-    if (_isHoldMode) {
-      if (!_hold.isCompleted) _hold.reverse();
-      return;
-    }
+    if (_isCurrent && !_hold.isCompleted) _hold.reverse();
+  }
+
+  void _onTap() {
     switch (widget.state) {
       case JourneyNodeState.locked:
         HapticFeedback.lightImpact();
         _shake.forward(from: 0);
         break;
       case JourneyNodeState.current:
-        widget.onComplete?.call();
-        break;
       case JourneyNodeState.done:
-        HapticFeedback.selectionClick();
         break;
     }
-  }
-
-  void _onTapCancel() {
-    setState(() => _pressed = false);
-    if (_isHoldMode && !_hold.isCompleted) _hold.reverse();
   }
 
   _NodePalette get _palette {
@@ -182,21 +174,18 @@ class _JourneyNodeState extends State<JourneyNode>
       case JourneyNodeState.locked:
         return _NodePalette(
           Colors.grey.shade300,
-          Colors.grey.shade400,
           Colors.grey.shade500,
           Colors.grey.shade500,
         );
       case JourneyNodeState.current:
-        return _NodePalette(
-          const Color(0xFF1287C4),
-          AppColour.colorCustom.shade300,
+        return const _NodePalette(
+          Color(0xFF1287C4),
           Colors.white,
           AppColour.colorCustom,
         );
       case JourneyNodeState.done:
         return const _NodePalette(
           Color(0xFFFFC107),
-          Color(0xFFE09B00),
           Colors.white,
           Color(0xFFC88A00),
         );
@@ -206,9 +195,8 @@ class _JourneyNodeState extends State<JourneyNode>
   @override
   Widget build(BuildContext context) {
     const size = JourneyNode.size;
-    const depth = JourneyNode.depth;
     const boxWidth = JourneyNode.boxWidth;
-    const ringRadius = size / 2 + 26;
+    const ringRadius = size / 2 + 22;
     final palette = _palette;
 
     return AnimatedBuilder(
@@ -216,7 +204,7 @@ class _JourneyNodeState extends State<JourneyNode>
       builder: (context, _) {
         final scale =
             _bounceScale.evaluate(_bounce) *
-            (1 - 0.1 * Curves.easeOut.transform(_hold.value));
+            (1 - 0.08 * Curves.easeOut.transform(_hold.value));
         final shakeDx = sin(_shake.value * pi * 6) * 8 * (1 - _shake.value);
         // Tremble as the hold nears completion to build anticipation.
         final trembleDx =
@@ -226,7 +214,7 @@ class _JourneyNodeState extends State<JourneyNode>
 
         return SizedBox(
           width: boxWidth,
-          height: size + depth + 30,
+          height: size + 30,
           child: Stack(
             clipBehavior: Clip.none,
             children: [
@@ -241,43 +229,37 @@ class _JourneyNodeState extends State<JourneyNode>
                       painter: _RingPainter(
                         pulse: _pulse.value,
                         hold: _hold.value,
-                        colour: palette.top,
+                        colour: palette.fill,
                       ),
                     ),
                   ),
                 ),
-              // Keyed so the GestureDetector survives the ring above being
-              // removed mid-press when a hold completes.
+              // Keyed so the button survives the ring above being removed
+              // mid-press when a hold completes.
               Positioned(
                 key: const ValueKey("button"),
                 left: boxWidth / 2 - size / 2,
                 top: 0,
                 width: size,
-                height: size + depth,
+                height: size,
                 child: Transform.translate(
                   offset: Offset(shakeDx + trembleDx, 0),
                   child: Transform.scale(
                     scale: scale,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTapDown: _onTapDown,
-                      onTapUp: _onTapUp,
-                      onTapCancel: _onTapCancel,
-                      child: _buildButton(palette),
-                    ),
+                    child: _buildButton(palette),
                   ),
                 ),
               ),
               Positioned(
                 left: 0,
                 right: 0,
-                top: size + depth + 6,
+                top: size + 8,
                 child: Text(
                   widget.label,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
-                    fontSize: 15,
+                    fontSize: 14,
                     color: palette.label,
                   ),
                 ),
@@ -286,13 +268,10 @@ class _JourneyNodeState extends State<JourneyNode>
                 Positioned(
                   left: 0,
                   right: 0,
-                  top: -60 + sin(_pulse.value * 2 * pi) * 4,
+                  top: -54 + sin(_pulse.value * 2 * pi) * 4,
                   child: IgnorePointer(
                     child: Center(
-                      child: _Bubble(
-                        text: widget.holdToComplete ? "HOLD" : "START",
-                        colour: palette.top,
-                      ),
+                      child: _Bubble(text: "HOLD", colour: palette.fill),
                     ),
                   ),
                 ),
@@ -304,63 +283,40 @@ class _JourneyNodeState extends State<JourneyNode>
   }
 
   Widget _buildButton(_NodePalette palette) {
-    const size = JourneyNode.size;
-    const depth = JourneyNode.depth;
-    const duration = Duration(milliseconds: 120);
+    final isDone = widget.state == JourneyNodeState.done;
 
-    return Stack(
-      children: [
-        Positioned(
-          top: depth,
-          left: 0,
-          child: AnimatedContainer(
-            duration: duration,
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              color: palette.base,
-              shape: BoxShape.circle,
+    // Material animates both the elevation and the colour change for us.
+    return Material(
+      shape: const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+      color: palette.fill,
+      elevation: _pressed ? _pressedElevation : _restingElevation,
+      animationDuration: const Duration(milliseconds: 120),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        splashColor: Colors.white24,
+        highlightColor: Colors.black12,
+        onTap: _onTap,
+        onTapDown: _onTapDown,
+        onTapUp: _onTapUp,
+        onTapCancel: _onTapCancel,
+        child: Center(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            reverseDuration: const Duration(milliseconds: 80),
+            switchInCurve: Curves.elasticOut,
+            transitionBuilder:
+                (child, animation) =>
+                    ScaleTransition(scale: animation, child: child),
+            child: Icon(
+              isDone ? widget.doneIcon : widget.icon,
+              key: ValueKey(isDone),
+              color: palette.icon,
+              size: isDone ? 36 : 28,
             ),
           ),
         ),
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 60),
-          top: _pressed ? depth : 0,
-          left: 0,
-          child: AnimatedContainer(
-            duration: duration,
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: RadialGradient(
-                center: const Alignment(-0.3, -0.4),
-                radius: 0.9,
-                colors: [
-                  Color.lerp(palette.top, Colors.white, 0.25)!,
-                  palette.top,
-                ],
-              ),
-            ),
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              reverseDuration: const Duration(milliseconds: 80),
-              switchInCurve: Curves.elasticOut,
-              transitionBuilder:
-                  (child, animation) =>
-                      ScaleTransition(scale: animation, child: child),
-              child: Icon(
-                widget.state == JourneyNodeState.done
-                    ? widget.doneIcon
-                    : widget.icon,
-                key: ValueKey(widget.state == JourneyNodeState.done),
-                color: palette.icon,
-                size: widget.state == JourneyNodeState.done ? 42 : 34,
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
@@ -381,7 +337,7 @@ class _RingPainter extends CustomPainter {
     if (hold == 0) {
       canvas.drawCircle(
         center,
-        nodeRadius + 4 + 16 * Curves.easeOut.transform(pulse),
+        nodeRadius + 4 + 14 * Curves.easeOut.transform(pulse),
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 4
@@ -390,23 +346,23 @@ class _RingPainter extends CustomPainter {
       return;
     }
 
-    final rect = Rect.fromCircle(center: center, radius: nodeRadius + 12);
+    const ringRadius = nodeRadius + 10;
     canvas.drawCircle(
       center,
-      nodeRadius + 12,
+      ringRadius,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 8
+        ..strokeWidth = 7
         ..color = Colors.grey.shade300,
     );
     canvas.drawArc(
-      rect,
+      Rect.fromCircle(center: center, radius: ringRadius),
       -pi / 2,
       2 * pi * hold,
       false,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 8
+        ..strokeWidth = 7
         ..strokeCap = StrokeCap.round
         ..color = const Color(0xFFFFC107),
     );
