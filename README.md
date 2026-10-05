@@ -8,11 +8,11 @@ __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia __VK_LAYER_NV_optim
 
 #Swap DEV_Oppo_API_31 for another AVD name if needed — ~/Android/Sdk/emulator/emulator -list-avds shows the options (you also have Pixel_8_Pro_API_35).
 
-flutter run --flavor dev
-flutter run --flavor prod --release
+fvm flutter run --flavor dev
+fvm flutter run --flavor prod --release
 
 # to regenerate icons
-flutter pub run flutter_launcher_icons
+fvm dart run flutter_launcher_icons
 ```
 
 ## Things left  to do...

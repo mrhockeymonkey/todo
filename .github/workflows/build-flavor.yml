@@ -26,10 +26,10 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      # .fvm/fvm_config.json is the single source of truth for the SDK version
+      # .fvmrc is the single source of truth for the SDK version
       - name: Read pinned Flutter version
         id: flutter
-        run: echo "version=$(python3 -c "import json;print(json.load(open('.fvm/fvm_config.json'))['flutterSdkVersion'])")" >> "$GITHUB_OUTPUT"
+        run: echo "version=$(python3 -c "import json;print(json.load(open('.fvmrc'))['flutter'])")" >> "$GITHUB_OUTPUT"
 
       - uses: subosito/flutter-action@v2
         with:
