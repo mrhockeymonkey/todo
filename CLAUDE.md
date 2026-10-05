@@ -3,4 +3,4 @@
 
 ## Flutter SDK
 
-The Flutter version is pinned in `.fvmrc` and managed with [fvm](https://fvm.app). Always run Flutter/Dart via fvm, exactly as you would locally — e.g. `fvm flutter pub get`, `fvm flutter analyze`, `fvm flutter test`, `fvm dart run ...`. Never call bare `flutter`/`dart`. In cloud sessions, `.claude/hooks/session-start.sh` installs fvm and the pinned SDK.
+The Flutter version is pinned in `.fvmrc` and managed with [fvm](https://fvm.app). Always run Flutter/Dart via fvm, exactly as you would locally — e.g. `fvm flutter pub get`, `fvm flutter analyze`, `fvm flutter test`, `fvm dart run ...`. Never call bare `flutter`/`dart`. In cloud sessions, the environment setup script (reference copy: `.claude/cloud-setup.sh`) pre-installs fvm and the SDK into the cached image, and `.claude/hooks/session-start.sh` makes sure the version in `.fvmrc` is installed and on PATH.
