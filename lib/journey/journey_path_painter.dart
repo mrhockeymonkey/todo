@@ -16,8 +16,16 @@ class JourneyPathPainter extends CustomPainter {
     required this.fillColor,
   });
 
+  static const double _strokeWidth = 5;
+  static const double _dash = 8;
+  static const double _gap = 10;
+
+  /// How far the control points reach along each node's vertical tangent,
+  /// as a fraction of the vertical distance. Over 0.5 gives a deeper S-bend.
+  static const double _bend = 0.7;
+
   static Path _segment(Offset from, Offset to) {
-    final bend = (to.dy - from.dy) * 0.5;
+    final bend = (to.dy - from.dy) * _bend;
     return Path()
       ..moveTo(from.dx, from.dy)
       ..cubicTo(from.dx, from.dy + bend, to.dx, to.dy - bend, to.dx, to.dy);
@@ -25,33 +33,31 @@ class JourneyPathPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final track =
+    Paint stroke(Color colour) =>
         Paint()
-          ..color = trackColor
+          ..color = colour
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 14
+          ..strokeWidth = _strokeWidth
           ..strokeCap = StrokeCap.round;
-    final fill =
-        Paint()
-          ..color = fillColor
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 14
-          ..strokeCap = StrokeCap.round;
+    final track = stroke(trackColor);
+    final fill = stroke(fillColor);
 
-    final segments = <Path>[
-      for (var i = 0; i < points.length - 1; i++)
-        _segment(points[i], points[i + 1]),
-    ];
+    for (var i = 0; i < points.length - 1; i++) {
+      final metric = _segment(points[i], points[i + 1]).computeMetrics().first;
+      final filled = metric.length * (progress - i).clamp(0.0, 1.0);
 
-    for (final segment in segments) {
-      canvas.drawPath(segment, track);
-    }
-
-    for (var i = 0; i < segments.length; i++) {
-      final amount = (progress - i).clamp(0.0, 1.0);
-      if (amount <= 0) break;
-      final metric = segments[i].computeMetrics().first;
-      canvas.drawPath(metric.extractPath(0, metric.length * amount), fill);
+      // Each dash is grey, or gold up to how far the fill has travelled.
+      for (var start = 0.0; start < metric.length; start += _dash + _gap) {
+        final end = (start + _dash).clamp(0.0, metric.length);
+        if (filled >= end) {
+          canvas.drawPath(metric.extractPath(start, end), fill);
+        } else if (filled > start) {
+          canvas.drawPath(metric.extractPath(start, filled), fill);
+          canvas.drawPath(metric.extractPath(filled, end), track);
+        } else {
+          canvas.drawPath(metric.extractPath(start, end), track);
+        }
+      }
     }
   }
 

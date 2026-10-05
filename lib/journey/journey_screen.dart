@@ -204,7 +204,7 @@ class _JourneyScreenState extends State<JourneyScreen>
                       painter: JourneyPathPainter(
                         points: _centers,
                         progress: _path.value,
-                        trackColor: Colors.grey.shade300,
+                        trackColor: Colors.grey.shade400,
                         fillColor: const Color(0xFFFFC107),
                       ),
                     ),

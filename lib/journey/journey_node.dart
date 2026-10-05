@@ -253,14 +253,26 @@ class _JourneyNodeState extends State<JourneyNode>
               Positioned(
                 left: 0,
                 right: 0,
-                top: size + 8,
-                child: Text(
-                  widget.label,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 14,
-                    color: palette.label,
+                top: size + 6,
+                // Backed by the page colour so the path passes behind it.
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      widget.label,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 14,
+                        color: palette.label,
+                      ),
+                    ),
                   ),
                 ),
               ),
