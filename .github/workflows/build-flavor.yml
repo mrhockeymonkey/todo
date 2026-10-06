@@ -47,7 +47,25 @@ jobs:
       - name: Test
         run: flutter test
 
+      # Each flavor has its own signing key (ANDROID_KEYSTORE_DEV_* / ANDROID_KEYSTORE_PROD_*)
+      # so every APK of a flavor can update the previously installed one
+      - name: Decode signing keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets[format('ANDROID_KEYSTORE_{0}_BASE64', inputs.flavor)] }}
+          FLAVOR: ${{ inputs.flavor }}
+        shell: bash
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::Missing secret ANDROID_KEYSTORE_${FLAVOR^^}_BASE64"
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.jks"
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/upload.jks" >> "$GITHUB_ENV"
+
       - name: Build APK
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets[format('ANDROID_KEYSTORE_{0}_PASSWORD', inputs.flavor)] }}
+          ANDROID_KEY_ALIAS: todo-${{ inputs.flavor }}
         run: flutter build apk --flavor ${{ inputs.flavor }} --${{ inputs.build-type }}
 
       - name: Upload APK artifact

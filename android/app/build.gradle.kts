@@ -25,11 +25,28 @@ android {
         versionName = flutter.versionName
     }
 
+    // CI signs every APK with a stable key (one per flavor, from GitHub secrets)
+    // so each new APK installs as an update over the previous one. Locally,
+    // without these env vars, builds fall back to the machine's debug key.
+    val keystorePath = System.getenv("ANDROID_KEYSTORE_PATH")
+    signingConfigs {
+        if (keystorePath != null) {
+            create("ci") {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            }
+        }
+    }
+    val apkSigningConfig = signingConfigs.findByName("ci") ?: signingConfigs.getByName("debug")
+
     buildTypes {
+        debug {
+            signingConfig = apkSigningConfig
+        }
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = apkSigningConfig
         }
     }
 
