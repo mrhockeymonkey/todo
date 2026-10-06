@@ -50,7 +50,7 @@ class _DailyScreenState extends State<DailyScreen> {
               itemBuilder: (context) => <PopupMenuEntry<AppActions>>[
                 AppActionsHelper.buildAction(AppActions.routines),
                 AppActionsHelper.buildAction(AppActions.settings),
-                AppActionsHelper.buildAction(AppActions.tools),
+                AppActionsHelper.buildAction(AppActions.kegels),
               ],
             )
           ],
