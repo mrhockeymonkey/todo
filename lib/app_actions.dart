@@ -5,12 +5,12 @@ import 'package:todo/providers/task_provider.dart';
 
 import './screens/routines_screen.dart';
 import './screens/settings_screen.dart';
-import './tools/tools_screen.dart';
+import './tools/kegels/kegel_training_screen.dart';
 
 enum AppActions {
   routines,
   settings,
-  tools,
+  kegels,
   clearCompleted,
 }
 
@@ -31,8 +31,9 @@ class AppActionsHelper {
             friendlyName: "Routines", iconData: Entypo.circular_graph);
       case AppActions.settings:
         return AppAction(friendlyName: "Settings", iconData: Icons.settings);
-      case AppActions.tools:
-        return AppAction(friendlyName: "Tools", iconData: Icons.handyman);
+      case AppActions.kegels:
+        return AppAction(
+            friendlyName: "Kegels", iconData: Icons.fitness_center);
       case AppActions.clearCompleted:
         return AppAction(
             friendlyName: "Clear Completed", iconData: Icons.delete);
@@ -51,8 +52,8 @@ class AppActionsHelper {
       case AppActions.settings:
         Navigator.of(context).pushNamed(SettingsScreen.routeName);
         break;
-      case AppActions.tools:
-        Navigator.of(context).pushNamed(ToolsScreen.routeName);
+      case AppActions.kegels:
+        Navigator.of(context).pushNamed(KegelTrainingScreen.routeName);
         break;
     }
   }

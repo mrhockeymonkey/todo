@@ -163,7 +163,7 @@ class _JourneyScreenState extends State<JourneyScreen>
                 (context) => <PopupMenuEntry<AppActions>>[
                   AppActionsHelper.buildAction(AppActions.routines),
                   AppActionsHelper.buildAction(AppActions.settings),
-                  AppActionsHelper.buildAction(AppActions.tools),
+                  AppActionsHelper.buildAction(AppActions.kegels),
                 ],
           ),
         ],
