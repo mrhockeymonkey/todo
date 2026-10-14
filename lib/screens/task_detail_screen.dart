@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
 import 'package:todo/date.dart';
 import 'package:todo/models/category.dart';
+import 'package:todo/models/priority.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:todo/widgets/custom_color_selection_handle.dart';
 
@@ -30,6 +31,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   String? _categoryId;
   Date? _selectedDate;
   String _notesValue = "";
+  Priority _priority = Priority.notImportant;
 
   @override
   void didChangeDependencies() {
@@ -39,8 +41,10 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
       var taskId = ModalRoute.of(context)?.settings.arguments;
 
       if (taskId is String) {
-        final task = Provider.of<TaskProvider>(context, listen: false)
-            .getItemById(taskId);
+        final task = Provider.of<TaskProvider>(
+          context,
+          listen: false,
+        ).getItemById(taskId);
 
         _taskId = task.id;
         _taskTitle = task.title;
@@ -49,6 +53,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
         _isPinned = task.isFlagged;
         _selectedDate = task.dueDate;
         _notesValue = task.notes;
+        _priority = task.priority;
       }
 
       _isInit = true;
@@ -61,17 +66,11 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
       appBar: AppBar(
         title: const Text("Task"),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: _delete,
-          )
+          IconButton(icon: const Icon(Icons.delete), onPressed: _delete),
         ],
       ),
       body: Column(
-        children: <Widget>[
-          _buildTitleHeader(),
-          _buildOptionsList(),
-        ],
+        children: <Widget>[_buildTitleHeader(), _buildOptionsList()],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _save,
@@ -100,6 +99,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
       isFlagged: _isPinned,
       dueDate: _selectedDate,
       notes: _notesValue,
+      priority: _priority,
     );
     await Provider.of<TaskProvider>(context, listen: false).addOrUpdate(task);
 
@@ -134,10 +134,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
               children: <Widget>[
-                Icon(
-                  categories[i].icon,
-                  color: Colors.white,
-                ),
+                Icon(categories[i].icon, color: Colors.white),
                 const SizedBox(width: 10),
                 Text(
                   categories[i].title,
@@ -153,9 +150,7 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
     var picked = await showDialog<int>(
       context: context,
       builder: (BuildContext context) {
-        return SimpleDialog(
-          children: options,
-        );
+        return SimpleDialog(children: options);
       },
     );
 
@@ -166,55 +161,101 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
     }
   }
 
+  //---------- priority picker popup
+  Future _selectPriority() async {
+    var picked = await showDialog<Priority>(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          children: [
+            for (var priority in Priority.values)
+              SimpleDialogOption(
+                onPressed: () {
+                  Navigator.pop(context, priority);
+                },
+                child: Container(
+                  color: priority.color,
+                  height: 80.0,
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Row(
+                    children: <Widget>[
+                      const Icon(Icons.priority_high, color: Colors.white),
+                      const SizedBox(width: 10),
+                      Text(
+                        priority.label,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+
+    if (picked != null) {
+      setState(() {
+        _priority = picked;
+      });
+    }
+  }
+
   Widget _buildTitleHeader() => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 25),
-      height: 72,
-      color: AppColour.colorCustom,
-      child: Form(
-        key: _form,
-        child: TextFormField(
-          style: const TextStyle(color: Colors.white),
-          selectionControls: CustomColorSelectionHandle(Colors.white),
-          cursorColor: Colors.white,
-          textCapitalization: TextCapitalization.words,
-          initialValue: _taskTitle,
-          autofocus: _shouldFocusTitleField,
-          onSaved: (String? value) {
-            _taskTitle = value ?? "";
-          },
-          validator: (String? value) {
-            if (value == null || value.isEmpty) {
-              return 'Must enter a task title';
-            }
-            return null;
-          },
-          decoration: const InputDecoration(
-            hintStyle: TextStyle(color: Colors.white30),
-            labelStyle: TextStyle(color: Colors.white),
-            hintText: 'Do Something',
-            labelText: 'Title',
-            focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.white)),
+    padding: const EdgeInsets.symmetric(horizontal: 25),
+    height: 72,
+    color: AppColour.colorCustom,
+    child: Form(
+      key: _form,
+      child: TextFormField(
+        style: const TextStyle(color: Colors.white),
+        selectionControls: CustomColorSelectionHandle(Colors.white),
+        cursorColor: Colors.white,
+        textCapitalization: TextCapitalization.words,
+        initialValue: _taskTitle,
+        autofocus: _shouldFocusTitleField,
+        onSaved: (String? value) {
+          _taskTitle = value ?? "";
+        },
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return 'Must enter a task title';
+          }
+          return null;
+        },
+        decoration: const InputDecoration(
+          hintStyle: TextStyle(color: Colors.white30),
+          labelStyle: TextStyle(color: Colors.white),
+          hintText: 'Do Something',
+          labelText: 'Title',
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
           ),
         ),
-      ));
+      ),
+    ),
+  );
 
   Widget _buildOptionsList() {
-    Category category = _categoryId == null
-        ? Category.defaultCategory()
-        : Provider.of<CategoryProvider>(context).getItemById(_categoryId!);
+    Category category =
+        _categoryId == null
+            ? Category.defaultCategory()
+            : Provider.of<CategoryProvider>(context).getItemById(_categoryId!);
 
     return ListView(
       shrinkWrap: true, // constrain listview within remaining column space
       children: [
         ListTile(
           title: const Text('Category'),
-          leading: Icon(
-            category.icon,
-            color: category.color,
-          ),
+          leading: Icon(category.icon, color: _priority.color),
           subtitle: Text(category.title),
           onTap: _selectCategory,
+        ),
+        ListTile(
+          title: const Text('Priority'),
+          leading: Icon(Icons.priority_high, color: _priority.color),
+          subtitle: Text(_priority.label),
+          onTap: _selectPriority,
         ),
         // ListTile(
         //     title: Text("Pin"),
@@ -232,23 +273,28 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
         //     }),
         ListTile(
           title: const Text("When"),
-          leading: Icon(Icons.today,
-              color: _selectedDate != null
-                  ? category.color
-                  : AppColour.inactiveColor),
-          trailing: _selectedDate != null
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    setState(() {
-                      _selectedDate = null;
-                    });
-                  },
-                )
-              : null,
-          subtitle: _selectedDate != null
-              ? Text(_selectedDate!.yMMMd())
-              : const Text("At Some Point"),
+          leading: Icon(
+            Icons.today,
+            color:
+                _selectedDate != null
+                    ? _priority.color
+                    : AppColour.inactiveColor,
+          ),
+          trailing:
+              _selectedDate != null
+                  ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      setState(() {
+                        _selectedDate = null;
+                      });
+                    },
+                  )
+                  : null,
+          subtitle:
+              _selectedDate != null
+                  ? Text(_selectedDate!.yMMMd())
+                  : const Text("At Some Point"),
           onTap: _selectDate,
         ),
         ListTile(
@@ -271,9 +317,10 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
           leading: Icon(
             //Icons.subject,
             FontAwesome.sticky_note,
-            color: _notesValue != ""
-                ? AppColour.colorCustom
-                : AppColour.inactiveColor,
+            color:
+                _notesValue != ""
+                    ? AppColour.colorCustom
+                    : AppColour.inactiveColor,
           ),
         ),
       ],
@@ -283,10 +330,11 @@ class TaskDetailScreenState extends State<TaskDetailScreen> {
   //---------- datepicker popup
   Future _selectDate() async {
     DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now().subtract(const Duration(days: 365)),
-        lastDate: DateTime.now().add(const Duration(days: 365 * 2)));
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+    );
     if (picked != null) {
       setState(() {
         _selectedDate = Date(picked);

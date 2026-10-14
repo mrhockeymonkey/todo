@@ -43,7 +43,7 @@ class DayPlanTaskPtr extends DayPlanBase {
             ? Icon(Icons.check, color: Colors.grey[350])
             : FlaggedIcon(
                 icon: category.icon,
-                color: category.color,
+                color: task.priority.color,
                 showFlag: task.isFlagged),
         trailing: DayPlanActions(
           handleSnooze: _handleSnooze,
