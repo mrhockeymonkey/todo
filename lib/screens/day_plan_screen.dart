@@ -1,14 +1,12 @@
 import "package:flutter/material.dart";
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:provider/provider.dart';
-import 'package:todo/models/throw_away_task.dart';
 import 'package:todo/widgets/day_plan_list.dart';
+import 'package:todo/widgets/new_day_plan_task.dart';
 import 'package:todo/widgets/routine_peek.dart';
 
 import '../app_actions.dart';
 import '../date.dart';
-import '../providers/throw_away_task_provider.dart';
 import '../widgets/text_header.dart';
 
 class DailyScreen extends StatefulWidget {
@@ -23,6 +21,7 @@ class _DailyScreenState extends State<DailyScreen> {
   final GlobalKey targetKey = GlobalKey();
   final GlobalKey scrollViewKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
+  Date? _draftDate;
 
   @override
   void initState() {
@@ -58,16 +57,7 @@ class _DailyScreenState extends State<DailyScreen> {
         body: _buildBody(),
       );
 
-  void _newThrowAwayTask(Date date) =>
-      Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-        ..saveStashed()
-        ..addOrUpdate(ThrowAwayTask(
-          id: null,
-          title: "",
-          isDone: false,
-          date: date,
-          order: 99999,
-        ));
+  void _newTask(Date date) => setState(() => _draftDate = date);
 
   Widget _buildBody() {
     var numberDays = 7;
@@ -92,6 +82,17 @@ class _DailyScreenState extends State<DailyScreen> {
       }
 
       sections.add(DayPlanList(date: date));
+
+      if (_draftDate == date) {
+        sections.add(SliverToBoxAdapter(
+          child: NewDayPlanTask(
+            key: ValueKey(date),
+            date: date,
+            onClose: () => setState(() => _draftDate = null),
+          ),
+        ));
+      }
+
       sections.add(_buildAddButton(date));
 
       
@@ -128,8 +129,15 @@ class _DailyScreenState extends State<DailyScreen> {
             Container(
               padding: const EdgeInsets.all(10.0),
               child: FloatingActionButton.small(
-                onPressed: () => _newThrowAwayTask(date),
+                onPressed: () => _newTask(date),
                 heroTag: date,
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.grey,
+                elevation: 0,
+                focusElevation: 0,
+                hoverElevation: 0,
+                highlightElevation: 0,
+                disabledElevation: 0,
                 child: const Icon(Icons.add),
               ),
             )

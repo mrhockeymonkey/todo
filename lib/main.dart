@@ -5,7 +5,6 @@ import 'package:todo/journey/journey_provider.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/providers/task_provider.dart';
-import 'package:todo/providers/throw_away_task_provider.dart';
 import 'package:todo/screens/categories_screen.dart';
 import 'package:todo/screens/category_detail_screen.dart';
 import 'package:todo/screens/export_json_screen.dart';
@@ -44,8 +43,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => TaskProvider(tableName: "tasks")),
         ChangeNotifierProvider(
             create: (_) => CategoryProvider(tableName: "categories")),
-        ChangeNotifierProvider(
-            create: (_) => ThrowAwayTaskProvider(tableName: "dayplantasks")),
         ChangeNotifierProvider(create: (_) => JourneyProvider()),
       ],
       child: MaterialApp(
