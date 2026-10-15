@@ -34,7 +34,7 @@ class _TaskScreenState extends State<TasksScreen> {
                 AppActionsHelper.buildAction(AppActions.clearCompleted),
                 AppActionsHelper.buildAction(AppActions.routines),
                 AppActionsHelper.buildAction(AppActions.settings),
-                AppActionsHelper.buildAction(AppActions.tools),
+                AppActionsHelper.buildAction(AppActions.kegels),
               ],
             )
           ],
