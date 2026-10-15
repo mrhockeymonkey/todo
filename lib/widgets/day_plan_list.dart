@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reorderables/reorderables.dart';
-import 'package:todo/models/daily_plan_todo.dart';
 import 'package:todo/models/day_plan_task_ptr.dart';
 import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/task.dart';
-import 'package:todo/models/throw_away_task.dart';
 import 'package:todo/providers/task_provider.dart';
-import 'package:todo/providers/throw_away_task_provider.dart';
 import 'package:todo/date.dart';
 
 class DayPlanList extends StatefulWidget {
@@ -35,18 +32,12 @@ class DayPlanListState extends State<DayPlanList> {
       _includeOutstanding = true;
     }
 
-    final throwAwayTaskProvider = Provider.of<ThrowAwayTaskProvider>(context);
     final taskProvider = Provider.of<TaskProvider>(context);
 
-    var tasks = taskProvider
+    _dayPlanItems = taskProvider
         .getByDate(widget.date)
-        .map<DayPlanBase>((task) => DayPlanTaskPtr(task: task));
-    var items = throwAwayTaskProvider
-        .getByDate(widget.date)
-        .map<DayPlanBase>((todo) => DayPlanToDo(todo: todo));
-    
-
-    _dayPlanItems = [...tasks, ...items];
+        .map<DayPlanBase>((task) => DayPlanTaskPtr(task: task))
+        .toList();
 
     _dayPlanItems.sort((a, b) => a.order.compareTo(b.order)); // descending
     _dayPlanItems.sort((a, b) => b.isFlagged ? 1 : 0); // flagged first
@@ -75,23 +66,18 @@ class DayPlanListState extends State<DayPlanList> {
 
     var next = 0;
     List<Task> updatedTasks = [];
-    List<ThrowAwayTask> updatedToDos = [];
 
     for (var item in _dayPlanItems) {
       debugPrint("${item.toString()} is now $next");
 
       if (item is DayPlanTaskPtr) {
         updatedTasks.add(item.task.copyWith(order: next));
-      } else if (item is DayPlanToDo) {
-        updatedToDos.add(item.todo.copyWith(order: next));
       }
 
       next++;
     }
 
     Provider.of<TaskProvider>(context, listen: false).updateAll(updatedTasks);
-    Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-        .updateAll(updatedToDos);
   }
 
   String _toStringCustom() =>

@@ -82,8 +82,4 @@ class DayPlanTaskPtr extends DayPlanBase {
 
   @override
   int get order => task.order;
-
-  // void _handleRemove(BuildContext context) =>
-  //     Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-  //         .delete(super.item.id!);
 }

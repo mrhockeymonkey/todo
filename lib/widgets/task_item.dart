@@ -6,7 +6,6 @@ import 'package:todo/models/category.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/task_provider.dart';
-import 'package:todo/providers/throw_away_task_provider.dart';
 import 'package:todo/screens/task_detail_screen.dart';
 import 'package:todo/widgets/add_to_dayplan_icon.dart';
 
@@ -109,6 +108,6 @@ class TaskItem extends StatelessWidget {
           .addOrUpdate(task.copyWith(isFlagged: !task.isFlagged));
 
   void _handleAddToPlan(BuildContext context) =>
-      Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-          .addFromTask(task, Date.now());
+      Provider.of<TaskProvider>(context, listen: false)
+          .addOrUpdate(task.copyWith(dueDate: Date.now()));
 }

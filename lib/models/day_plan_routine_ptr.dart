@@ -83,8 +83,4 @@ class DayPlanRoutinePtr extends DayPlanBase {
   // void _handleFlag(BuildContext context) =>
   //     Provider.of<RoutineProvider>(context, listen: false)
   //         .addOrUpdate(routine.copyWith(isFlagged: !routine.isFlagged));
-
-  // void _handleRemove(BuildContext context) =>
-  //     Provider.of<ThrowAwayTaskProvider>(context, listen: false)
-  //         .delete(super.item.id!);
 }

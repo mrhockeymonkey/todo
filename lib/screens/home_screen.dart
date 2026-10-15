@@ -5,7 +5,6 @@ import 'package:todo/journey/journey_screen.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/providers/task_provider.dart';
-import 'package:todo/providers/throw_away_task_provider.dart';
 import 'package:todo/screens/day_plan_screen.dart';
 import 'package:todo/screens/tasks_screen.dart';
 import 'package:todo/widgets/badge_icon.dart';
@@ -33,7 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
       Provider.of<CategoryProvider>(context).fetch(),
       Provider.of<TaskProvider>(context).fetch(),
       Provider.of<RoutineProvider>(context).fetch(),
-      Provider.of<ThrowAwayTaskProvider>(context).fetch(),
     ]);
 
     super.didChangeDependencies();
