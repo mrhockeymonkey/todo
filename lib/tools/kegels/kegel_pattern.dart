@@ -88,7 +88,7 @@ const List<KegelPattern> kKegelTraining = [
     holdSeconds: 5,
     relaxSeconds: 1,
     waitSeconds: 0,
-    reps: 2,
+    reps: 5,
   ),
   _calmWave,
   KegelPattern(

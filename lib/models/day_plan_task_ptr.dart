@@ -3,11 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/widgets/flagged_icon.dart';
+import 'package:todo/widgets/priority_menu.dart';
 import 'package:uuid/uuid.dart';
 import '../providers/category_provider.dart';
 import '../providers/task_provider.dart';
 import '../screens/task_detail_screen.dart';
 import 'category.dart';
+import 'priority.dart';
 import 'day_plan_actions.dart';
 
 class DayPlanTaskPtr extends DayPlanBase {
@@ -41,10 +43,13 @@ class DayPlanTaskPtr extends DayPlanBase {
         ),
         leading: task.isDone
             ? Icon(Icons.check, color: Colors.grey[350])
-            : FlaggedIcon(
-                icon: category.icon,
-                color: task.priority.color,
-                showFlag: task.isFlagged),
+            : PriorityMenu(
+                onSelected: (priority) => _handlePriority(context, priority),
+                child: FlaggedIcon(
+                    icon: category.icon,
+                    color: task.priority.color,
+                    showFlag: task.isFlagged),
+              ),
         trailing: DayPlanActions(
           handleSnooze: _handleSnooze,
           handleFlag: _handleFlag,
@@ -73,6 +78,10 @@ class DayPlanTaskPtr extends DayPlanBase {
   void _handleFlag(BuildContext context) =>
       Provider.of<TaskProvider>(context, listen: false)
           .addOrUpdate(task.copyWith(isFlagged: !task.isFlagged));
+
+  void _handlePriority(BuildContext context, Priority priority) =>
+      Provider.of<TaskProvider>(context, listen: false)
+          .addOrUpdate(task.copyWith(priority: priority));
           
   @override
   bool get isDone => task.isDone;

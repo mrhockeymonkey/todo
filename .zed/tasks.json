@@ -1,0 +1,18 @@
+// Run via the command palette: "task: spawn" (alt-shift-t), then pick a task.
+// `-d emulator` matches the first running Android emulator by prefix.
+[
+  {
+    "label": "flutter run (dev, emulator)",
+    "command": "fvm flutter run -d emulator --flavor dev",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  },
+  {
+    "label": "flutter run (prod release, emulator)",
+    "command": "fvm flutter run -d emulator --flavor prod --release",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "reveal": "always"
+  }
+]

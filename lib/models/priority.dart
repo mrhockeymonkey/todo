@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:todo/app_colour.dart';
 
 enum Priority {
   urgent('Urgent', Colors.red),
-  important('Important', Colors.blue),
+  important('Important', AppColour.colorCustom),
   notImportant('Not important', Colors.grey);
 
   const Priority(this.label, this.color);
