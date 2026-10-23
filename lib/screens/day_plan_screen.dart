@@ -16,20 +16,57 @@ class DailyScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _DailyScreenState();
 }
 
-class _DailyScreenState extends State<DailyScreen> {
+class _DailyScreenState extends State<DailyScreen>
+    with WidgetsBindingObserver {
 
   final GlobalKey targetKey = GlobalKey();
-  final GlobalKey scrollViewKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
   Date? _draftDate;
+  Date _today = Date.now();
+  bool _wasBackgrounded = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // call back runs after widget has rendered
-      _scrollToTarget();
+      _scrollToToday();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.paused:
+        _wasBackgrounded = true;
+      case AppLifecycleState.resumed:
+        // Ignore brief inactive -> resumed blips (e.g. notification shade)
+        if (_wasBackgrounded) {
+          _wasBackgrounded = false;
+          _refreshToday();
+        }
+      default:
+        break;
+    }
+  }
+
+  void _refreshToday() {
+    final today = Date.now();
+    if (today != _today) {
+      setState(() => _today = today);
+      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToToday());
+    } else {
+      _scrollToToday();
+    }
   }
 
   @override
@@ -62,26 +99,24 @@ class _DailyScreenState extends State<DailyScreen> {
   Widget _buildBody() {
     var numberDays = 7;
     var days = List<int>.generate(numberDays, (index) => index - 1);
-    var now = DateTime.now();
-    var targetDay = now.hour < 3 ? -1 : 0;
     var sections = <Widget>[];
 
     for (var day in days) {
-      var datetime = now.add(Duration(days: day));
-      var date = Date(datetime);
+      var date = _today.addDays(day);
+      var isToday = day == 0;
       sections.add(SliverToBoxAdapter(
         child: TextHeader(
-          key: day == targetDay ? targetKey : null,
-          text: Jiffy.parseFromDateTime(datetime).MMMMEEEEd.toString(),),
+          key: isToday ? targetKey : null,
+          text: Jiffy.parseFromDateTime(date.dateTime).MMMMEEEEd.toString(),),
       ));
-      
-      if (day == targetDay) {
+
+      if (isToday) {
         sections.add(const SliverToBoxAdapter(
           child: RoutinePeek(),
         ));
       }
 
-      sections.add(DayPlanList(date: date));
+      sections.add(DayPlanList(key: ValueKey(date), date: date));
 
       if (_draftDate == date) {
         sections.add(SliverToBoxAdapter(
@@ -95,15 +130,12 @@ class _DailyScreenState extends State<DailyScreen> {
 
       sections.add(_buildAddButton(date));
 
-      
-
-      if (day == targetDay) {
+      if (isToday) {
         sections.add(const SliverFillRemaining());
       }
     }
 
     return CustomScrollView(
-      key: scrollViewKey,
       controller: _scrollController,
       slivers: sections,
     );
@@ -145,14 +177,11 @@ class _DailyScreenState extends State<DailyScreen> {
         ),
       );
 
-  void _scrollToTarget() {
-    final RenderBox renderBox = targetKey.currentContext?.findRenderObject() as RenderBox;
-    final RenderBox scrollViewBox = scrollViewKey.currentContext?.findRenderObject() as RenderBox;
-    final position = renderBox.localToGlobal(Offset.zero, ancestor: scrollViewBox);
-    final offset = position.dy + _scrollController.offset;
-
-    _scrollController.animateTo(
-      offset,
+  void _scrollToToday() {
+    final targetContext = targetKey.currentContext;
+    if (!mounted || targetContext == null) return;
+    Scrollable.ensureVisible(
+      targetContext,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );

@@ -38,6 +38,8 @@ class Date {
     return Date(_dateTime.add(duration));
   }
 
+  Date addDays(int days) => Date(DateTime(year, month, day + days));
+
   // Adds a day tothe given date or returns tomorrow if given date is in the past
   // Date addFromNow(Duration duration) {
   //   var now = Date.now();

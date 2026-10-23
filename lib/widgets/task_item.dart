@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/category.dart';
+import 'package:todo/models/priority.dart';
 
 import 'package:todo/models/task.dart';
 import 'package:todo/providers/category_provider.dart';
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/screens/task_detail_screen.dart';
 import 'package:todo/widgets/add_to_dayplan_icon.dart';
+import 'package:todo/widgets/priority_menu.dart';
 
 import '../date.dart';
 
@@ -35,7 +37,10 @@ class TaskItem extends StatelessWidget {
       subtitle: task.dueDate != null
           ? Text(task.dueDate!.yMMMd())
           : const Text("At Some Point"),
-      leading: Icon(category.icon, color: task.priority.color),
+      leading: PriorityMenu(
+        onSelected: (priority) => _handlePriority(context, priority),
+        child: Icon(category.icon, color: task.priority.color),
+      ),
       trailing: _buildPopupMenu(context),
       onTap: () => Navigator.of(context)
           .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
@@ -106,6 +111,10 @@ class TaskItem extends StatelessWidget {
   void _handleFlag(BuildContext context) =>
       Provider.of<TaskProvider>(context, listen: false)
           .addOrUpdate(task.copyWith(isFlagged: !task.isFlagged));
+
+  void _handlePriority(BuildContext context, Priority priority) =>
+      Provider.of<TaskProvider>(context, listen: false)
+          .addOrUpdate(task.copyWith(priority: priority));
 
   void _handleAddToPlan(BuildContext context) =>
       Provider.of<TaskProvider>(context, listen: false)
