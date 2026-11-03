@@ -32,7 +32,7 @@ class TaskListState extends State<TaskList> {
         (BuildContext context, int index) {
           Task task = widget.tasks[index];
           return Dismissible(
-            key: UniqueKey(),
+            key: ObjectKey(task), // see DayPlanTaskPtr for why ObjectKey
             direction: DismissDirection.startToEnd,
             onDismissed: (direction) => _handleDismiss(direction, task),
             child: TaskItem(task: task),

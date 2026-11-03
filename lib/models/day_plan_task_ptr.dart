@@ -4,7 +4,6 @@ import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/widgets/flagged_icon.dart';
 import 'package:todo/widgets/priority_menu.dart';
-import 'package:uuid/uuid.dart';
 import '../providers/category_provider.dart';
 import '../providers/task_provider.dart';
 import '../screens/task_detail_screen.dart';
@@ -27,7 +26,11 @@ class DayPlanTaskPtr extends DayPlanBase {
         : Provider.of<CategoryProvider>(context).getItemById(categoryId);
 
     return Dismissible(
-      key: Key(const Uuid().v1()),
+      // ObjectKey: the provider returns the same instance until the item is saved,
+      // and every save creates a new one, so a dismissed tile always comes back
+      // with fresh state (a stable id key would trip Dismissible's
+      // "dismissed widget is still part of the tree" assertion).
+      key: ObjectKey(task),
       direction: DismissDirection.startToEnd,
       onDismissed: (direction) => _handleDismiss(context, direction),
       child: ListTile(
