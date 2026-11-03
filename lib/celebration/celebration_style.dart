@@ -6,6 +6,7 @@ import 'package:localstore/localstore.dart';
 /// swipe and names it so you know which you saw.
 enum CelebrationStyle {
   none("None", "Just mark it done"),
+  circuit("Circuit", "A red line runs round the screen to the done item"),
   ribbon("Ribbon", "A rainbow ribbon swoops to where the done item lands"),
   streamer("Streamer", "Party streamers loop-the-loop into place"),
   comet("Comet", "A glowing comet with a sparkle tail, then a burst"),
@@ -32,7 +33,7 @@ class CelebrationSettings with ChangeNotifier {
   CelebrationStyle _style;
 
   CelebrationSettings({
-    CelebrationStyle initial = CelebrationStyle.ribbon,
+    CelebrationStyle initial = CelebrationStyle.circuit,
     bool persist = true,
   }) : _style = initial,
        _persist = persist {

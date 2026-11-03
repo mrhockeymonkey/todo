@@ -97,7 +97,7 @@ class DayPlanTaskPtr extends DayPlanBase {
         Provider.of<CelebrationSettings?>(itemContext, listen: false);
     controller.celebrate(
       itemContext,
-      style: settings?.style ?? CelebrationStyle.ribbon,
+      style: settings?.style ?? CelebrationStyle.circuit,
       request: CelebrationRequest(
         taskId: id,
         title: task.title,

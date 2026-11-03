@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:todo/celebration/celebration_style.dart';
+import 'package:todo/celebration/effects/circuit_effect.dart';
 import 'package:todo/celebration/effects/comet_effect.dart';
 import 'package:todo/celebration/effects/confetti_pop_effect.dart';
 import 'package:todo/celebration/effects/fly_in_effect.dart';
@@ -77,6 +78,7 @@ abstract class CelebrationEffect {
     CelebrationRequest request,
     Random random,
   ) => switch (style) {
+    CelebrationStyle.circuit => CircuitEffect(),
     CelebrationStyle.ribbon => RibbonEffect(random),
     CelebrationStyle.streamer => StreamerEffect(random),
     CelebrationStyle.comet => CometEffect(random),
