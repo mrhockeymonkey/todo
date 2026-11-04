@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:provider/provider.dart';
+import 'package:todo/celebration/celebration_controller.dart';
 import 'package:todo/widgets/day_plan_list.dart';
 import 'package:todo/widgets/new_day_plan_task.dart';
 import 'package:todo/widgets/routine_peek.dart';
@@ -91,7 +93,12 @@ class _DailyScreenState extends State<DailyScreen>
             )
           ],
         ),
-        body: _buildBody(),
+        // Lets swiped-done tasks play a celebration that lands on their done
+        // item.
+        body: ChangeNotifierProvider(
+          create: (_) => CelebrationController(),
+          child: _buildBody(),
+        ),
       );
 
   void _newTask(Date date) => setState(() => _draftDate = date);
