@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:todo/celebration/celebration_screen.dart';
 import 'package:todo/screens/categories_screen.dart';
 import 'package:todo/screens/export_json_screen.dart';
 import 'package:todo/screens/import_json_screen.dart';
@@ -21,6 +22,7 @@ class SettingsScreen extends StatelessWidget {
             child: ListView(
               children: [
                 _buildCategoriesTile(context),
+                _buildCelebrationTile(context),
                 _buildJsonExportTile(context),
                 _buildJsonImportTile(context)
               ],
@@ -37,6 +39,13 @@ class SettingsScreen extends StatelessWidget {
       //subtitle: Text(""),
       //isThreeLine: true,
       onTap: () => Navigator.of(context).pushNamed(CategoriesScreen.routeName));
+
+  Widget _buildCelebrationTile(BuildContext context) => ListTile(
+      leading: const Icon(Icons.celebration),
+      title: const Text("Completion animation"),
+      subtitle: const Text("Tune the line that runs to completed tasks"),
+      onTap: () =>
+          Navigator.of(context).pushNamed(CelebrationScreen.routeName));
 
   Widget _buildJsonExportTile(BuildContext context) => ListTile(
       leading: const Icon(Entypo.arrow_bold_up),
