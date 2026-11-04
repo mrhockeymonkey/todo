@@ -5,7 +5,7 @@ import 'package:todo/models/routine.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/screens/routine_detail_screen.dart';
 
-/// A summary tile for routines shown at the top of today's day plan.
+/// A summary card for routines, floating above the bottom of the day plan.
 ///
 /// Unlike the task tiles it is never removed: it focuses on one due routine at
 /// a time, which can be marked done (check button or swipe) or swapped for the
@@ -31,65 +31,73 @@ class RoutinePeekState extends State<RoutinePeek> {
     final focused = due.isEmpty ? null : due[_focusIndex % due.length];
     final others = due.length - 1;
 
-    return ListTile(
-      leading: _ProgressRing(done: all.length - due.length, total: all.length),
-      // Only the title slides on swipe; the ring, subtitle and buttons stay
-      // put. The clip stops the sliding text drawing over the buttons.
-      title: ClipRect(
-        child: Dismissible(
-          key: const ValueKey('routine-peek'),
-          direction:
-              focused == null
-                  ? DismissDirection.none
-                  : DismissDirection.startToEnd,
-          // Mark the focused routine done but never dismiss the title.
-          confirmDismiss: (_) async {
-            if (focused != null) _markDone(provider, focused);
-            return false;
-          },
-          child: SizedBox(
-            // The whole title row is the swipe target, not just the text.
-            width: double.infinity,
-            child: Text(focused?.title ?? "All routines done"),
+    return Card(
+      elevation: 4,
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        leading: _ProgressRing(
+          done: all.length - due.length,
+          total: all.length,
+        ),
+        // Only the title slides on swipe; the ring, subtitle and buttons stay
+        // put. The clip stops the sliding text drawing over the buttons.
+        title: ClipRect(
+          child: Dismissible(
+            key: const ValueKey('routine-peek'),
+            direction:
+                focused == null
+                    ? DismissDirection.none
+                    : DismissDirection.startToEnd,
+            // Mark the focused routine done but never dismiss the title.
+            confirmDismiss: (_) async {
+              if (focused != null) _markDone(provider, focused);
+              return false;
+            },
+            child: SizedBox(
+              // The whole title row is the swipe target, not just the text.
+              width: double.infinity,
+              child: Text(focused?.title ?? "All routines done"),
+            ),
           ),
         ),
+        subtitle:
+            others > 0
+                ? Text("+ $others routine${others == 1 ? "" : "s"}")
+                : null,
+        trailing:
+            focused == null
+                ? null
+                : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.check),
+                      tooltip: "Mark done",
+                      onPressed: () => _markDone(provider, focused),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.swap_horiz),
+                      tooltip: "Next routine",
+                      onPressed:
+                          due.length < 2
+                              ? null
+                              : () => setState(
+                                () =>
+                                    _focusIndex =
+                                        (_focusIndex % due.length + 1) %
+                                        due.length,
+                              ),
+                    ),
+                  ],
+                ),
+        onTap:
+            focused == null
+                ? null
+                : () => Navigator.of(context).pushNamed(
+                  RoutineDetailScreen.routeName,
+                  arguments: focused.id,
+                ),
       ),
-      subtitle:
-          others > 0
-              ? Text("+ $others routine${others == 1 ? "" : "s"}")
-              : null,
-      trailing:
-          focused == null
-              ? null
-              : Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.check),
-                    tooltip: "Mark done",
-                    onPressed: () => _markDone(provider, focused),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.swap_horiz),
-                    tooltip: "Next routine",
-                    onPressed:
-                        due.length < 2
-                            ? null
-                            : () => setState(
-                              () =>
-                                  _focusIndex =
-                                      (_focusIndex % due.length + 1) %
-                                      due.length,
-                            ),
-                  ),
-                ],
-              ),
-      onTap:
-          focused == null
-              ? null
-              : () => Navigator.of(
-                context,
-              ).pushNamed(RoutineDetailScreen.routeName, arguments: focused.id),
     );
   }
 
