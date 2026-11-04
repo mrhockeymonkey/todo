@@ -29,8 +29,19 @@ class CelebrationRequest {
 
 /// Everything an effect needs to draw one frame, in overlay coordinates.
 class CelebrationFrame {
-  /// Overall progress, 0 to 1.
+  /// Overall progress through the effect's [CelebrationEffect.duration],
+  /// 0 to 1.
   final double t;
+
+  /// Time since the effect started.
+  final Duration elapsed;
+
+  /// Size of the overlay the effect is drawn in (normally the screen).
+  final Size size;
+
+  /// Top of the space below the app bar, in overlay coordinates.
+  final double contentTop;
+
   final Rect source;
   final Offset start;
 
@@ -45,6 +56,9 @@ class CelebrationFrame {
 
   CelebrationFrame({
     required this.t,
+    required this.elapsed,
+    required this.size,
+    required this.contentTop,
     required this.source,
     required this.start,
     required this.end,
@@ -60,12 +74,18 @@ class CelebrationFrame {
 }
 
 abstract class CelebrationEffect {
-  /// Total running time.
+  /// Total running time (an upper bound if [isFinished] is overridden).
   Duration get duration;
 
   /// The fraction of [duration] at which the effect reaches the done item,
   /// which is then revealed.
   double get landAt;
+
+  /// Whether the effect has reached the done item, which is then revealed.
+  bool hasLanded(CelebrationFrame frame) => frame.t >= landAt;
+
+  /// Whether the effect has finished and can be removed early.
+  bool isFinished(CelebrationFrame frame) => frame.t >= 1;
 
   /// Where the effect sets off from, given the swiped row.
   Offset launchPoint(Rect source) =>
@@ -76,9 +96,10 @@ abstract class CelebrationEffect {
   static CelebrationEffect? forStyle(
     CelebrationStyle style,
     CelebrationRequest request,
-    Random random,
-  ) => switch (style) {
-    CelebrationStyle.circuit => CircuitEffect(),
+    Random random, {
+    CircuitOptions circuit = const CircuitOptions(),
+  }) => switch (style) {
+    CelebrationStyle.circuit => CircuitEffect(circuit),
     CelebrationStyle.ribbon => RibbonEffect(random),
     CelebrationStyle.streamer => StreamerEffect(random),
     CelebrationStyle.comet => CometEffect(random),
@@ -123,8 +144,10 @@ class _CelebrationOverlayState extends State<CelebrationOverlay>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   bool _landed = false;
+  bool _finished = false;
   Offset? _end;
   Rect? _target;
+  CelebrationFrame? _frame;
 
   @override
   void initState() {
@@ -133,10 +156,7 @@ class _CelebrationOverlayState extends State<CelebrationOverlay>
       vsync: this,
       duration: widget.effect.duration,
     )..addListener(_tick);
-    _controller.forward().whenComplete(() {
-      _land();
-      widget.onFinished();
-    });
+    _controller.forward().whenComplete(_finish);
   }
 
   @override
@@ -146,7 +166,17 @@ class _CelebrationOverlayState extends State<CelebrationOverlay>
   }
 
   void _tick() {
-    if (_controller.value >= widget.effect.landAt) _land();
+    final frame = _frame = _computeFrame();
+    if (widget.effect.hasLanded(frame)) _land();
+    if (widget.effect.isFinished(frame)) _finish();
+  }
+
+  void _finish() {
+    if (_finished) return;
+    _finished = true;
+    _controller.stop();
+    _land();
+    widget.onFinished();
   }
 
   void _land() {
@@ -161,33 +191,41 @@ class _CelebrationOverlayState extends State<CelebrationOverlay>
     return box.globalToLocal(global.topLeft) & global.size;
   }
 
+  CelebrationFrame _computeFrame() {
+    final box = context.findRenderObject();
+    final size =
+        box is RenderBox && box.hasSize ? box.size : MediaQuery.sizeOf(context);
+    final source = _toLocal(widget.request.source);
+    final resolved = widget.resolveTarget();
+    if (resolved != null) _target = _toLocal(resolved);
+
+    // Until the done item exists, guess it lands a row below.
+    final desired =
+        _target != null
+            ? Offset(_target!.left + 28, _target!.center.dy)
+            : Offset(source.left + 28, source.bottom + source.height / 2);
+    // Ease towards the real landing spot rather than jumping to it.
+    _end = _end == null || _landed ? desired : Offset.lerp(_end, desired, 0.3);
+
+    return CelebrationFrame(
+      t: _controller.value,
+      elapsed: widget.effect.duration * _controller.value,
+      size: size,
+      contentTop: MediaQuery.paddingOf(context).top + kToolbarHeight,
+      source: source,
+      start: widget.effect.launchPoint(source),
+      end: _end!,
+      target: _target,
+      request: widget.request,
+    );
+  }
+
   @override
   Widget build(BuildContext context) => IgnorePointer(
     child: AnimatedBuilder(
       animation: _controller,
       builder: (context, _) {
-        final source = _toLocal(widget.request.source);
-        final resolved = widget.resolveTarget();
-        if (resolved != null) _target = _toLocal(resolved);
-
-        // Until the done item exists, guess it lands a row below.
-        final desired =
-            _target != null
-                ? Offset(_target!.left + 28, _target!.center.dy)
-                : Offset(source.left + 28, source.bottom + source.height / 2);
-        // Ease towards the real landing spot rather than jumping to it.
-        _end =
-            _end == null || _landed ? desired : Offset.lerp(_end, desired, 0.3);
-
-        final frame = CelebrationFrame(
-          t: _controller.value,
-          source: source,
-          start: widget.effect.launchPoint(source),
-          end: _end!,
-          target: _target,
-          request: widget.request,
-        );
-
+        final frame = _frame ??= _computeFrame();
         return Stack(
           clipBehavior: Clip.none,
           children: [

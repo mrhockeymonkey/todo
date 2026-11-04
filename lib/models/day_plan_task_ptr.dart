@@ -4,6 +4,7 @@ import 'package:todo/celebration/celebration_controller.dart';
 import 'package:todo/celebration/celebration_effect.dart';
 import 'package:todo/celebration/celebration_style.dart';
 import 'package:todo/celebration/celebration_target.dart';
+import 'package:todo/celebration/effects/circuit_effect.dart';
 import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/widgets/flagged_icon.dart';
@@ -98,6 +99,7 @@ class DayPlanTaskPtr extends DayPlanBase {
     controller.celebrate(
       itemContext,
       style: settings?.style ?? CelebrationStyle.circuit,
+      circuit: settings?.circuit ?? const CircuitOptions(),
       request: CelebrationRequest(
         taskId: id,
         title: task.title,

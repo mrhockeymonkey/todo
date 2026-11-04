@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/celebration/celebration_controller.dart';
 import 'package:todo/celebration/celebration_effect.dart';
+import 'package:todo/celebration/celebration_screen.dart';
 import 'package:todo/celebration/celebration_style.dart';
+import 'package:todo/celebration/effects/circuit_effect.dart';
 import 'package:todo/date.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/providers/task_provider.dart';
@@ -145,5 +147,84 @@ void main() {
 
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
+  });
+
+  group('circuit route', () {
+    Offset endOf(Path p) {
+      final m = p.computeMetrics().last;
+      return m.getTangentForOffset(m.length)!.position;
+    }
+
+    test(
+      'starts at the tile, loops up and over, and drops to the done item',
+      () {
+        final route = circuitRoute(
+          start: const Offset(380, 300),
+          endY: 500,
+          width: 400,
+          top: 100,
+          radius: 36,
+        );
+        final bounds = route.getBounds();
+        expect(
+          route.computeMetrics().first.getTangentForOffset(0)!.position,
+          const Offset(380, 300),
+        );
+        expect(endOf(route).dx, closeTo(200, 0.01));
+        expect(endOf(route).dy, closeTo(500, 0.01));
+        // The loop rises a full diameter above the row, left of the middle.
+        expect(bounds.top, closeTo(300 - 72, 0.5));
+        expect(bounds.left, closeTo(200 - 72, 0.5));
+      },
+    );
+
+    test('loops downwards when the done item is above', () {
+      final route = circuitRoute(
+        start: const Offset(380, 300),
+        endY: 150,
+        width: 400,
+        top: 100,
+        radius: 36,
+      );
+      expect(endOf(route).dy, closeTo(150, 0.01));
+      expect(route.getBounds().bottom, closeTo(300 + 72, 0.5));
+    });
+
+    test('shrinks the loop to stay below the app bar', () {
+      final route = circuitRoute(
+        start: const Offset(380, 140),
+        endY: 400,
+        width: 400,
+        top: 100,
+        radius: 36,
+      );
+      expect(route.getBounds().top, greaterThanOrEqualTo(100 - 0.5));
+    });
+  });
+
+  testWidgets('circuit sliders change thickness and speed', (tester) async {
+    final settings = CelebrationSettings(persist: false);
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: settings,
+        child: const MaterialApp(home: CelebrationScreen()),
+      ),
+    );
+
+    expect(find.text('4.0 px'), findsOneWidget);
+    expect(find.text('900 px/s'), findsOneWidget);
+
+    final sliders = find.byType(Slider);
+    await tester.drag(sliders.at(0), const Offset(-1000, 0));
+    await tester.drag(sliders.at(1), const Offset(1000, 0));
+    await tester.pump();
+
+    expect(settings.circuit.thickness, CircuitOptions.minThickness);
+    expect(settings.circuit.speed, CircuitOptions.maxSpeed);
+
+    await tester.tap(find.text('Reset to defaults'));
+    await tester.pump();
+    expect(settings.circuit.thickness, 4);
+    expect(settings.circuit.speed, 900);
   });
 }

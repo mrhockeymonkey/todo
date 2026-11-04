@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:todo/celebration/celebration_effect.dart';
 import 'package:todo/celebration/celebration_style.dart';
+import 'package:todo/celebration/effects/circuit_effect.dart';
 
 /// Coordinates completion celebrations for one screen.
 ///
@@ -47,6 +48,7 @@ class CelebrationController with ChangeNotifier {
     BuildContext context, {
     required CelebrationRequest request,
     required CelebrationStyle style,
+    CircuitOptions circuit = const CircuitOptions(),
   }) {
     String? label;
     var chosen = style;
@@ -56,7 +58,12 @@ class CelebrationController with ChangeNotifier {
       label = chosen.label;
     }
 
-    final effect = CelebrationEffect.forStyle(chosen, request, _random);
+    final effect = CelebrationEffect.forStyle(
+      chosen,
+      request,
+      _random,
+      circuit: circuit,
+    );
     final overlay = Overlay.maybeOf(context, rootOverlay: true);
     if (effect == null || overlay == null) return;
 

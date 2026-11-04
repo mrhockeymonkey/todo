@@ -3,118 +3,164 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:todo/celebration/celebration_effect.dart';
 
-/// A single solid line spawned by the swipe that runs round the screen on
-/// straight legs joined by rounded corners, ending on the done item as if the
-/// task rode the line there:
-///
-/// right along the row to the screen edge, up to just under the app bar,
-/// left to the middle of the screen, then down to the done item.
+/// Tunables for [CircuitEffect], adjustable in Settings.
+class CircuitOptions {
+  static const double minThickness = 1;
+  static const double maxThickness = 20;
+  static const double minSpeed = 200;
+  static const double maxSpeed = 3000;
+
+  /// Line width in logical pixels.
+  final double thickness;
+
+  /// How fast the line travels, in logical pixels per second.
+  final double speed;
+
+  const CircuitOptions({this.thickness = 4, this.speed = 900});
+
+  CircuitOptions copyWith({double? thickness, double? speed}) => CircuitOptions(
+    thickness: thickness ?? this.thickness,
+    speed: speed ?? this.speed,
+  );
+}
+
+/// A single solid line that starts where the swiped tile was thrown to (its
+/// right-hand side), runs left along the row to the middle of the screen,
+/// loops the loop (a 270° turn) and drops straight down into the done item,
+/// as if the task rode the line there.
 class CircuitEffect extends CelebrationEffect {
   static const Color colour = Colors.red;
-  static const double strokeWidth = 4;
+  static const double loopRadius = 36;
 
-  /// Fraction of the route the line covers at once.
-  static const double tailLength = 0.25;
+  /// Longest stretch of route the line covers at once, in pixels.
+  static const double maxLineLength = 160;
+
+  final CircuitOptions options;
+
+  CircuitEffect([this.options = const CircuitOptions()]);
+
+  /// An upper bound; the effect ends as soon as the line has run in.
+  @override
+  Duration get duration => const Duration(seconds: 8);
 
   @override
-  Duration get duration => const Duration(milliseconds: 1500);
+  double get landAt => 1;
 
-  /// The head reaches the done item here; the tail then runs in after it,
-  /// finishing exactly at the end ([landAt] * (1 + [tailLength]) == 1).
   @override
-  double get landAt => 0.8;
+  Offset launchPoint(Rect source) =>
+      Offset(source.right - 16, source.center.dy);
 
-  /// Start at the left of the swiped tile.
+  Path _route(CelebrationFrame frame) => circuitRoute(
+    start: frame.start,
+    endY: frame.end.dy,
+    width: frame.size.width,
+    top: frame.contentTop + 8 + options.thickness / 2,
+    radius: loopRadius + options.thickness / 2,
+  );
+
+  double _travelled(CelebrationFrame frame) =>
+      options.speed * frame.elapsed.inMicroseconds / 1e6;
+
+  double _lineLength(double routeLength) =>
+      min(maxLineLength, routeLength * 0.5);
+
+  /// Only lands once the done item exists; until then the route ends at a
+  /// guess, which a fast line could otherwise reach first.
   @override
-  Offset launchPoint(Rect source) => Offset(source.left + 16, source.center.dy);
+  bool hasLanded(CelebrationFrame frame) =>
+      frame.target != null && _travelled(frame) >= _length(_route(frame));
+
+  @override
+  bool isFinished(CelebrationFrame frame) {
+    // Give up if the done item never turns up.
+    if (frame.target == null) return frame.elapsed > _giveUpAfter;
+    final length = _length(_route(frame));
+    return _travelled(frame) - _lineLength(length) >= length;
+  }
+
+  static const Duration _giveUpAfter = Duration(seconds: 3);
 
   @override
   Widget build(BuildContext context, CelebrationFrame frame) {
-    final size = MediaQuery.sizeOf(context);
-    final top = MediaQuery.paddingOf(context).top + kToolbarHeight + 16;
-    final route = circuitRoute(
-      start: frame.start,
-      endY: frame.end.dy,
-      width: size.width,
-      top: top,
+    final route = _route(frame);
+    final length = _length(route);
+    final head = _travelled(frame);
+    final tail = head - _lineLength(length);
+    return CustomPaint(
+      painter: _CircuitPainter(
+        route: route,
+        from: max(0, tail),
+        to: min(length, head),
+        thickness: options.thickness,
+      ),
     );
-
-    final travelled = frame.t / landAt;
-    final head = min(1.0, travelled);
-    final tail = (travelled - tailLength).clamp(0.0, 1.0);
-
-    return CustomPaint(painter: _CircuitPainter(route, tail, head));
   }
+
+  static double _length(Path path) =>
+      path.computeMetrics().fold(0.0, (sum, m) => sum + m.length);
 }
 
-/// The route described on [CircuitEffect], from [start] to the middle of the
-/// screen at [endY], staying below [top].
+/// The route described on [CircuitEffect]: from [start] left to the middle
+/// of the screen, a 270° loop, then straight to [endY]. The loop goes up and
+/// over when the done item is below, and down and under when it is above,
+/// and is shrunk if needed to stay below [top].
 Path circuitRoute({
   required Offset start,
   required double endY,
   required double width,
   required double top,
-  double margin = 16,
-  double radius = 28,
+  double radius = 36,
 }) {
-  final right = width - margin;
   final mid = width / 2;
-  // Tighten the corners if a leg is too short for them, e.g. a tile right
-  // under the app bar.
-  final r = max(2.0, min(radius, min((start.dy - top) / 2, (right - mid) / 2)));
-  final bottom = max(endY, top + r);
-  final startX = min(start.dx, right - r);
+  final y = start.dy;
+  final goingDown = endY >= y - radius;
+  // Keep an upward loop clear of the app bar.
+  final r = goingDown ? max(8.0, min(radius, (y - top) / 2)) : radius;
+  // The loop's centre sits so the line leaves it heading straight down (or
+  // up) along the middle of the screen.
+  final centre = Offset(mid - r, goingDown ? y - r : y + r);
+  final startX = max(start.dx, centre.dx + 1);
 
   return Path()
-    ..moveTo(startX, start.dy)
-    // Along the row to the right edge, turning up.
-    ..lineTo(right - r, start.dy)
-    ..arcToPoint(
-      Offset(right, start.dy - r),
-      radius: Radius.circular(r),
-      clockwise: false,
+    ..moveTo(startX, y)
+    ..lineTo(centre.dx, y)
+    // Clockwise from the bottom of the circle round to its right-hand side
+    // (or anticlockwise from the top, when heading up).
+    ..arcTo(
+      Rect.fromCircle(center: centre, radius: r),
+      goingDown ? pi / 2 : -pi / 2,
+      goingDown ? 3 * pi / 2 : -3 * pi / 2,
+      false,
     )
-    // Up the screen to just under the app bar, turning left.
-    ..lineTo(right, top + r)
-    ..arcToPoint(
-      Offset(right - r, top),
-      radius: Radius.circular(r),
-      clockwise: false,
-    )
-    // Across to the middle, turning left again to head down.
-    ..lineTo(mid + r, top)
-    ..arcToPoint(
-      Offset(mid, top + r),
-      radius: Radius.circular(r),
-      clockwise: false,
-    )
-    // Down to the done item.
-    ..lineTo(mid, bottom);
+    ..lineTo(mid, endY);
 }
 
 class _CircuitPainter extends CustomPainter {
   final Path route;
-  final double tail;
-  final double head;
+  final double from;
+  final double to;
+  final double thickness;
 
-  _CircuitPainter(this.route, this.tail, this.head);
+  _CircuitPainter({
+    required this.route,
+    required this.from,
+    required this.to,
+    required this.thickness,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (head <= tail) return;
+    if (to <= from) return;
     final paint =
         Paint()
           ..style = PaintingStyle.stroke
-          ..strokeWidth = CircuitEffect.strokeWidth
+          ..strokeWidth = thickness
           ..strokeCap = StrokeCap.round
           ..strokeJoin = StrokeJoin.round
           ..color = CircuitEffect.colour;
 
-    // The route is one contour, but measure them all in case it ever isn't.
-    final metrics = route.computeMetrics().toList();
-    final total = metrics.fold<double>(0, (sum, m) => sum + m.length);
-    var from = tail * total, to = head * total, offset = 0.0;
-    for (final m in metrics) {
+    var offset = 0.0;
+    for (final m in route.computeMetrics()) {
       final a = (from - offset).clamp(0.0, m.length);
       final b = (to - offset).clamp(0.0, m.length);
       if (b > a) canvas.drawPath(m.extractPath(a, b), paint);
@@ -124,5 +170,7 @@ class _CircuitPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_CircuitPainter oldDelegate) =>
-      oldDelegate.head != head || oldDelegate.tail != tail;
+      oldDelegate.from != from ||
+      oldDelegate.to != to ||
+      oldDelegate.thickness != thickness;
 }
