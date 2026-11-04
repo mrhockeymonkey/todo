@@ -52,82 +52,74 @@ class CelebrationScreen extends StatelessWidget {
   }
 }
 
-/// Sliders for the Circuit line's thickness and speed.
+/// Sliders for every [CircuitParam], in a collapsible section per
+/// [CircuitGroup] so the practice list stays in reach.
 class _CircuitControls extends StatelessWidget {
   final CelebrationSettings settings;
 
   const _CircuitControls({required this.settings});
 
   @override
-  Widget build(BuildContext context) {
-    final circuit = settings.circuit;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Circuit line", style: Theme.of(context).textTheme.titleSmall),
-          _slider(
-            label: "Thickness",
-            value: circuit.thickness,
-            min: CircuitOptions.minThickness,
-            max: CircuitOptions.maxThickness,
-            divisions: 38,
-            display: "${circuit.thickness.toStringAsFixed(1)} px",
-            onChanged:
-                (v) =>
-                    settings.circuit = settings.circuit.copyWith(thickness: v),
-          ),
-          _slider(
-            label: "Speed",
-            value: circuit.speed,
-            min: CircuitOptions.minSpeed,
-            max: CircuitOptions.maxSpeed,
-            divisions: 56,
-            display: "${circuit.speed.round()} px/s",
-            onChanged:
-                (v) => settings.circuit = settings.circuit.copyWith(speed: v),
-          ),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: () {
-                settings.circuit = const CircuitOptions();
-                settings.save();
-              },
-              child: const Text("Reset to defaults"),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _slider({
-    required String label,
-    required double value,
-    required double min,
-    required double max,
-    required int divisions,
-    required String display,
-    required ValueChanged<double> onChanged,
-  }) => Row(
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      SizedBox(width: 80, child: Text(label)),
-      Expanded(
-        child: Slider(
-          value: value.clamp(min, max),
-          min: min,
-          max: max,
-          divisions: divisions,
-          label: display,
-          onChanged: onChanged,
-          onChangeEnd: (_) => settings.save(),
+      for (final group in CircuitGroup.values)
+        ExpansionTile(
+          key: PageStorageKey(group),
+          title: Text(group.label),
+          subtitle: Text(_summary(group)),
+          initiallyExpanded: group == CircuitGroup.main,
+          dense: true,
+          childrenPadding: const EdgeInsets.symmetric(horizontal: 16),
+          children: [
+            for (final param in CircuitParam.values)
+              if (param.group == group) _slider(param),
+          ],
+        ),
+      Align(
+        alignment: Alignment.centerRight,
+        child: TextButton(
+          onPressed: () {
+            settings.circuit = const CircuitOptions();
+            settings.save();
+          },
+          child: const Text("Reset to defaults"),
         ),
       ),
-      SizedBox(width: 76, child: Text(display, textAlign: TextAlign.end)),
     ],
   );
+
+  /// The group's current values, shown while it is collapsed.
+  String _summary(CircuitGroup group) => [
+    for (final param in CircuitParam.values)
+      if (param.group == group)
+        "${param.label} ${param.format(settings.circuit[param])}",
+  ].join(" · ");
+
+  Widget _slider(CircuitParam param) {
+    final value = settings.circuit[param];
+    final display = param.format(value);
+    return Row(
+      children: [
+        SizedBox(width: 80, child: Text(param.label)),
+        Expanded(
+          child: Slider(
+            value: value,
+            min: param.min,
+            max: param.max,
+            divisions: param.divisions,
+            label: display,
+            // Read the current options when changed, not when built, so a
+            // change to another slider since the last build isn't lost.
+            onChanged:
+                (v) => settings.circuit = settings.circuit.withValue(param, v),
+            onChangeEnd: (_) => settings.save(),
+          ),
+        ),
+        SizedBox(width: 84, child: Text(display, textAlign: TextAlign.end)),
+      ],
+    );
+  }
 }
 
 class _PracticeItem {

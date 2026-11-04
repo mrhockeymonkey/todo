@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -219,12 +221,90 @@ void main() {
     await tester.drag(sliders.at(1), const Offset(1000, 0));
     await tester.pump();
 
-    expect(settings.circuit.thickness, CircuitOptions.minThickness);
-    expect(settings.circuit.speed, CircuitOptions.maxSpeed);
+    expect(settings.circuit.thickness, CircuitParam.thickness.min);
+    expect(settings.circuit.speed, CircuitParam.speed.max);
 
     await tester.tap(find.text('Reset to defaults'));
     await tester.pump();
     expect(settings.circuit.thickness, 4);
     expect(settings.circuit.speed, 900);
+  });
+
+  group('circuit motion', () {
+    // Start on the right at y=300, loop up to y=228, drop to y=600.
+    final route = circuitRoute(
+      start: const Offset(380, 300),
+      endY: 600,
+      width: 400,
+      top: 100,
+      radius: 36,
+    );
+
+    /// Speed around [seconds], in px/s.
+    double speedAt(CircuitMotion motion, double seconds) =>
+        (motion.distanceAt(seconds + 0.005) -
+            motion.distanceAt(seconds - 0.005)) /
+        0.01;
+
+    test('moves at a constant speed without gravity', () {
+      final motion = CircuitMotion(
+        route,
+        CircuitOptions.of({CircuitParam.gravity: 0, CircuitParam.speed: 500}),
+      );
+      expect(motion.distanceAt(0.5), closeTo(250, 1));
+      expect(speedAt(motion, 0.2), closeTo(500, 1));
+    });
+
+    test('slows climbing into the loop and speeds up on the drop', () {
+      final motion = CircuitMotion(
+        route,
+        CircuitOptions.of({
+          CircuitParam.gravity: 2500,
+          CircuitParam.speed: 900,
+          CircuitParam.minSpeed: 50,
+        }),
+      );
+      final start = speedAt(motion, 0.02);
+
+      // Find the times at the top of the loop and near the bottom.
+      double timeAtDistance(double d) {
+        var t = 0.0;
+        while (motion.distanceAt(t) < d) {
+          t += 0.001;
+        }
+        return t;
+      }
+
+      final loopTop = route.computeMetrics().first;
+      var topDistance = 0.0, topY = double.infinity;
+      for (var d = 0.0; d < loopTop.length; d += 1) {
+        final y = loopTop.getTangentForOffset(d)!.position.dy;
+        if (y < topY) {
+          topY = y;
+          topDistance = d;
+        }
+      }
+      final top = speedAt(motion, timeAtDistance(topDistance));
+      final bottom = speedAt(motion, timeAtDistance(motion.length - 10));
+
+      expect(start, closeTo(900, 10));
+      // v² = v0² + 2g·Δy: 72px up, then 300px below the start.
+      expect(top, closeTo(sqrt(900 * 900 - 2 * 2500 * 72), 15));
+      expect(bottom, closeTo(sqrt(900 * 900 + 2 * 2500 * 290), 25));
+    });
+
+    test('never drops below the minimum speed', () {
+      final motion = CircuitMotion(
+        route,
+        CircuitOptions.of({
+          CircuitParam.gravity: 8000,
+          CircuitParam.speed: 200,
+          CircuitParam.minSpeed: 150,
+        }),
+      );
+      for (var t = 0.0; t < 1; t += 0.05) {
+        expect(speedAt(motion, t + 0.01), greaterThanOrEqualTo(149));
+      }
+    });
   });
 }

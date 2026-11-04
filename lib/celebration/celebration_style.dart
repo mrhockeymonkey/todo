@@ -67,8 +67,8 @@ class CelebrationSettings with ChangeNotifier {
     if (!_persist) return;
     await Localstore.instance.collection(_collection).doc(_doc).set({
       "style": _style.name,
-      "circuitThickness": _circuit.thickness,
-      "circuitSpeed": _circuit.speed,
+      for (final param in CircuitParam.values)
+        param.storageKey: _circuit[param],
     });
   }
 
@@ -80,10 +80,12 @@ class CelebrationSettings with ChangeNotifier {
       final name = data["style"];
       final stored = CelebrationStyle.values.where((s) => s.name == name);
       if (stored.isNotEmpty) _style = stored.first;
-      _circuit = _circuit.copyWith(
-        thickness: (data["circuitThickness"] as num?)?.toDouble(),
-        speed: (data["circuitSpeed"] as num?)?.toDouble(),
-      );
+      for (final param in CircuitParam.values) {
+        final value = data[param.storageKey];
+        if (value is num) {
+          _circuit = _circuit.withValue(param, value.toDouble());
+        }
+      }
       notifyListeners();
     } catch (e) {
       debugPrint("Could not load celebration setting: $e");
