@@ -139,19 +139,6 @@ class _DailyScreenState extends State<DailyScreen>
       controller: _scrollController,
       slivers: sections,
     );
-
-    // return Column(
-    //   children: [
-    //     Expanded(
-    //       child: CustomScrollView(
-    //         key: scrollViewKey,
-    //         controller: _scrollController,
-    //         slivers: sections,
-    //       ),
-    //     ),
-    //     const RoutinePeek()
-    //   ],
-    // );
   }
 
   Widget _buildAddButton(Date date) => SliverToBoxAdapter(
