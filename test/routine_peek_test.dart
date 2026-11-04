@@ -24,19 +24,21 @@ class _FakeRoutineProvider extends RoutineProvider {
 
 /// Never completed, so due now.
 Routine due(String id, int order) => Routine(
-      id: id,
-      title: id,
-      order: order,
-      schedule: RepeatSchedule(),
-      lastCompletedDate: Date.fromMillisecondsSinceEpoch(0),
-    );
+  id: id,
+  title: id,
+  order: order,
+  schedule: RepeatSchedule(),
+  lastCompletedDate: Date.fromMillisecondsSinceEpoch(0),
+);
 
 /// Completed just now, so not due.
 Routine notDue(String id, int order) => due(id, order).done();
 
 void main() {
   Future<_FakeRoutineProvider> pump(
-      WidgetTester tester, List<Routine> routines) async {
+    WidgetTester tester,
+    List<Routine> routines,
+  ) async {
     final provider = _FakeRoutineProvider(routines);
     await tester.pumpWidget(
       ChangeNotifierProvider<RoutineProvider>.value(
@@ -47,12 +49,16 @@ void main() {
     return provider;
   }
 
-  double ringValue(WidgetTester tester) => tester
-      .widget<CircularProgressIndicator>(find.byType(CircularProgressIndicator))
-      .value!;
+  double ringValue(WidgetTester tester) =>
+      tester
+          .widget<CircularProgressIndicator>(
+            find.byType(CircularProgressIndicator),
+          )
+          .value!;
 
-  testWidgets('focuses the first due routine and summarises the rest',
-      (tester) async {
+  testWidgets('focuses the first due routine and summarises the rest', (
+    tester,
+  ) async {
     await pump(tester, [due('A', 0), due('B', 1), due('C', 2), notDue('D', 3)]);
 
     expect(find.text('A'), findsOneWidget);
@@ -61,8 +67,9 @@ void main() {
     expect(find.text('25%'), findsOneWidget);
   });
 
-  testWidgets('swap cycles the focus through due routines and wraps',
-      (tester) async {
+  testWidgets('swap cycles the focus through due routines and wraps', (
+    tester,
+  ) async {
     await pump(tester, [due('A', 0), due('B', 1), notDue('C', 2)]);
     expect(find.text('+ 1 routine'), findsOneWidget);
 
@@ -75,8 +82,9 @@ void main() {
     expect(find.text('A'), findsOneWidget);
   });
 
-  testWidgets('check marks the focused routine done and moves on',
-      (tester) async {
+  testWidgets('check marks the focused routine done and moves on', (
+    tester,
+  ) async {
     final provider = await pump(tester, [due('A', 0), due('B', 1)]);
 
     await tester.tap(find.byIcon(Icons.check));
@@ -87,11 +95,32 @@ void main() {
     expect(ringValue(tester), 0.5);
   });
 
-  testWidgets('swiping marks the focused routine done but keeps the tile',
-      (tester) async {
+  testWidgets('swiping marks the focused routine done but keeps the tile', (
+    tester,
+  ) async {
     final provider = await pump(tester, [due('A', 0), due('B', 1)]);
 
-    await tester.drag(find.text('A'), const Offset(600, 0));
+    Offset at(Finder f) => tester.getTopLeft(f);
+    final ring = find.byType(CircularProgressIndicator);
+    final subtitle = find.text('+ 1 routine');
+    final check = find.byIcon(Icons.check);
+    final ringBefore = at(ring);
+    final subtitleBefore = at(subtitle);
+    final checkBefore = at(check);
+    final titleBefore = at(find.text('A'));
+
+    // Mid-swipe only the title has moved.
+    final gesture = await tester.startGesture(tester.getCenter(find.text('A')));
+    await gesture.moveBy(const Offset(40, 0));
+    await gesture.moveBy(const Offset(60, 0));
+    await tester.pump();
+    expect(at(find.text('A')).dx, greaterThan(titleBefore.dx));
+    expect(at(ring), ringBefore);
+    expect(at(subtitle), subtitleBefore);
+    expect(at(check), checkBefore);
+
+    await gesture.moveBy(const Offset(500, 0));
+    await gesture.up();
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
