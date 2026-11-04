@@ -1,7 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:todo/celebration/celebration_painters.dart';
+
+const List<Color> kCelebrationColours = [
+  Color(0xFFFFC107),
+  Color(0xFFFF7043),
+  Color(0xFF29B6F6),
+  Color(0xFF66BB6A),
+  Color(0xFFAB47BC),
+  Color(0xFFEC407A),
+];
 
 /// A one-shot celebration drawn over the journey, centred on [center]: a
 /// sparkle burst for a step, or a confetti shower for the [finale]. It fills
@@ -28,7 +36,7 @@ class CompletionEffect extends StatefulWidget {
 class _CompletionEffectState extends State<CompletionEffect>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final List<CelebrationParticle> _particles;
+  late final List<_Particle> _particles;
 
   Duration get _duration =>
       widget.finale
@@ -42,7 +50,7 @@ class _CompletionEffectState extends State<CompletionEffect>
     final count = widget.finale ? 140 : 16;
     _particles = List.generate(
       count,
-      (i) => CelebrationParticle.random(random, i, count),
+      (i) => _Particle.random(random, i, count),
     );
     _controller = AnimationController(vsync: this, duration: _duration)
       ..forward().whenComplete(widget.onFinished);
@@ -56,13 +64,13 @@ class _CompletionEffectState extends State<CompletionEffect>
 
   CustomPainter _painter(double t) =>
       widget.finale
-          ? ConfettiPainter(
+          ? _ConfettiPainter(
             t: t,
             seconds: _duration.inMilliseconds / 1000,
             center: widget.center,
             particles: _particles,
           )
-          : BurstPainter(t: t, center: widget.center, particles: _particles);
+          : _BurstPainter(t: t, center: widget.center, particles: _particles);
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
@@ -120,4 +128,162 @@ class _CompletionEffectState extends State<CompletionEffect>
       );
     },
   );
+}
+
+class _Particle {
+  final double angle;
+  final double speed;
+  final double size;
+  final double spin;
+  final double rotation;
+  final Color color;
+  final bool sparkle;
+
+  _Particle({
+    required this.angle,
+    required this.speed,
+    required this.size,
+    required this.spin,
+    required this.rotation,
+    required this.color,
+    required this.sparkle,
+  });
+
+  factory _Particle.random(Random random, int index, int count) => _Particle(
+    angle: 2 * pi * index / count + (random.nextDouble() - 0.5) * 0.4,
+    speed: 0.7 + random.nextDouble() * 0.6,
+    size: 5 + random.nextDouble() * 5,
+    spin: (random.nextDouble() - 0.5) * 20,
+    rotation: random.nextDouble() * pi,
+    color: kCelebrationColours[random.nextInt(kCelebrationColours.length)],
+    sparkle: index.isEven,
+  );
+}
+
+/// A ring plus a radial spray of dots and four-point sparkles.
+class _BurstPainter extends CustomPainter {
+  final double t;
+  final Offset center;
+  final List<_Particle> particles;
+
+  _BurstPainter({
+    required this.t,
+    required this.center,
+    required this.particles,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final ease = Curves.easeOutCubic.transform(t);
+
+    final ringT = (t / 0.5).clamp(0.0, 1.0);
+    if (ringT < 1) {
+      canvas.drawCircle(
+        center,
+        40 + 50 * Curves.easeOut.transform(ringT),
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 8 * (1 - ringT)
+          ..color = const Color(0xFFFFC107).withValues(alpha: 1 - ringT),
+      );
+    }
+
+    final paint = Paint();
+    for (final p in particles) {
+      final distance = 44 + 90 * ease * p.speed;
+      final position = center + Offset(cos(p.angle), sin(p.angle)) * distance;
+      final radius = p.size * (1 - t);
+      if (radius <= 0.2) continue;
+      paint.color = p.color.withValues(alpha: (1 - t * t).clamp(0.0, 1.0));
+      if (p.sparkle) {
+        _drawSparkle(
+          canvas,
+          position,
+          radius * 1.6,
+          p.rotation + p.spin * t * 0.2,
+          paint,
+        );
+      } else {
+        canvas.drawCircle(position, radius * 0.7, paint);
+      }
+    }
+  }
+
+  static void _drawSparkle(
+    Canvas canvas,
+    Offset c,
+    double r,
+    double rotation,
+    Paint paint,
+  ) {
+    final inner = r * 0.3;
+    final path = Path();
+    for (var i = 0; i < 8; i++) {
+      final a = rotation + i * pi / 4;
+      final d = i.isEven ? r : inner;
+      final point = c + Offset(cos(a), sin(a)) * d;
+      i == 0
+          ? path.moveTo(point.dx, point.dy)
+          : path.lineTo(point.dx, point.dy);
+    }
+    canvas.drawPath(path..close(), paint);
+  }
+
+  @override
+  bool shouldRepaint(_BurstPainter oldDelegate) => oldDelegate.t != t;
+}
+
+/// Confetti thrown upwards from the node that tumbles back down under gravity.
+class _ConfettiPainter extends CustomPainter {
+  static const double _gravity = 1500;
+  static const double _spread = 1.4;
+
+  final double t;
+  final double seconds;
+  final Offset center;
+  final List<_Particle> particles;
+
+  _ConfettiPainter({
+    required this.t,
+    required this.seconds,
+    required this.center,
+    required this.particles,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final time = t * seconds;
+    final opacity = t < 0.75 ? 1.0 : 1 - (t - 0.75) / 0.25;
+    final paint = Paint();
+
+    for (final p in particles) {
+      // Mostly upwards, fanned out by the particle's angle.
+      final vx = cos(p.angle) * 320 * p.speed * _spread;
+      final vy =
+          -(520 + 380 * p.speed) * _spread * (0.75 + 0.25 * sin(p.angle).abs());
+      // A bit of air drag on the horizontal so pieces drift rather than fly.
+      final drag = 1 - exp(-time * 2.2);
+      final x = center.dx + vx * drag / 2.2;
+      final y = center.dy + vy * time + 0.5 * _gravity * time * time;
+
+      paint.color = p.color.withValues(alpha: opacity.clamp(0.0, 1.0));
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(p.rotation + p.spin * time);
+      // Squash on one axis to fake the flutter of a flipping piece of paper.
+      canvas.scale(cos(time * p.spin.abs() * 1.3), 1);
+      canvas.drawRect(
+        Rect.fromCenter(
+          center: Offset.zero,
+          width: p.size,
+          height: p.size * 1.7,
+        ),
+        paint,
+      );
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(_ConfettiPainter oldDelegate) => oldDelegate.t != t;
 }

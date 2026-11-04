@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/celebration/celebration_controller.dart';
-import 'package:todo/celebration/celebration_effect.dart';
 import 'package:todo/celebration/celebration_screen.dart';
-import 'package:todo/celebration/celebration_style.dart';
-import 'package:todo/celebration/effects/circuit_effect.dart';
+import 'package:todo/celebration/circuit_animation.dart';
+import 'package:todo/celebration/circuit_settings.dart';
 import 'package:todo/date.dart';
+import 'package:todo/models/priority.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/providers/task_provider.dart';
 import 'package:todo/widgets/day_plan_list.dart';
@@ -34,7 +34,6 @@ void main() {
   Future<(_FakeTaskProvider, CelebrationController)> pump(
     WidgetTester tester,
     List<Task> tasks,
-    CelebrationStyle style,
   ) async {
     final provider = _FakeTaskProvider(tasks);
     final controller = CelebrationController();
@@ -43,7 +42,7 @@ void main() {
         providers: [
           ChangeNotifierProvider<TaskProvider>.value(value: provider),
           ChangeNotifierProvider(
-            create: (_) => CelebrationSettings(initial: style, persist: false),
+            create: (_) => CircuitSettings(persist: false),
           ),
           ChangeNotifierProvider.value(value: controller),
         ],
@@ -75,77 +74,81 @@ void main() {
           )
           .opacity;
 
-  for (final style in CelebrationStyle.values) {
-    testWidgets('swiping a task with the ${style.label} style', (tester) async {
-      final (provider, controller) = await pump(tester, [
-        Task(id: 'a', title: 'First', dueDate: today, order: 0),
-        Task(id: 'b', title: 'Second', dueDate: today, order: 1),
-      ], style);
+  List<Task> twoTasks() => [
+    Task(
+      id: 'a',
+      title: 'First',
+      dueDate: today,
+      order: 0,
+      priority: Priority.urgent,
+    ),
+    Task(id: 'b', title: 'Second', dueDate: today, order: 1),
+  ];
 
-      await tester.drag(find.text('First'), const Offset(600, 0));
-      // The row slides off, then the celebration starts.
-      await advance(tester, 250);
-
-      final animates = style != CelebrationStyle.none;
-      expect(
-        find.byType(CelebrationOverlay),
-        animates ? findsOneWidget : findsNothing,
-      );
-
-      // Let the row collapse and the done item appear in its new place.
-      await advance(tester, 400);
-      expect(provider.getItemById('a').isDone, isTrue);
-
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-      expect(find.byType(CelebrationOverlay), findsNothing);
-      expect(controller.isHidden('a'), isFalse);
-      expect(controller.isPlaying, isFalse);
-      expect(opacityOf(tester, 'First'), 1);
-      // Still re-sorted below the outstanding task.
-      expect(
-        tester.getTopLeft(find.text('Second')).dy,
-        lessThan(tester.getTopLeft(find.text('First')).dy),
-      );
-    });
-  }
-
-  testWidgets('the done item stays hidden until the ribbon lands', (
+  testWidgets('swiping a task plays the animation in its priority colour', (
     tester,
   ) async {
-    final (_, controller) = await pump(tester, [
-      Task(id: 'a', title: 'First', dueDate: today, order: 0),
-      Task(id: 'b', title: 'Second', dueDate: today, order: 1),
-    ], CelebrationStyle.ribbon);
+    final (provider, controller) = await pump(tester, twoTasks());
 
     await tester.drag(find.text('First'), const Offset(600, 0));
-    // The row slides off (~200ms, when the ribbon sets off) and collapses
-    // (~300ms), then the done item is rebuilt; the ribbon lands 780ms after
-    // it set off, so is still in flight.
-    await advance(tester, 650);
-    expect(controller.isHidden('a'), isTrue);
-    expect(find.text('First'), findsOneWidget);
-    expect(opacityOf(tester, 'First'), 0);
-    expect(controller.targetRect('a'), isNotNull);
-
-    await advance(tester, 400);
-    expect(controller.isHidden('a'), isFalse);
-    expect(opacityOf(tester, 'First'), 1);
+    // The row slides off, then the animation starts.
+    await advance(tester, 250);
+    final animation = tester.widget<CircuitAnimation>(
+      find.byType(CircuitAnimation),
+    );
+    expect(animation.request.colour, Priority.urgent.color);
+    expect(animation.request.taskId, 'a');
 
     await tester.pumpAndSettle();
-    expect(find.byType(CelebrationOverlay), findsNothing);
+    expect(tester.takeException(), isNull);
+    expect(provider.getItemById('a').isDone, isTrue);
+    expect(find.byType(CircuitAnimation), findsNothing);
+    expect(controller.isPlaying, isFalse);
+    expect(controller.isHidden('a'), isFalse);
+    expect(opacityOf(tester, 'First'), 1);
+    // Still re-sorted below the outstanding task.
+    expect(
+      tester.getTopLeft(find.text('Second')).dy,
+      lessThan(tester.getTopLeft(find.text('First')).dy),
+    );
   });
 
-  testWidgets('swiping an already-done task does not celebrate', (
+  testWidgets('the done item stays hidden until the line reaches it', (
     tester,
   ) async {
+    final (_, controller) = await pump(tester, twoTasks());
+
+    await tester.drag(find.text('First'), const Offset(600, 0));
+    await advance(tester, 250);
+    expect(controller.isHidden('a'), isTrue);
+
+    // Step until it's revealed: by then the done item was laid out (hidden)
+    // and the animation is still running its tail in.
+    var sawHiddenDoneItem = false;
+    for (var i = 0; i < 300 && controller.isHidden('a'); i++) {
+      if (controller.targetRect('a') != null) {
+        sawHiddenDoneItem = true;
+        expect(opacityOf(tester, 'First'), 0);
+      }
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    expect(sawHiddenDoneItem, isTrue);
+    expect(controller.isHidden('a'), isFalse);
+    expect(opacityOf(tester, 'First'), 1);
+    expect(find.byType(CircuitAnimation), findsOneWidget);
+
+    await tester.pumpAndSettle();
+    expect(find.byType(CircuitAnimation), findsNothing);
+  });
+
+  testWidgets('swiping an already-done task does not animate', (tester) async {
     await pump(tester, [
       Task(id: 'a', title: 'Done already', dueDate: today, isDone: true),
-    ], CelebrationStyle.ribbon);
+    ]);
 
     await tester.drag(find.text('Done already'), const Offset(600, 0));
     await advance(tester, 250);
-    expect(find.byType(CelebrationOverlay), findsNothing);
+    expect(find.byType(CircuitAnimation), findsNothing);
 
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
@@ -205,7 +208,7 @@ void main() {
   });
 
   testWidgets('circuit sliders change thickness and speed', (tester) async {
-    final settings = CelebrationSettings(persist: false);
+    final settings = CircuitSettings(persist: false);
     await tester.pumpWidget(
       ChangeNotifierProvider.value(
         value: settings,
@@ -213,21 +216,21 @@ void main() {
       ),
     );
 
-    expect(find.text('4.0 px'), findsOneWidget);
-    expect(find.text('900 px/s'), findsOneWidget);
+    expect(find.text('16.0 px'), findsWidgets);
+    expect(find.text('1200 px/s'), findsOneWidget);
 
     final sliders = find.byType(Slider);
     await tester.drag(sliders.at(0), const Offset(-1000, 0));
     await tester.drag(sliders.at(1), const Offset(1000, 0));
     await tester.pump();
 
-    expect(settings.circuit.thickness, CircuitParam.thickness.min);
-    expect(settings.circuit.speed, CircuitParam.speed.max);
+    expect(settings.options.thickness, CircuitParam.thickness.min);
+    expect(settings.options.speed, CircuitParam.speed.max);
 
     await tester.tap(find.text('Reset to defaults'));
     await tester.pump();
-    expect(settings.circuit.thickness, 4);
-    expect(settings.circuit.speed, 900);
+    expect(settings.options.thickness, 16);
+    expect(settings.options.speed, 1200);
   });
 
   group('circuit motion', () {

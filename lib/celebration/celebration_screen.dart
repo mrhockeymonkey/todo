@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/celebration/celebration_controller.dart';
-import 'package:todo/celebration/celebration_effect.dart';
-import 'package:todo/celebration/celebration_style.dart';
 import 'package:todo/celebration/celebration_target.dart';
-import 'package:todo/celebration/effects/circuit_effect.dart';
+import 'package:todo/celebration/circuit_animation.dart';
+import 'package:todo/celebration/circuit_settings.dart';
+import 'package:todo/models/priority.dart';
 
-/// Pick the completion animation and try it out on a practice list.
+/// Tune the completion animation and try it out on a practice list.
 class CelebrationScreen extends StatelessWidget {
   static const String routeName = '/celebration';
 
@@ -14,7 +14,7 @@ class CelebrationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settings = context.watch<CelebrationSettings>();
+    final settings = context.watch<CircuitSettings>();
 
     return Scaffold(
       appBar: AppBar(title: const Text("Completion animation")),
@@ -22,29 +22,9 @@ class CelebrationScreen extends StatelessWidget {
         create: (_) => CelebrationController(),
         child: ListView(
           children: [
-            // Controls and practice list first, so you can tweak and swipe
-            // without scrolling.
-            if (settings.style == CelebrationStyle.circuit)
-              _CircuitControls(settings: settings),
-            const _PracticeList(),
+            _CircuitControls(settings: settings),
             const Divider(),
-            RadioGroup<CelebrationStyle>(
-              groupValue: settings.style,
-              onChanged: (style) {
-                if (style != null) settings.style = style;
-              },
-              child: Column(
-                children: [
-                  for (final style in CelebrationStyle.values)
-                    RadioListTile<CelebrationStyle>(
-                      value: style,
-                      title: Text(style.label),
-                      subtitle: Text(style.description),
-                      dense: true,
-                    ),
-                ],
-              ),
-            ),
+            const _PracticeList(),
           ],
         ),
       ),
@@ -55,7 +35,7 @@ class CelebrationScreen extends StatelessWidget {
 /// Sliders for every [CircuitParam], in a collapsible section per
 /// [CircuitGroup] so the practice list stays in reach.
 class _CircuitControls extends StatelessWidget {
-  final CelebrationSettings settings;
+  final CircuitSettings settings;
 
   const _CircuitControls({required this.settings});
 
@@ -80,7 +60,7 @@ class _CircuitControls extends StatelessWidget {
         alignment: Alignment.centerRight,
         child: TextButton(
           onPressed: () {
-            settings.circuit = const CircuitOptions();
+            settings.options = const CircuitOptions();
             settings.save();
           },
           child: const Text("Reset to defaults"),
@@ -89,15 +69,15 @@ class _CircuitControls extends StatelessWidget {
     ],
   );
 
-  /// The group's current values, shown while it is collapsed.
+  /// The group's current values, shown under its title.
   String _summary(CircuitGroup group) => [
     for (final param in CircuitParam.values)
       if (param.group == group)
-        "${param.label} ${param.format(settings.circuit[param])}",
+        "${param.label} ${param.format(settings.options[param])}",
   ].join(" · ");
 
   Widget _slider(CircuitParam param) {
-    final value = settings.circuit[param];
+    final value = settings.options[param];
     final display = param.format(value);
     return Row(
       children: [
@@ -112,7 +92,7 @@ class _CircuitControls extends StatelessWidget {
             // Read the current options when changed, not when built, so a
             // change to another slider since the last build isn't lost.
             onChanged:
-                (v) => settings.circuit = settings.circuit.withValue(param, v),
+                (v) => settings.options = settings.options.withValue(param, v),
             onChangeEnd: (_) => settings.save(),
           ),
         ),
@@ -125,10 +105,10 @@ class _CircuitControls extends StatelessWidget {
 class _PracticeItem {
   final String id;
   final String title;
-  final Color colour;
+  final Priority priority;
   bool done = false;
 
-  _PracticeItem(this.id, this.title, this.colour);
+  _PracticeItem(this.id, this.title, this.priority);
 }
 
 /// A few pretend tasks that behave like the day plan: swipe one and it moves
@@ -153,10 +133,10 @@ class _PracticeListState extends State<_PracticeList> {
   void _reset() {
     _generation++;
     _items = [
-      _PracticeItem("practice-1", "Water the plants", Colors.green),
-      _PracticeItem("practice-2", "Reply to emails", Colors.blue),
-      _PracticeItem("practice-3", "Go for a run", Colors.red),
-      _PracticeItem("practice-4", "Read a chapter", Colors.purple),
+      _PracticeItem("practice-1", "Pay the bills", Priority.urgent),
+      _PracticeItem("practice-2", "Reply to emails", Priority.important),
+      _PracticeItem("practice-3", "Water the plants", Priority.notImportant),
+      _PracticeItem("practice-4", "Book the dentist", Priority.urgent),
     ];
   }
 
@@ -198,7 +178,7 @@ class _PracticeListState extends State<_PracticeList> {
               leading:
                   item.done
                       ? Icon(Icons.check, color: Colors.grey[350])
-                      : Icon(Icons.circle, color: item.colour),
+                      : Icon(Icons.circle, color: item.priority.color),
               title: Text(
                 item.title,
                 style:
@@ -209,6 +189,7 @@ class _PracticeListState extends State<_PracticeList> {
                         )
                         : null,
               ),
+              subtitle: Text(item.priority.label),
             ),
           ),
         ),
@@ -219,12 +200,10 @@ class _PracticeListState extends State<_PracticeList> {
     if (box is! RenderBox || !box.hasSize) return;
     itemContext.read<CelebrationController>().celebrate(
       itemContext,
-      style: itemContext.read<CelebrationSettings>().style,
-      circuit: itemContext.read<CelebrationSettings>().circuit,
-      request: CelebrationRequest(
+      options: itemContext.read<CircuitSettings>().options,
+      request: CircuitRequest(
         taskId: item.id,
-        title: item.title,
-        colour: item.colour,
+        colour: item.priority.color,
         source: box.localToGlobal(Offset.zero) & box.size,
       ),
     );

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/celebration/celebration_controller.dart';
-import 'package:todo/celebration/celebration_effect.dart';
-import 'package:todo/celebration/celebration_style.dart';
 import 'package:todo/celebration/celebration_target.dart';
-import 'package:todo/celebration/effects/circuit_effect.dart';
+import 'package:todo/celebration/circuit_animation.dart';
+import 'package:todo/celebration/circuit_settings.dart';
 import 'package:todo/models/day_plan_base.dart';
 import 'package:todo/models/task.dart';
 import 'package:todo/widgets/flagged_icon.dart';
@@ -30,7 +29,7 @@ class DayPlanTaskPtr extends DayPlanBase {
         ? Category.defaultCategory()
         : Provider.of<CategoryProvider>(context).getItemById(categoryId);
 
-    // The Builder gives a context for this row, so the celebration knows
+    // The Builder gives a context for this row, so the animation knows
     // where the row was when it was swiped.
     return Builder(
       builder: (itemContext) => Dismissible(
@@ -41,10 +40,10 @@ class DayPlanTaskPtr extends DayPlanBase {
         // assertion).
         key: ObjectKey(task),
         direction: DismissDirection.startToEnd,
-        // Start the celebration as soon as the swipe is let go, while the row
+        // Start the animation as soon as the swipe is let go, while the row
         // is still laid out where the user saw it.
         confirmDismiss: (_) async {
-          _celebrate(itemContext, category);
+          _celebrate(itemContext);
           return true;
         },
         onDismissed: (direction) => _handleDismiss(context, direction),
@@ -86,7 +85,7 @@ class DayPlanTaskPtr extends DayPlanBase {
     );
   }
 
-  void _celebrate(BuildContext itemContext, Category category) {
+  void _celebrate(BuildContext itemContext) {
     final id = task.id;
     final controller =
         Provider.of<CelebrationController?>(itemContext, listen: false);
@@ -94,16 +93,13 @@ class DayPlanTaskPtr extends DayPlanBase {
     if (task.isDone || id == null || controller == null) return;
     if (box is! RenderBox || !box.hasSize) return;
 
-    final settings =
-        Provider.of<CelebrationSettings?>(itemContext, listen: false);
+    final settings = Provider.of<CircuitSettings?>(itemContext, listen: false);
     controller.celebrate(
       itemContext,
-      style: settings?.style ?? CelebrationStyle.circuit,
-      circuit: settings?.circuit ?? const CircuitOptions(),
-      request: CelebrationRequest(
+      options: settings?.options ?? const CircuitOptions(),
+      request: CircuitRequest(
         taskId: id,
-        title: task.title,
-        colour: category.color,
+        colour: task.priority.color,
         source: box.localToGlobal(Offset.zero) & box.size,
       ),
     );

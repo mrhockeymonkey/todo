@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:provider/provider.dart';
 import 'package:todo/celebration/celebration_screen.dart';
-import 'package:todo/celebration/celebration_style.dart';
 import 'package:todo/screens/categories_screen.dart';
 import 'package:todo/screens/export_json_screen.dart';
 import 'package:todo/screens/import_json_screen.dart';
@@ -45,7 +43,7 @@ class SettingsScreen extends StatelessWidget {
   Widget _buildCelebrationTile(BuildContext context) => ListTile(
       leading: const Icon(Icons.celebration),
       title: const Text("Completion animation"),
-      subtitle: Text(context.watch<CelebrationSettings>().style.label),
+      subtitle: const Text("Tune the line that runs to completed tasks"),
       onTap: () =>
           Navigator.of(context).pushNamed(CelebrationScreen.routeName));
 

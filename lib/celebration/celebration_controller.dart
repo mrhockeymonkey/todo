@@ -1,24 +1,18 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:todo/celebration/celebration_effect.dart';
-import 'package:todo/celebration/celebration_style.dart';
-import 'package:todo/celebration/effects/circuit_effect.dart';
+import 'package:todo/celebration/circuit_animation.dart';
+import 'package:todo/celebration/circuit_settings.dart';
 
-/// Coordinates completion celebrations for one screen.
+/// Coordinates the completion animation for one screen.
 ///
-/// Done items register themselves (see `CelebrationTarget`) so an effect can
-/// fly to wherever the item lands after it re-sorts. While an effect is in
-/// flight the done item is kept hidden, then revealed as the effect arrives.
+/// Done items register themselves (see `CelebrationTarget`) so the animation
+/// can run to wherever the item lands after it re-sorts. While it runs the
+/// done item is kept hidden, then revealed as the line arrives.
 class CelebrationController with ChangeNotifier {
   final Map<String, BuildContext> _targets = {};
   final Set<String> _hidden = {};
   final List<OverlayEntry> _entries = [];
-  final Random _random;
   bool _disposed = false;
-
-  CelebrationController({Random? random}) : _random = random ?? Random();
 
   void register(String taskId, BuildContext context) =>
       _targets[taskId] = context;
@@ -29,7 +23,7 @@ class CelebrationController with ChangeNotifier {
 
   bool isHidden(String taskId) => _hidden.contains(taskId);
 
-  /// Whether an effect is currently playing.
+  /// Whether an animation is currently playing.
   bool get isPlaying => _entries.isNotEmpty;
 
   /// The registered done item's row in global coordinates, if laid out.
@@ -42,30 +36,15 @@ class CelebrationController with ChangeNotifier {
     return box.localToGlobal(Offset.zero) & box.size;
   }
 
-  /// Plays [style] for [request]. Call before saving the done task so its
-  /// done item starts hidden.
+  /// Plays the animation for [request]. Call before saving the done task so
+  /// its done item starts hidden.
   void celebrate(
     BuildContext context, {
-    required CelebrationRequest request,
-    required CelebrationStyle style,
-    CircuitOptions circuit = const CircuitOptions(),
+    required CircuitRequest request,
+    CircuitOptions options = const CircuitOptions(),
   }) {
-    String? label;
-    var chosen = style;
-    if (style == CelebrationStyle.shuffle) {
-      final options = CelebrationStyle.playable;
-      chosen = options[_random.nextInt(options.length)];
-      label = chosen.label;
-    }
-
-    final effect = CelebrationEffect.forStyle(
-      chosen,
-      request,
-      _random,
-      circuit: circuit,
-    );
     final overlay = Overlay.maybeOf(context, rootOverlay: true);
-    if (effect == null || overlay == null) return;
+    if (overlay == null) return;
 
     final id = request.taskId;
     _hidden.add(id);
@@ -74,10 +53,9 @@ class CelebrationController with ChangeNotifier {
     late final OverlayEntry entry;
     entry = OverlayEntry(
       builder:
-          (_) => CelebrationOverlay(
-            effect: effect,
+          (_) => CircuitAnimation(
+            options: options,
             request: request,
-            label: label,
             resolveTarget: () => targetRect(id),
             onLanded: () {
               HapticFeedback.mediumImpact();
