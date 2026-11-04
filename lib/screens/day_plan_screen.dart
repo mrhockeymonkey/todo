@@ -117,12 +117,6 @@ class _DailyScreenState extends State<DailyScreen>
           text: Jiffy.parseFromDateTime(date.dateTime).MMMMEEEEd.toString(),),
       ));
 
-      if (isToday) {
-        sections.add(const SliverToBoxAdapter(
-          child: RoutinePeek(),
-        ));
-      }
-
       sections.add(DayPlanList(key: ValueKey(date), date: date));
 
       if (_draftDate == date) {
@@ -142,24 +136,29 @@ class _DailyScreenState extends State<DailyScreen>
       }
     }
 
-    return CustomScrollView(
-      controller: _scrollController,
-      slivers: sections,
-    );
+    // Room for the last day's tasks to scroll clear of the routine card.
+    sections.add(const SliverToBoxAdapter(
+      child: SizedBox(height: _routineCardClearance),
+    ));
 
-    // return Column(
-    //   children: [
-    //     Expanded(
-    //       child: CustomScrollView(
-    //         key: scrollViewKey,
-    //         controller: _scrollController,
-    //         slivers: sections,
-    //       ),
-    //     ),
-    //     const RoutinePeek()
-    //   ],
-    // );
+    return Stack(
+      children: [
+        CustomScrollView(
+          controller: _scrollController,
+          slivers: sections,
+        ),
+        // Fixed above the bottom tab bar, outside the scrolling list.
+        const Positioned(
+          left: 8,
+          right: 8,
+          bottom: 8,
+          child: RoutinePeek(),
+        ),
+      ],
+    );
   }
+
+  static const double _routineCardClearance = 96;
 
   Widget _buildAddButton(Date date) => SliverToBoxAdapter(
         child: Row(
