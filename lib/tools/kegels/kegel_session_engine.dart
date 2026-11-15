@@ -45,10 +45,7 @@ class KegelSessionEngine extends ChangeNotifier {
   bool _isPaused = false;
   bool _disposed = false;
 
-  KegelSessionEngine({
-    required TickerProvider vsync,
-    required this.patterns,
-  }) {
+  KegelSessionEngine({required TickerProvider vsync, required this.patterns}) {
     _buildSteps();
     _controller = AnimationController(vsync: vsync);
     _controller.addStatusListener((status) {
@@ -58,42 +55,54 @@ class KegelSessionEngine extends ChangeNotifier {
   }
 
   void _buildSteps() {
-    _steps.add(const SessionStep(
-        phase: KegelPhase.getReady, seconds: kGetReadySeconds));
+    _steps.add(
+      const SessionStep(phase: KegelPhase.getReady, seconds: kGetReadySeconds),
+    );
 
     for (var i = 0; i < patterns.length; i++) {
       final pattern = patterns[i];
       if (i > 0) {
         _stageFirstStep.add(_steps.length);
-        _steps.add(SessionStep(
-            phase: KegelPhase.rest, seconds: kRestSeconds, exerciseIndex: i));
+        _steps.add(
+          SessionStep(
+            phase: KegelPhase.rest,
+            seconds: kRestSeconds,
+            exerciseIndex: i,
+          ),
+        );
       }
       _stageFirstStep.add(_steps.length);
       for (var rep = 0; rep < pattern.reps; rep++) {
-        _steps.addAll([
-          SessionStep(
+        _steps.addAll(
+          [
+            SessionStep(
               phase: KegelPhase.contract,
               seconds: pattern.contractSeconds,
               fillFrom: 0,
               fillTo: 1,
-              exerciseIndex: i),
-          SessionStep(
+              exerciseIndex: i,
+            ),
+            SessionStep(
               phase: KegelPhase.hold,
               seconds: pattern.holdSeconds,
               fillFrom: 1,
               fillTo: 1,
-              exerciseIndex: i),
-          SessionStep(
+              exerciseIndex: i,
+            ),
+            SessionStep(
               phase: KegelPhase.relax,
               seconds: pattern.relaxSeconds,
               fillFrom: 1,
               fillTo: 0,
-              exerciseIndex: i),
-          SessionStep(
+              exerciseIndex: i,
+            ),
+            SessionStep(
               phase: KegelPhase.wait,
               seconds: pattern.waitSeconds,
-              exerciseIndex: i),
-        ].where((step) => step.seconds > 0));
+              exerciseIndex: i,
+            ),
+          ].where((step) => step.seconds > 0),
+        );
       }
     }
     _steps.add(const SessionStep(phase: KegelPhase.complete, seconds: 0));
@@ -104,7 +113,8 @@ class KegelSessionEngine extends ChangeNotifier {
     var remaining = 0.0;
     for (var i = _steps.length - 1; i >= 0; i--) {
       final step = _steps[i];
-      final isExerciseStep = step.phase != KegelPhase.getReady &&
+      final isExerciseStep =
+          step.phase != KegelPhase.getReady &&
           step.phase != KegelPhase.rest &&
           step.phase != KegelPhase.complete;
       if (!isExerciseStep) {
@@ -210,9 +220,9 @@ class KegelSessionEngine extends ChangeNotifier {
   void skipToNextStage() {
     if (isComplete) return;
     final next = currentStageIndex + 1;
-    _jumpToStep(next < _stageFirstStep.length
-        ? _stageFirstStep[next]
-        : _steps.length - 1);
+    _jumpToStep(
+      next < _stageFirstStep.length ? _stageFirstStep[next] : _steps.length - 1,
+    );
   }
 
   void skipToPreviousStage() {
@@ -222,7 +232,8 @@ class KegelSessionEngine extends ChangeNotifier {
     // Media-player semantics: restart the current stage unless we're within
     // the first couple of seconds of its first step, in which case step back
     // to the previous stage.
-    final nearStart = _stepIndex == stageStart &&
+    final nearStart =
+        _stepIndex == stageStart &&
         _controller.value * _currentStep.seconds < 2.0;
     if (nearStart && stage > 0) {
       _jumpToStep(_stageFirstStep[stage - 1]);
@@ -252,10 +263,13 @@ class KegelSessionEngine extends ChangeNotifier {
       notifyListeners();
       return;
     }
-    _controller.duration =
-        Duration(milliseconds: (step.seconds * 1000).round());
-    _fill = Tween(begin: step.fillFrom, end: step.fillTo).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _controller.duration = Duration(
+      milliseconds: (step.seconds * 1000).round(),
+    );
+    _fill = Tween(
+      begin: step.fillFrom,
+      end: step.fillTo,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
     _controller.value = 0;
     if (!_isPaused) _controller.forward();
     notifyListeners();

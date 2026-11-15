@@ -2,9 +2,7 @@ import 'package:todo/models/category.dart';
 import 'package:todo/providers/provider_base.dart';
 
 class CategoryProvider extends ProviderBase<Category> {
-  CategoryProvider({
-    required super.tableName,
-  });
+  CategoryProvider({required super.tableName});
 
   @override
   Category parse(Map<String, dynamic> json) => Category.fromJson(json);

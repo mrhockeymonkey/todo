@@ -49,10 +49,12 @@ void main() {
   // A key that stays the same after the task is saved makes Dismissible
   // throw "A dismissed Dismissible widget is still part of the tree" when
   // the task is rebuilt at the same position.
-  testWidgets('swiping the only task marks it done and keeps it in the list',
-      (tester) async {
-    final provider =
-        await pump(tester, [Task(id: 'a', title: 'Only', dueDate: today)]);
+  testWidgets('swiping the only task marks it done and keeps it in the list', (
+    tester,
+  ) async {
+    final provider = await pump(tester, [
+      Task(id: 'a', title: 'Only', dueDate: today),
+    ]);
 
     await swipe(tester, 'Only');
 
@@ -72,8 +74,9 @@ void main() {
     expect(find.text('Done already'), findsOneWidget);
   });
 
-  testWidgets('a swiped task moves below the outstanding tasks',
-      (tester) async {
+  testWidgets('a swiped task moves below the outstanding tasks', (
+    tester,
+  ) async {
     await pump(tester, [
       Task(id: 'a', title: 'First', dueDate: today, order: 0),
       Task(id: 'b', title: 'Second', dueDate: today, order: 1),
@@ -82,7 +85,9 @@ void main() {
     await swipe(tester, 'First');
 
     expect(tester.takeException(), isNull);
-    expect(tester.getTopLeft(find.text('Second')).dy,
-        lessThan(tester.getTopLeft(find.text('First')).dy));
+    expect(
+      tester.getTopLeft(find.text('Second')).dy,
+      lessThan(tester.getTopLeft(find.text('First')).dy),
+    );
   });
 }

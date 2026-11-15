@@ -6,10 +6,7 @@ import 'package:todo/models/routine.dart';
 class RoutineItem extends StatelessWidget {
   final Routine routine;
 
-  const RoutineItem({
-    super.key,
-    required this.routine,
-  });
+  const RoutineItem({super.key, required this.routine});
 
   @override
   Widget build(BuildContext context) {
@@ -17,16 +14,14 @@ class RoutineItem extends StatelessWidget {
       leading: SizedBox(
         height: 40,
         width: 40,
-        child: AnimatedGauge(
-          percent: routine.percent,
-        ),
+        child: AnimatedGauge(percent: routine.percent),
       ),
       title: Text("${routine.order} ${routine.title}"),
       subtitle: Text(routine.dueWhen),
-      onTap: () => Navigator.of(context).pushNamed(
-        RoutineDetailScreen.routeName,
-        arguments: routine.id,
-      ),
+      onTap:
+          () => Navigator.of(
+            context,
+          ).pushNamed(RoutineDetailScreen.routeName, arguments: routine.id),
     );
   }
 }

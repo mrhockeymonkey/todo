@@ -14,7 +14,6 @@ class RoutineList extends StatefulWidget {
 }
 
 class RoutineListState extends State<RoutineList> {
-  
   List<Routine> _routines = [];
   final ScrollController _scrollController = ScrollController();
 
@@ -26,32 +25,32 @@ class RoutineListState extends State<RoutineList> {
     _routines = routineProvider.items;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return ReorderableSliverList(
-      delegate: ReorderableSliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          
-          Routine routine = _routines[index];
-          
-          return Dismissible(
-            key: ObjectKey(routine), // see DayPlanTaskPtr for why ObjectKey
-            direction: DismissDirection.startToEnd,
-            onDismissed: (direction) => _handleDismiss(direction, routine),
-            child: RoutineItem(routine: routine),
-          );
-        },
-        childCount: _routines.length,
-      ),
+      delegate: ReorderableSliverChildBuilderDelegate((
+        BuildContext context,
+        int index,
+      ) {
+        Routine routine = _routines[index];
+
+        return Dismissible(
+          key: ObjectKey(routine), // see DayPlanTaskPtr for why ObjectKey
+          direction: DismissDirection.startToEnd,
+          onDismissed: (direction) => _handleDismiss(direction, routine),
+          child: RoutineItem(routine: routine),
+        );
+      }, childCount: _routines.length),
       onReorder: _onReorder,
       controller: _scrollController,
     );
   }
 
   void _handleDismiss(DismissDirection direction, Routine routine) {
-    Provider.of<RoutineProvider>(context, listen: false)
-        .addOrUpdate(routine.done());
+    Provider.of<RoutineProvider>(
+      context,
+      listen: false,
+    ).addOrUpdate(routine.done());
   }
 
   void _onReorder(int oldIndex, int newIndex) {
@@ -70,7 +69,9 @@ class RoutineListState extends State<RoutineList> {
       next++;
     }
 
-    Provider.of<RoutineProvider>(context, listen: false)
-        .updateAll(updatedRoutines);
+    Provider.of<RoutineProvider>(
+      context,
+      listen: false,
+    ).updateAll(updatedRoutines);
   }
 }

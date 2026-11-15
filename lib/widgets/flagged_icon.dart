@@ -16,10 +16,7 @@ class FlaggedIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) => showFlag ? _flagged() : _notFlagged();
 
-  Widget _notFlagged() => Icon(
-        icon,
-        color: color,
-      );
+  Widget _notFlagged() => Icon(icon, color: color);
 
   // Widget _flagged() => SizedBox(
   //       height: 30,
@@ -51,31 +48,21 @@ class FlaggedIcon extends StatelessWidget {
   //     );
 
   Widget _flagged() => SizedBox(
-        height: 30,
-        width: 30,
-        child: Stack(
-          children: <Widget>[
-            Icon(
-              icon,
-              color: color,
-            ),
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.all(1),
-                constraints: const BoxConstraints(
-                  minWidth: 12,
-                  minHeight: 12,
-                ),
-                child: const Icon(
-                  Entypo.flag,
-                  color: Colors.red,
-                  size: 12.0,
-                ),
-              ),
-            ),
-          ],
+    height: 30,
+    width: 30,
+    child: Stack(
+      children: <Widget>[
+        Icon(icon, color: color),
+        Positioned(
+          right: 0,
+          bottom: 0,
+          child: Container(
+            padding: const EdgeInsets.all(1),
+            constraints: const BoxConstraints(minWidth: 12, minHeight: 12),
+            child: const Icon(Entypo.flag, color: Colors.red, size: 12.0),
+          ),
         ),
-      );
+      ],
+    ),
+  );
 }

@@ -8,9 +8,7 @@ abstract class ProviderBase<T extends DbItem> with ChangeNotifier {
   final Localstore db = Localstore.instance;
   final Map<String, T> _items = {};
 
-  ProviderBase({
-    required this.tableName,
-  });
+  ProviderBase({required this.tableName});
 
   List<T> get items {
     var items = [..._items.values];

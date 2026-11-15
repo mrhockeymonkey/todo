@@ -10,10 +10,7 @@ import 'package:todo/date.dart';
 class DayPlanList extends StatefulWidget {
   final Date date;
 
-  const DayPlanList({
-    super.key,
-    required this.date,
-  });
+  const DayPlanList({super.key, required this.date});
 
   @override
   State<StatefulWidget> createState() => DayPlanListState();
@@ -34,10 +31,11 @@ class DayPlanListState extends State<DayPlanList> {
 
     final taskProvider = Provider.of<TaskProvider>(context);
 
-    _dayPlanItems = taskProvider
-        .getByDate(widget.date)
-        .map<DayPlanBase>((task) => DayPlanTaskPtr(task: task))
-        .toList();
+    _dayPlanItems =
+        taskProvider
+            .getByDate(widget.date)
+            .map<DayPlanBase>((task) => DayPlanTaskPtr(task: task))
+            .toList();
 
     _dayPlanItems.sort(DayPlanBase.compare);
   }
@@ -45,13 +43,13 @@ class DayPlanListState extends State<DayPlanList> {
   @override
   Widget build(BuildContext context) {
     return ReorderableSliverList(
-      delegate: ReorderableSliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          var item = _dayPlanItems[index];
-          return item.build(context);
-        },
-        childCount: _dayPlanItems.length,
-      ),
+      delegate: ReorderableSliverChildBuilderDelegate((
+        BuildContext context,
+        int index,
+      ) {
+        var item = _dayPlanItems[index];
+        return item.build(context);
+      }, childCount: _dayPlanItems.length),
       onReorder: _onReorder,
     );
   }

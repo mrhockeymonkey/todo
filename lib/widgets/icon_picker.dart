@@ -52,20 +52,21 @@ class _IconPickerState extends State<IconPicker> {
     final int nbrCircleLine = width ~/ (widget.circleSize + widget.spacing);
 
     return SizedBox(
-        width: width,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            GridView.count(
-              padding: const EdgeInsets.all(16.0),
-              crossAxisSpacing: widget.spacing,
-              mainAxisSpacing: widget.spacing,
-              crossAxisCount: nbrCircleLine,
-              shrinkWrap: true,
-              children: _buildIconButtons(),
-            ),
-          ],
-        ));
+      width: width,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GridView.count(
+            padding: const EdgeInsets.all(16.0),
+            crossAxisSpacing: widget.spacing,
+            mainAxisSpacing: widget.spacing,
+            crossAxisCount: nbrCircleLine,
+            shrinkWrap: true,
+            children: _buildIconButtons(),
+          ),
+        ],
+      ),
+    );
   }
 
   List<Widget> _buildIconButtons() {
@@ -87,8 +88,10 @@ class _IconPickerState extends State<IconPicker> {
                 answer = iconPair.key;
               });
             },
-            icon: Icon(iconPair.value,
-                color: isSelected ? Colors.white : Colors.grey),
+            icon: Icon(
+              iconPair.value,
+              color: isSelected ? Colors.white : Colors.grey,
+            ),
           ),
         ),
       ),

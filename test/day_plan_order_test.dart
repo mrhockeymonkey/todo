@@ -11,7 +11,12 @@ class _Item extends DayPlanBase {
   @override
   final int order;
 
-  _Item(this.name, {this.isDone = false, this.isFlagged = false, this.order = 0});
+  _Item(
+    this.name, {
+    this.isDone = false,
+    this.isFlagged = false,
+    this.order = 0,
+  });
 
   @override
   Widget build(BuildContext context) => const SizedBox();
@@ -48,8 +53,11 @@ void main() {
   test('compare is antisymmetric', () {
     for (final a in expected) {
       for (final b in expected) {
-        expect(DayPlanBase.compare(a, b).sign, -DayPlanBase.compare(b, a).sign,
-            reason: '${a.name} vs ${b.name}');
+        expect(
+          DayPlanBase.compare(a, b).sign,
+          -DayPlanBase.compare(b, a).sign,
+          reason: '${a.name} vs ${b.name}',
+        );
       }
     }
   });

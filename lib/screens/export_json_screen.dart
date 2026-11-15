@@ -41,41 +41,31 @@ class _ExportJsonPageState extends State<ExportJsonPage> {
   }
 
   Widget _buildBody() => Row(
-        children: [
-          Expanded(
-            child: Column(
-              children: [
-                _buildTextBox(),
-                _buildButton(),
-              ],
-            ),
-          )
-        ],
-      );
+    children: [
+      Expanded(child: Column(children: [_buildTextBox(), _buildButton()])),
+    ],
+  );
 
   Widget _buildTextBox() => Expanded(
-        child: Container(
-          padding: const EdgeInsets.all(10.0),
-          child: Text(json),
-        ),
-      );
+    child: Container(padding: const EdgeInsets.all(10.0), child: Text(json)),
+  );
 
   Widget _buildButton() => ElevatedButton(
-        child: const Text(
-          "Copy To Clipboard",
-          style: TextStyle(color: Colors.white),
-        ),
-        onPressed: () {
-          Clipboard.setData(ClipboardData(text: json));
-          debugPrint("copied to clipboard");
-        },
-      );
+    child: const Text(
+      "Copy To Clipboard",
+      style: TextStyle(color: Colors.white),
+    ),
+    onPressed: () {
+      Clipboard.setData(ClipboardData(text: json));
+      debugPrint("copied to clipboard");
+    },
+  );
 
   String _buildJson(BuildContext context) {
-    var exportTasks = Provider.of<TaskProvider>(context)
-        .items
-        .where((t) => !t.isDone)
-        .toList();
+    var exportTasks =
+        Provider.of<TaskProvider>(
+          context,
+        ).items.where((t) => !t.isDone).toList();
 
     var exportRoutines = Provider.of<RoutineProvider>(context).items.toList();
 

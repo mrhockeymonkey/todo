@@ -49,12 +49,8 @@ void main() {
     return provider;
   }
 
-  double ringValue(WidgetTester tester) =>
-      tester
-          .widget<CircularProgressIndicator>(
-            find.byType(CircularProgressIndicator),
-          )
-          .value!;
+  SegmentedRing ring(WidgetTester tester) =>
+      tester.widget<SegmentedRing>(find.byType(SegmentedRing));
 
   testWidgets('focuses the first due routine and summarises the rest', (
     tester,
@@ -63,8 +59,8 @@ void main() {
 
     expect(find.text('A'), findsOneWidget);
     expect(find.text('+ 2 routines'), findsOneWidget);
-    expect(ringValue(tester), 0.25);
-    expect(find.text('25%'), findsOneWidget);
+    expect(ring(tester).total, 4);
+    expect(ring(tester).done, 1);
   });
 
   testWidgets('swap cycles the focus through due routines and wraps', (
@@ -92,7 +88,8 @@ void main() {
 
     expect(provider.getItemById('A').isDue, isFalse);
     expect(find.text('B'), findsOneWidget);
-    expect(ringValue(tester), 0.5);
+    expect(ring(tester).total, 2);
+    expect(ring(tester).done, 1);
   });
 
   testWidgets('swiping marks the focused routine done but keeps the tile', (
@@ -101,7 +98,7 @@ void main() {
     final provider = await pump(tester, [due('A', 0), due('B', 1)]);
 
     Offset at(Finder f) => tester.getTopLeft(f);
-    final ring = find.byType(CircularProgressIndicator);
+    final ring = find.byType(SegmentedRing);
     final subtitle = find.text('+ 1 routine');
     final check = find.byIcon(Icons.check);
     final ringBefore = at(ring);
@@ -128,16 +125,34 @@ void main() {
     expect(find.text('B'), findsOneWidget);
   });
 
-  testWidgets('shows an all-done state when nothing is due', (tester) async {
-    final provider = await pump(tester, [due('A', 0)]);
+  testWidgets('hides once every routine is done', (tester) async {
+    await pump(tester, [due('A', 0)]);
 
     await tester.tap(find.byIcon(Icons.check));
     await tester.pump();
 
-    expect(provider.getItemById('A').isDue, isFalse);
-    expect(find.text('All routines done'), findsOneWidget);
-    expect(find.byIcon(Icons.check), findsNothing);
-    expect(find.byIcon(Icons.swap_horiz), findsNothing);
-    expect(ringValue(tester), 1.0);
+    expect(find.byType(Card), findsNothing);
+  });
+
+  testWidgets('is hidden when no routines are due', (tester) async {
+    await pump(tester, [notDue('A', 0)]);
+
+    expect(find.byType(Card), findsNothing);
+  });
+
+  testWidgets('hides while the keyboard is open and returns after', (
+    tester,
+  ) async {
+    await pump(tester, [due('A', 0)]);
+    expect(find.byType(Card), findsOneWidget);
+
+    tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+    addTearDown(tester.view.resetViewInsets);
+    await tester.pump();
+    expect(find.byType(Card), findsNothing);
+
+    tester.view.resetViewInsets();
+    await tester.pump();
+    expect(find.byType(Card), findsOneWidget);
   });
 }

@@ -58,34 +58,34 @@ class Category implements DbItem {
   });
 
   Category.defaultCategory()
-      : id = null,
-        name = "Default",
-        order = 99999,
-        iconName = "pin",
-        color = AppColour.colorCustom;
+    : id = null,
+      name = "Default",
+      order = 99999,
+      iconName = "pin",
+      color = AppColour.colorCustom;
 
   factory Category.fromJson(Map<String, dynamic> map) => Category(
-        id: map['id'],
-        name: map['name'],
-        iconName: map['iconName'] ?? "flag",
-        color: map['color'] == null ? Colors.grey : Color(map['color']),
-        order: map['order'] ?? 0,
-      );
+    id: map['id'],
+    name: map['name'],
+    iconName: map['iconName'] ?? "flag",
+    color: map['color'] == null ? Colors.grey : Color(map['color']),
+    order: map['order'] ?? 0,
+  );
 
   Category copyWith({int? order}) => Category(
-        id: id,
-        name: name,
-        iconName: iconName,
-        color: color,
-        order: order ?? this.order,
-      );
+    id: id,
+    name: name,
+    iconName: iconName,
+    color: color,
+    order: order ?? this.order,
+  );
 
   @override
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'iconName': iconName,
-        'color': color.value,
-        'order': order
-      };
+    'id': id,
+    'name': name,
+    'iconName': iconName,
+    'color': color.value,
+    'order': order,
+  };
 }

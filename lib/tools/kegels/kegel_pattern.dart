@@ -39,7 +39,8 @@ class KegelPattern {
 
 const KegelPattern _calmWave = KegelPattern(
   name: "Calm Wave",
-  description: "Slow, flowing waves. Contract, hold and release "
+  description:
+      "Slow, flowing waves. Contract, hold and release "
       "smoothly, then rest briefly before the next wave.",
   contractSeconds: 3.2,
   holdSeconds: 3,
@@ -52,7 +53,8 @@ const KegelPattern _calmWave = KegelPattern(
 const List<KegelPattern> kKegelTraining = [
   KegelPattern(
     name: "Gentle Pulses",
-    description: "Quick, light squeezes to warm up. "
+    description:
+        "Quick, light squeezes to warm up. "
         "Contract for a second, then release.",
     contractSeconds: .5,
     holdSeconds: .7,
@@ -72,7 +74,8 @@ const List<KegelPattern> kKegelTraining = [
   ),
   KegelPattern(
     name: "Core Beat",
-    description: "Continuous medium-paced beats with no pause "
+    description:
+        "Continuous medium-paced beats with no pause "
         "between reps.",
     contractSeconds: .3,
     holdSeconds: 1.9,
@@ -82,7 +85,8 @@ const List<KegelPattern> kKegelTraining = [
   ),
   KegelPattern(
     name: "Front Hold",
-    description: "Squeeze and hold at full strength, focusing on the "
+    description:
+        "Squeeze and hold at full strength, focusing on the "
         "front muscles, then release quickly.",
     contractSeconds: .5,
     holdSeconds: 5,
@@ -93,7 +97,8 @@ const List<KegelPattern> kKegelTraining = [
   _calmWave,
   KegelPattern(
     name: "Endurance Squeeze",
-    description: "A long, sustained hold to build endurance. "
+    description:
+        "A long, sustained hold to build endurance. "
         "Release slowly and with control.",
     contractSeconds: 2,
     holdSeconds: 10,

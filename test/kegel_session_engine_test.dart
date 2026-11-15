@@ -4,8 +4,8 @@ import 'package:todo/tools/kegels/kegel_session_engine.dart';
 
 /// Pumps just past [seconds] so the current step's controller completes
 /// (a frame must land beyond the duration for the completed status to fire).
-Future<void> pumpStep(WidgetTester tester, double seconds) => tester
-    .pump(Duration(milliseconds: (seconds * 1000).round() + 50));
+Future<void> pumpStep(WidgetTester tester, double seconds) =>
+    tester.pump(Duration(milliseconds: (seconds * 1000).round() + 50));
 
 void main() {
   test('total duration is reps x (contract + hold + relax + wait)', () {
@@ -24,13 +24,17 @@ void main() {
 
   test('every training preset has a positive duration', () {
     for (final pattern in kKegelTraining) {
-      expect(pattern.totalDuration, greaterThan(Duration.zero),
-          reason: pattern.name);
+      expect(
+        pattern.totalDuration,
+        greaterThan(Duration.zero),
+        reason: pattern.name,
+      );
     }
   });
 
-  testWidgets('engine runs get ready, reps, rest and completes',
-      (tester) async {
+  testWidgets('engine runs get ready, reps, rest and completes', (
+    tester,
+  ) async {
     const patterns = [
       KegelPattern(
         name: "A",
@@ -136,8 +140,9 @@ void main() {
     engine.dispose();
   });
 
-  testWidgets('next and previous move one stage at a time incl. rests',
-      (tester) async {
+  testWidgets('next and previous move one stage at a time incl. rests', (
+    tester,
+  ) async {
     const pattern = KegelPattern(
       name: "A",
       description: "",
@@ -148,8 +153,10 @@ void main() {
       reps: 2,
     );
     // Two exercises => stages [ex0 (0), rest (1), ex1 (2)].
-    final engine =
-        KegelSessionEngine(vsync: tester, patterns: const [pattern, pattern]);
+    final engine = KegelSessionEngine(
+      vsync: tester,
+      patterns: const [pattern, pattern],
+    );
 
     engine.start();
     await tester.pump(); // anchor the ticker

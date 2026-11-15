@@ -21,9 +21,10 @@ class TaskItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var categoryId = task.categoryId;
-    var category = categoryId == null
-        ? Category.defaultCategory()
-        : Provider.of<CategoryProvider>(context).getItemById(categoryId);
+    var category =
+        categoryId == null
+            ? Category.defaultCategory()
+            : Provider.of<CategoryProvider>(context).getItemById(categoryId);
 
     return task.isDone
         ? _buildDoneTaskItem(context, category)
@@ -34,16 +35,19 @@ class TaskItem extends StatelessWidget {
     return ListTile(
       key: ValueKey(task),
       title: Text(task.title),
-      subtitle: task.dueDate != null
-          ? Text(task.dueDate!.yMMMd())
-          : const Text("At Some Point"),
+      subtitle:
+          task.dueDate != null
+              ? Text(task.dueDate!.yMMMd())
+              : const Text("At Some Point"),
       leading: PriorityMenu(
         onSelected: (priority) => _handlePriority(context, priority),
         child: Icon(category.icon, color: task.priority.color),
       ),
       trailing: _buildPopupMenu(context),
-      onTap: () => Navigator.of(context)
-          .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
+      onTap:
+          () => Navigator.of(
+            context,
+          ).pushNamed(TaskDetailScreen.routeName, arguments: task.id),
     );
   }
 
@@ -61,43 +65,49 @@ class TaskItem extends StatelessWidget {
         trailing: IconButton(
           icon: const Icon(Icons.undo),
           onPressed: () {
-            Provider.of<TaskProvider>(context, listen: false)
-                .addOrUpdate(task.copyWith(isDone: false));
+            Provider.of<TaskProvider>(
+              context,
+              listen: false,
+            ).addOrUpdate(task.copyWith(isDone: false));
           },
         ),
       );
 
   Widget _buildPopupMenu(BuildContext context) => PopupMenuButton<void>(
-        onSelected: (_) => {},
-        itemBuilder: (context) => <PopupMenuEntry<void>>[
+    onSelected: (_) => {},
+    itemBuilder:
+        (context) => <PopupMenuEntry<void>>[
           PopupMenuItem<void>(
             child: ListTile(
               title: Row(
                 children: [
                   IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        _handleFlag(context);
-                      },
-                      icon: const Icon(Entypo.flag)),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _handleFlag(context);
+                    },
+                    icon: const Icon(Entypo.flag),
+                  ),
                   IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        _handleSnooze(context);
-                      },
-                      icon: const Icon(Icons.snooze)),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _handleSnooze(context);
+                    },
+                    icon: const Icon(Icons.snooze),
+                  ),
                   IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        _handleAddToPlan(context);
-                      },
-                      icon: const AddToDayPlanIcon())
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _handleAddToPlan(context);
+                    },
+                    icon: const AddToDayPlanIcon(),
+                  ),
                 ],
               ),
             ),
           ),
         ],
-      );
+  );
 
   void _handleSnooze(BuildContext context) {
     if (task.dueDate == null) return;
@@ -108,15 +118,19 @@ class TaskItem extends StatelessWidget {
     Provider.of<TaskProvider>(context, listen: false).addOrUpdate(snoozedTask);
   }
 
-  void _handleFlag(BuildContext context) =>
-      Provider.of<TaskProvider>(context, listen: false)
-          .addOrUpdate(task.copyWith(isFlagged: !task.isFlagged));
+  void _handleFlag(BuildContext context) => Provider.of<TaskProvider>(
+    context,
+    listen: false,
+  ).addOrUpdate(task.copyWith(isFlagged: !task.isFlagged));
 
   void _handlePriority(BuildContext context, Priority priority) =>
-      Provider.of<TaskProvider>(context, listen: false)
-          .addOrUpdate(task.copyWith(priority: priority));
+      Provider.of<TaskProvider>(
+        context,
+        listen: false,
+      ).addOrUpdate(task.copyWith(priority: priority));
 
-  void _handleAddToPlan(BuildContext context) =>
-      Provider.of<TaskProvider>(context, listen: false)
-          .addOrUpdate(task.copyWith(dueDate: Date.now()));
+  void _handleAddToPlan(BuildContext context) => Provider.of<TaskProvider>(
+    context,
+    listen: false,
+  ).addOrUpdate(task.copyWith(dueDate: Date.now()));
 }

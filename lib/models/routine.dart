@@ -31,20 +31,22 @@ class Routine implements DbItem {
     this.displayOnPinned = false,
     this.order = 0,
     this.isFlagged = false,
-  })  : lastCompletedDate =
-            lastCompletedDate ?? Date.fromMillisecondsSinceEpoch(0),
-        _nextDueDateTime = nextDueDateTime == null ||
-                nextDueDateTime == Date.fromMillisecondsSinceEpoch(0)
-            ? schedule.calculateNextDueDate(Date.now())
-            : nextDueDateTime;
+  }) : lastCompletedDate =
+           lastCompletedDate ?? Date.fromMillisecondsSinceEpoch(0),
+       _nextDueDateTime =
+           nextDueDateTime == null ||
+                   nextDueDateTime == Date.fromMillisecondsSinceEpoch(0)
+               ? schedule.calculateNextDueDate(Date.now())
+               : nextDueDateTime;
 
   factory Routine.fromJson(Map<String, dynamic> map) {
     return Routine(
       id: map['id'],
       title: map['title'],
       schedule: RepeatSchedule.fromJson(map['schedule']),
-      lastCompletedDate:
-          Date.fromMillisecondsSinceEpoch(map['lastCompletedDate'] ?? 0),
+      lastCompletedDate: Date.fromMillisecondsSinceEpoch(
+        map['lastCompletedDate'] ?? 0,
+      ),
       nextDueDateTime: Date.fromMillisecondsSinceEpoch(map['nextDueDate'] ?? 0),
       notes: map['notes'] ?? "",
       displayOnPinned: map['displayOnPinned'] ?? false,
@@ -74,26 +76,26 @@ class Routine implements DbItem {
     Date? lastCompletedDate,
     Date? nextDueDateTime,
     bool? isFlagged,
-  }) =>
-      Routine(
-        id: id,
-        title: title ?? this.title,
-        schedule: schedule,
-        lastCompletedDate: lastCompletedDate ?? this.lastCompletedDate,
-        nextDueDateTime: nextDueDateTime ?? _nextDueDateTime,
-        color: color,
-        notes: notes,
-        displayOnPinned: displayOnPinned,
-        order: order ?? this.order,
-        isFlagged: isFlagged ?? this.isFlagged,
-      );
+  }) => Routine(
+    id: id,
+    title: title ?? this.title,
+    schedule: schedule,
+    lastCompletedDate: lastCompletedDate ?? this.lastCompletedDate,
+    nextDueDateTime: nextDueDateTime ?? _nextDueDateTime,
+    color: color,
+    notes: notes,
+    displayOnPinned: displayOnPinned,
+    order: order ?? this.order,
+    isFlagged: isFlagged ?? this.isFlagged,
+  );
 
   Routine done() {
     Date now = Date.now();
     Date lastCompletedDate = now;
     Date nextDueDateTime = schedule.calculateNextDueDate(now);
     debugPrint(
-        "Routine: '$title', Completed: '$lastCompletedDate', NextDue: '$_nextDueDateTime'");
+      "Routine: '$title', Completed: '$lastCompletedDate', NextDue: '$_nextDueDateTime'",
+    );
 
     return copyWith(
       lastCompletedDate: lastCompletedDate,
@@ -113,17 +115,21 @@ class Routine implements DbItem {
     if (lastCompletedDate.millisecondsSinceEpoch == 0) {
       return 1.0;
     }
-    
+
     var elapsed = DateTime.now().difference(lastCompletedDate.dateTime);
-    var total =
-        _nextDueDateTime.dateTime.difference(lastCompletedDate.dateTime);
+    var total = _nextDueDateTime.dateTime.difference(
+      lastCompletedDate.dateTime,
+    );
 
     return min(1.0, (elapsed.inSeconds / total.inSeconds));
   }
 
   bool get isDue => percent >= 1.0;
 
-  String get dueWhen => isDue
-      ? "due"
-      : Jiffy.parseFromDateTime(_nextDueDateTime.dateTime).from(Jiffy.now()).toString();
+  String get dueWhen =>
+      isDue
+          ? "due"
+          : Jiffy.parseFromDateTime(
+            _nextDueDateTime.dateTime,
+          ).from(Jiffy.now()).toString();
 }

@@ -4,10 +4,10 @@ class Date {
   final DateTime _dateTime;
 
   Date(DateTime dateTime)
-      : _dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day);
+    : _dateTime = DateTime(dateTime.year, dateTime.month, dateTime.day);
 
   Date.fromMillisecondsSinceEpoch(int milliseconds)
-      : _dateTime = DateTime.fromMillisecondsSinceEpoch(milliseconds);
+    : _dateTime = DateTime.fromMillisecondsSinceEpoch(milliseconds);
 
   factory Date.now() {
     var now = DateTime.now();
@@ -20,17 +20,11 @@ class Date {
   int get day => _dateTime.day;
   int get millisecondsSinceEpoch => _dateTime.millisecondsSinceEpoch;
 
-  bool isAtSameMomentAs(Date other) => _dateTime.isAtSameMomentAs(DateTime(
-        other.year,
-        other.month,
-        other.day,
-      ));
+  bool isAtSameMomentAs(Date other) =>
+      _dateTime.isAtSameMomentAs(DateTime(other.year, other.month, other.day));
 
-  bool isBefore(Date other) => _dateTime.isBefore(DateTime(
-        other.year,
-        other.month,
-        other.day,
-      ));
+  bool isBefore(Date other) =>
+      _dateTime.isBefore(DateTime(other.year, other.month, other.day));
 
   int compareTo(Date other) => _dateTime.compareTo(other.dateTime);
 

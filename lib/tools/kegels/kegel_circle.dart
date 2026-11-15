@@ -8,11 +8,7 @@ class KegelCircle extends StatelessWidget {
   final double fill;
   final double diameter;
 
-  const KegelCircle({
-    super.key,
-    required this.fill,
-    required this.diameter,
-  });
+  const KegelCircle({super.key, required this.fill, required this.diameter});
 
   @override
   Widget build(BuildContext context) {
@@ -40,29 +36,36 @@ class KegelCirclePainter extends CustomPainter {
 
     // Glow halo around the disc.
     canvas.drawCircle(
-        center,
-        discRadius + 12,
-        Paint()
-          ..color = AppColour.colorCustom.withValues(alpha: 0.20)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 24));
+      center,
+      discRadius + 12,
+      Paint()
+        ..color = AppColour.colorCustom.withValues(alpha: 0.20)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 24),
+    );
 
     // The animated disc.
     canvas.drawCircle(
-        center,
-        discRadius,
-        Paint()
-          ..color = Color.lerp(AppColour.colorCustom.withValues(alpha: 0.45),
-              AppColour.colorCustom, fill)!);
+      center,
+      discRadius,
+      Paint()
+        ..color =
+            Color.lerp(
+              AppColour.colorCustom.withValues(alpha: 0.45),
+              AppColour.colorCustom,
+              fill,
+            )!,
+    );
 
     // White core with a subtle outline.
     canvas.drawCircle(center, coreRadius, Paint()..color = Colors.white);
     canvas.drawCircle(
-        center,
-        coreRadius,
-        Paint()
-          ..color = AppColour.colorCustom.withValues(alpha: 0.6)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2);
+      center,
+      coreRadius,
+      Paint()
+        ..color = AppColour.colorCustom.withValues(alpha: 0.6)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
   }
 
   @override

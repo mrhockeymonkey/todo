@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
 abstract class DayPlanBase {
-
   DayPlanBase();
 
   Widget build(BuildContext context);
 
-  int get order; 
+  int get order;
 
-  bool get isDone; 
+  bool get isDone;
 
-  bool get isFlagged; 
+  bool get isFlagged;
 
   /// Display order for a day plan: outstanding before done, then flagged
   /// before unflagged, then by [order] ascending.

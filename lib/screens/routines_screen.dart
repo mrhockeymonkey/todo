@@ -17,7 +17,6 @@ class RoutinesScreen extends StatefulWidget {
 }
 
 class _RoutinesScreenState extends State<RoutinesScreen> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,31 +34,32 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
         ),
         actions: <Widget>[
           PopupMenuButton<AppActions>(
-            onSelected: (AppActions value) =>
-                AppActionsHelper.handleAction(value, context),
-            itemBuilder: (context) => <PopupMenuEntry<AppActions>>[
-              AppActionsHelper.buildAction(AppActions.settings),
-              AppActionsHelper.buildAction(AppActions.kegels),
-            ],
-          )
+            onSelected:
+                (AppActions value) =>
+                    AppActionsHelper.handleAction(value, context),
+            itemBuilder:
+                (context) => <PopupMenuEntry<AppActions>>[
+                  AppActionsHelper.buildAction(AppActions.settings),
+                  AppActionsHelper.buildAction(AppActions.kegels),
+                ],
+          ),
         ],
       ),
       body: _buildBody(),
       floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () => Navigator.of(context).pushNamed(
-                RoutineDetailScreen.routeName,
-              )),
+        child: const Icon(Icons.add),
+        onPressed:
+            () =>
+                Navigator.of(context).pushNamed(RoutineDetailScreen.routeName),
+      ),
     );
   }
 
   Widget _buildBody() => const CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: DateHeader(),
-          ),
-          RoutineList(),
-          SliverFillRemaining()
-        ],
-      );
+    slivers: [
+      SliverToBoxAdapter(child: DateHeader()),
+      RoutineList(),
+      SliverFillRemaining(),
+    ],
+  );
 }

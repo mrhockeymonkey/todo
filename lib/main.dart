@@ -24,9 +24,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: AppColour.colorCustom,
-  ));
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(statusBarColor: AppColour.colorCustom),
+  );
 
   runApp(const MyApp());
 }
@@ -40,10 +40,12 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (_) => RoutineProvider(tableName: "routines")),
+          create: (_) => RoutineProvider(tableName: "routines"),
+        ),
         ChangeNotifierProvider(create: (_) => TaskProvider(tableName: "tasks")),
         ChangeNotifierProvider(
-            create: (_) => CategoryProvider(tableName: "categories")),
+          create: (_) => CategoryProvider(tableName: "categories"),
+        ),
         ChangeNotifierProvider(create: (_) => JourneyProvider()),
         ChangeNotifierProvider(create: (_) => CircuitSettings()),
       ],
@@ -54,10 +56,7 @@ class MyApp extends StatelessWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: const [
-          Locale('en', 'US'),
-          Locale('en', 'GB'),
-        ],
+        supportedLocales: const [Locale('en', 'US'), Locale('en', 'GB')],
         theme: ThemeData(
           useMaterial3: false,
           primarySwatch: AppColour.colorCustom,
@@ -74,20 +73,19 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (ctx) => const HomeScreen(),
           RoutinesScreen.routeName: (context) => const RoutinesScreen(),
-          RoutineDetailScreen.routeName: (context) =>
-              const RoutineDetailScreen(),
+          RoutineDetailScreen.routeName:
+              (context) => const RoutineDetailScreen(),
           TaskDetailScreen.routeName: (context) => const TaskDetailScreen(),
           SettingsScreen.routeName: (context) => const SettingsScreen(),
           CategoriesScreen.routeName: (context) => const CategoriesScreen(),
-          CategoryDetailScreen.routeName: (context) =>
-              const CategoryDetailScreen(),
+          CategoryDetailScreen.routeName:
+              (context) => const CategoryDetailScreen(),
           ExportJsonPage.routeName: (context) => const ExportJsonPage(),
           ImportJsonScreen.routeName: (context) => const ImportJsonScreen(),
           CelebrationScreen.routeName: (context) => const CelebrationScreen(),
-          KegelTrainingScreen.routeName: (context) =>
-              const KegelTrainingScreen(),
-          KegelSessionScreen.routeName: (context) =>
-              const KegelSessionScreen(),
+          KegelTrainingScreen.routeName:
+              (context) => const KegelTrainingScreen(),
+          KegelSessionScreen.routeName: (context) => const KegelSessionScreen(),
         },
       ),
     );

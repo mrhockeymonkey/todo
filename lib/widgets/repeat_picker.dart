@@ -1,209 +1,280 @@
 import 'package:flutter/material.dart';
 import 'package:todo/app_colour.dart';
-import 'package:todo/app_constants.dart';
 import 'package:todo/models/repeat_schedule.dart';
-import 'package:todo/widgets/repeat_picker_date_choice.dart';
 import 'package:wheel_chooser/wheel_chooser.dart';
 
+/// Dialog for choosing how a routine repeats: every N days/weeks/..., or on
+/// chosen days of the month. Pops the chosen [RepeatSchedule] on OK.
 class RepeatPicker extends StatefulWidget {
   final RepeatSchedule repeatPickerAnswer;
 
   const RepeatPicker(this.repeatPickerAnswer, {super.key});
 
   @override
-  State<StatefulWidget> createState() {
-    return _RepeatPickerState();
-  }
+  State<StatefulWidget> createState() => _RepeatPickerState();
 }
 
+enum _Mode { periodic, onDates }
+
 class _RepeatPickerState extends State<RepeatPicker> {
-  final List<int> repeatAmmountChoice = List<int>.generate(31, (i) => (i + 1));
-  final List<PeriodType> periodTypeOptions = PeriodType.all;
+  static const double _wheelItemSize = 48;
+  static const double _wheelHeight = 144;
+  static const int _daysInGrid = 31;
+  static const int _gridColumns = 7;
 
-  late final double width = MediaQuery.of(context).size.width * 0.8;
-  late final List<RepeatPickerDateChoice> dateChoices;
+  final List<int> _periodChoices = List<int>.generate(31, (i) => i + 1);
+  final List<PeriodType> _periodTypes = PeriodType.all;
 
-  int _selectedTab = 0;
-  late RepeatSchedule answer;
+  late _Mode _mode;
+  late int _period;
+  late PeriodType _periodType;
+  late Set<int> _dates;
 
   @override
   void initState() {
     super.initState();
-    answer = widget.repeatPickerAnswer;
-    _selectedTab =
-        answer.type.value == const ScheduleType.periodic().value ? 0 : 1;
-    dateChoices = List.generate(
-        31,
-        (index) => RepeatPickerDateChoice(
-              index + 1,
-              answer.dates.contains(index + 1),
-            ));
+    final schedule = widget.repeatPickerAnswer;
+    _mode =
+        schedule.type.value == const ScheduleType.onDates().value
+            ? _Mode.onDates
+            : _Mode.periodic;
+    _period = schedule.period;
+    _periodType = schedule.periodType;
+    _dates = schedule.dates.toSet();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    //width = MediaQuery.of(context).size.width * 0.8;
-  }
+  bool get _canSubmit => _mode == _Mode.periodic || _dates.isNotEmpty;
+
+  RepeatSchedule get _answer =>
+      _mode == _Mode.periodic
+          ? widget.repeatPickerAnswer.copyWith(
+            type: const ScheduleType.periodic(),
+            period: _period,
+            periodType: _periodType,
+          )
+          : widget.repeatPickerAnswer.copyWith(
+            type: const ScheduleType.onDates(),
+            dates: (_dates.toList()..sort()),
+          );
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: _buildDialog(),
-      actions: <Widget>[
-        ElevatedButton(
-          child: const Text('OK'),
-          onPressed: () => Navigator.of(context).pop(answer),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDialog() {
-    return SizedBox(
-      // height: 250,
-      width: width,
-      child: DefaultTabController(
-        length: 2,
-        initialIndex: _selectedTab,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      title: const Text("Repeat"),
+      content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TabBar(
-              onTap: (value) => setState(() {
-                _selectedTab = value;
-              }),
-              tabs: const [
-                Text(
-                  "Periodically",
-                  style: TextStyle(color: Colors.black),
-                ),
-                Text(
-                  "On Dates",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            // TabBarView has unbounded heigh so cannot be used here
-            // Builder repaces it, see https://stackoverflow.com/questions/54642710/tabbarview-with-dynamic-container-height
-            Builder(builder: (_) {
-              if (_selectedTab == 0) {
-                return _buildPeriodicSelector();
-              } else if (_selectedTab == 1) {
-                return _buildDateSelector();
-              } else {
-                return Container(); //3rd tabView
-              }
-            })
+            _buildModeSwitch(),
+            const SizedBox(height: 24),
+            _mode == _Mode.periodic
+                ? _buildPeriodicSelector()
+                : _buildDateSelector(),
           ],
         ),
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed:
+              _canSubmit ? () => Navigator.of(context).pop(_answer) : null,
+          child: const Text("OK"),
+        ),
+      ],
     );
   }
 
-  Widget _buildDateSelector() {
-    final int nbrCircleLine = width ~/
-        (AppConstants.pickerCircleSize + AppConstants.pickerCircleSpacing);
-
-    return GridView.count(
-      padding: const EdgeInsets.all(16.0),
-      crossAxisSpacing: AppConstants.pickerCircleSpacing,
-      mainAxisSpacing: AppConstants.pickerCircleSpacing,
-      crossAxisCount: nbrCircleLine,
-      shrinkWrap: true,
-      children: _buildDatesButtons(),
-    );
-  }
-
-  List<Widget> _buildDatesButtons() {
-    return dateChoices.map((e) => _buildDateButton(e)).toList();
-  }
-
-  Widget _buildDateButton(RepeatPickerDateChoice dateChoice) {
-    return Material(
-      elevation: 0.0,
-      shape: const CircleBorder(),
-      child: CircleAvatar(
-        backgroundColor:
-            dateChoice.isSelected ? AppColour.colorCustom : Colors.grey[100],
-        child: Container(
-            alignment: Alignment.center,
-            child: TextButton(
-              child: Text(
-                dateChoice.date.toString(),
-                style: TextStyle(
-                    color: dateChoice.isSelected
-                        ? Colors.white
-                        : AppColour.colorCustom),
-              ),
-              onPressed: () => setState(() {
-                dateChoice.isSelected = !dateChoice.isSelected;
-                answer = answer.copyWith(
-                  type: const ScheduleType.onDates(),
-                  dates: dateChoices
-                      .where((choice) => choice.isSelected)
-                      .map((choice) => choice.date)
-                      .toList(),
-                );
-              }),
-            )),
+  Widget _buildModeSwitch() {
+    return SegmentedButton<_Mode>(
+      showSelectedIcon: false,
+      segments: const [
+        ButtonSegment(value: _Mode.periodic, label: Text("Periodically")),
+        ButtonSegment(value: _Mode.onDates, label: Text("On dates")),
+      ],
+      selected: {_mode},
+      onSelectionChanged:
+          (selection) => setState(() => _mode = selection.first),
+      style: SegmentedButton.styleFrom(
+        selectedBackgroundColor: AppColour.colorCustom,
+        selectedForegroundColor: Colors.white,
+        foregroundColor: AppColour.colorCustom,
       ),
     );
   }
 
+  // --- Periodic ---------------------------------------------------------
+
   Widget _buildPeriodicSelector() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        SizedBox(
-          width: 60,
-          height: 140,
-          child: WheelChooser.custom(
-            startPosition: repeatAmmountChoice.indexOf(answer.period),
-            children: repeatAmmountChoice
-                .map((e) => Text(
-                      e.toString(),
-                      style: TextStyle(
-                          color:
-                              answer.period == e ? Colors.black : Colors.grey),
-                    ))
-                .toList(),
-            onValueChanged: (index) {
-              setState(() {
-                answer = answer.copyWith(
-                    type: const ScheduleType.periodic(),
-                    period: repeatAmmountChoice.elementAt(index));
-              });
-            },
+    const labelStyle = TextStyle(fontSize: 16, color: Colors.black54);
+    return SizedBox(
+      height: _wheelHeight,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Highlight band behind the selected row of both wheels.
+          Container(
+            height: _wheelItemSize,
+            decoration: BoxDecoration(
+              color: AppColour.colorCustom.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Every", style: labelStyle),
+              const SizedBox(width: 16),
+              SizedBox(width: 56, child: _buildPeriodWheel()),
+              const SizedBox(width: 8),
+              SizedBox(width: 96, child: _buildUnitWheel()),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPeriodWheel() {
+    return WheelChooser.custom(
+      startPosition: _periodChoices.indexOf(_period),
+      itemSize: _wheelItemSize,
+      children:
+          _periodChoices
+              .map((e) => _wheelText(e.toString(), selected: e == _period))
+              .toList(),
+      onValueChanged:
+          (index) => setState(() => _period = _periodChoices[index]),
+    );
+  }
+
+  Widget _buildUnitWheel() {
+    return WheelChooser.custom(
+      startPosition: _periodTypes.indexOf(_periodType),
+      itemSize: _wheelItemSize,
+      children:
+          _periodTypes
+              .map(
+                (type) => _wheelText(
+                  _unitLabel(type),
+                  selected: type.value == _periodType.value,
+                ),
+              )
+              .toList(),
+      onValueChanged:
+          (index) => setState(() => _periodType = _periodTypes[index]),
+    );
+  }
+
+  // "days" -> "day" when the period is 1.
+  String _unitLabel(PeriodType type) =>
+      _period == 1
+          ? type.value.substring(0, type.value.length - 1)
+          : type.value;
+
+  Widget _wheelText(String text, {required bool selected}) => Text(
+    text,
+    style: TextStyle(
+      fontSize: selected ? 20 : 16,
+      fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+      color: selected ? AppColour.colorCustom : Colors.grey,
+    ),
+  );
+
+  // --- On dates ---------------------------------------------------------
+
+  Widget _buildDateSelector() {
+    final sorted = _dates.toList()..sort();
+    final skipsShortMonths = sorted.any((d) => d > 28);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Rows rather than a GridView, which can't be measured by the dialog.
+        for (var start = 1; start <= _daysInGrid; start += _gridColumns)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 3),
+            child: Row(
+              children: [
+                for (var day = start; day < start + _gridColumns; day++)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3),
+                      child:
+                          day <= _daysInGrid
+                              ? AspectRatio(
+                                aspectRatio: 1,
+                                child: _buildDayButton(day),
+                              )
+                              : const SizedBox.shrink(),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        const SizedBox(height: 16),
+        Text(
+          sorted.isEmpty
+              ? "Choose at least one day"
+              : "${sorted.map(_ordinal).join(", ")} of every month",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: sorted.isEmpty ? Colors.grey : AppColour.colorCustom,
           ),
         ),
-        SizedBox(
-          width: 90,
-          height: 140,
-          child: WheelChooser.custom(
-            startPosition: periodTypeOptions.indexOf(answer.periodType),
-            children: periodTypeOptions
-                .map((periodType) => Text(
-                      periodType.value,
-                      style: TextStyle(
-                          color: answer.periodType == periodType
-                              ? Colors.black
-                              : Colors.grey),
-                    ))
-                .toList(),
-            onValueChanged: (index) {
-              setState(() {
-                answer = answer.copyWith(
-                    type: const ScheduleType.periodic(),
-                    periodType: periodTypeOptions.elementAt(index));
-              });
-            },
+        if (skipsShortMonths)
+          const Padding(
+            padding: EdgeInsets.only(top: 4),
+            child: Text(
+              "Skipped in months that are too short",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
           ),
-        ),
       ],
     );
+  }
+
+  Widget _buildDayButton(int day) {
+    final selected = _dates.contains(day);
+    return Material(
+      color: selected ? AppColour.colorCustom : Colors.grey[100],
+      shape: const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        key: ValueKey("day-$day"),
+        onTap:
+            () => setState(() {
+              if (!_dates.remove(day)) _dates.add(day);
+            }),
+        child: Center(
+          child: Text(
+            "$day",
+            style: TextStyle(
+              color: selected ? Colors.white : AppColour.colorCustom,
+              fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _ordinal(int n) {
+    if (n >= 11 && n <= 13) return "${n}th";
+    switch (n % 10) {
+      case 1:
+        return "${n}st";
+      case 2:
+        return "${n}nd";
+      case 3:
+        return "${n}rd";
+      default:
+        return "${n}th";
+    }
   }
 }

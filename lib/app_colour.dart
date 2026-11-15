@@ -19,14 +19,13 @@ class AppColour {
   static const inactiveColor = Colors.grey;
 
   static void setStatusBarColor(Color color) =>
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: color,
-      ));
+      SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: color),
+      );
 
-  static void resetStatusBarColor() =>
-      SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: colorCustom,
-      ));
+  static void resetStatusBarColor() => SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(statusBarColor: colorCustom),
+  );
 
   // static final Map<int, Color> swatch = {
   //   50: const Color(0xff07618e),
