@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:todo/date.dart';
 import 'package:jiffy/jiffy.dart';
 
@@ -12,9 +11,7 @@ class ScheduleType {
 
   ScheduleType.fromJson(Map<String, dynamic> json) : _value = json['value'];
 
-  Map<String, dynamic> toJson() => {
-        'value': _value,
-      };
+  Map<String, dynamic> toJson() => {'value': _value};
 }
 
 class PeriodType {
@@ -27,9 +24,7 @@ class PeriodType {
 
   PeriodType.fromJson(Map<String, dynamic> json) : value = json['value'];
 
-  Map<String, dynamic> toJson() => {
-        'value': value,
-      };
+  Map<String, dynamic> toJson() => {'value': value};
 
   static const List<PeriodType> all = [
     PeriodType.days(),
@@ -53,10 +48,10 @@ class RepeatSchedule {
   });
 
   RepeatSchedule.fromJson(Map<String, dynamic> map)
-      : type = ScheduleType.fromJson(map['type']),
-        period = map['period'],
-        periodType = PeriodType.fromJson(map['periodType']),
-        dates = map['dates'].cast<int>();
+    : type = ScheduleType.fromJson(map['type']),
+      period = map['period'],
+      periodType = PeriodType.fromJson(map['periodType']),
+      dates = map['dates'].cast<int>();
 
   Map<String, dynamic> toJson() {
     return {
@@ -77,19 +72,18 @@ class RepeatSchedule {
     }
   }
 
+  /// The first day after [lastCompleted] whose day of the month is in [dates].
   Date _calculateOnDatesNext(Date lastCompleted) {
-    var jiffy = Jiffy.parseFromDateTime(lastCompleted.dateTime);
-    var lastCompletedDate = jiffy.date;
-    dates.sort();
-    var nextDateIndex = dates.indexWhere((date) => date > lastCompletedDate);
-    var nextDate = nextDateIndex == -1 ? dates.first : dates[nextDateIndex];
-    debugPrint("nextDate is $nextDate");
+    // No dates chosen (e.g. all deselected): fall back to tomorrow rather
+    // than searching forever.
+    if (dates.isEmpty) return lastCompleted.addDays(1);
 
-    while (jiffy.date != nextDate) {
-      jiffy.add(days: 1);
+    // Every day of the month occurs within 62 days, so this always finds one.
+    for (var i = 1; i <= 62; i++) {
+      final candidate = lastCompleted.addDays(i);
+      if (dates.contains(candidate.day)) return candidate;
     }
-
-    return Date(jiffy.dateTime);
+    return lastCompleted.addDays(1);
   }
 
   Date _calculatePeriodicNext(Date lastCompleted) {
@@ -113,13 +107,12 @@ class RepeatSchedule {
     int? period,
     PeriodType? periodType,
     List<int>? dates,
-  }) =>
-      RepeatSchedule(
-        type: type ?? this.type,
-        period: period ?? this.period,
-        periodType: periodType ?? this.periodType,
-        dates: dates ?? this.dates,
-      );
+  }) => RepeatSchedule(
+    type: type ?? this.type,
+    period: period ?? this.period,
+    periodType: periodType ?? this.periodType,
+    dates: dates ?? this.dates,
+  );
 
   String get displayName {
     if (type.value == const ScheduleType.periodic().value) {
@@ -131,6 +124,5 @@ class RepeatSchedule {
     }
   }
 }
-
 
 // TODO rename break up

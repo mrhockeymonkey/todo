@@ -28,11 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void didChangeDependencies() {
-    _dbFetch ??= _dbFetch = Future.wait([
-      Provider.of<CategoryProvider>(context).fetch(),
-      Provider.of<TaskProvider>(context).fetch(),
-      Provider.of<RoutineProvider>(context).fetch(),
-    ]);
+    _dbFetch ??=
+        _dbFetch = Future.wait([
+          Provider.of<CategoryProvider>(context).fetch(),
+          Provider.of<TaskProvider>(context).fetch(),
+          Provider.of<RoutineProvider>(context).fetch(),
+        ]);
 
     super.didChangeDependencies();
   }
@@ -46,38 +47,41 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _dbFetch,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) return Container();
+      future: _dbFetch,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (!snapshot.hasData) return Container();
 
-          taskCount = Provider.of<TaskProvider>(context).isDueCount;
+        taskCount = Provider.of<TaskProvider>(context).isDueCount;
 
-          return PopScope(
-            canPop: false,
-            //onWillPop: () async => false,
-            child: Scaffold(
-              body: _pages[_selectedIndex],
-              bottomNavigationBar: BottomNavigationBar(
-                currentIndex: _selectedIndex,
-                onTap: _selectScreen,
-                items: [
-                  BottomNavigationBarItem(
-                    label: '',
-                    icon: BadgeIcon(
-                        icon: const Icon(Entypo.pin), badgeCount: taskCount),
+        return PopScope(
+          canPop: false,
+          //onWillPop: () async => false,
+          child: Scaffold(
+            body: _pages[_selectedIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: _selectedIndex,
+              onTap: _selectScreen,
+              items: [
+                BottomNavigationBarItem(
+                  label: '',
+                  icon: BadgeIcon(
+                    icon: const Icon(Entypo.pin),
+                    badgeCount: taskCount,
                   ),
-                  const BottomNavigationBarItem(
-                    label: '',
-                    icon: Icon(Entypo.list),
-                  ),
-                  const BottomNavigationBarItem(
-                    label: '',
-                    icon: Icon(Icons.route),
-                  ),
-                ],
-              ),
+                ),
+                const BottomNavigationBarItem(
+                  label: '',
+                  icon: Icon(Entypo.list),
+                ),
+                const BottomNavigationBarItem(
+                  label: '',
+                  icon: Icon(Icons.route),
+                ),
+              ],
             ),
-          );
-        });
+          ),
+        );
+      },
+    );
   }
 }

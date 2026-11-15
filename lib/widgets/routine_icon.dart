@@ -6,18 +6,14 @@ class RoutineIcon extends StatelessWidget {
   final Color? color;
   final bool isFlagged;
 
-  const RoutineIcon({
-    super.key,
-    this.color,
-    this.isFlagged = false,
-  });
+  const RoutineIcon({super.key, this.color, this.isFlagged = false});
 
   @override
   Widget build(BuildContext context) => FlaggedIcon(
-        icon: Entypo.circular_graph,
-        color: color,
-        showFlag: isFlagged,
-      );
+    icon: Entypo.circular_graph,
+    color: color,
+    showFlag: isFlagged,
+  );
 
   // @override
   // Widget build(BuildContext context) => Transform(

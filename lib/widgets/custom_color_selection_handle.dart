@@ -5,9 +5,10 @@ import 'package:flutter/src/foundation/change_notifier.dart';
 
 class CustomColorSelectionHandle extends TextSelectionControls {
   CustomColorSelectionHandle(this.handleColor)
-      : _controls = Platform.isIOS
-            ? cupertinoTextSelectionControls
-            : materialTextSelectionControls;
+    : _controls =
+          Platform.isIOS
+              ? cupertinoTextSelectionControls
+              : materialTextSelectionControls;
 
   final Color handleColor;
   final TextSelectionControls _controls;
@@ -18,18 +19,25 @@ class CustomColorSelectionHandle extends TextSelectionControls {
       Platform.isIOS
           // ios handle uses the CupertinoTheme primary color, so override that.
           ? CupertinoTheme(
-              data: CupertinoThemeData(primaryColor: handleColor),
-              child: Builder(builder: builder))
+            data: CupertinoThemeData(primaryColor: handleColor),
+            child: Builder(builder: builder),
+          )
           // material handle uses the selection handle color, so override that.
           : TextSelectionTheme(
-              data: TextSelectionThemeData(selectionHandleColor: handleColor),
-              child: Builder(builder: builder));
+            data: TextSelectionThemeData(selectionHandleColor: handleColor),
+            child: Builder(builder: builder),
+          );
 
   @override
-  Widget buildHandle(BuildContext context, TextSelectionHandleType type,
-          double textLineHeight, [VoidCallback? onTap]) =>
-      _wrapWithThemeData((BuildContext context) =>
-          _controls.buildHandle(context, type, textLineHeight, onTap));
+  Widget buildHandle(
+    BuildContext context,
+    TextSelectionHandleType type,
+    double textLineHeight, [
+    VoidCallback? onTap,
+  ]) => _wrapWithThemeData(
+    (BuildContext context) =>
+        _controls.buildHandle(context, type, textLineHeight, onTap),
+  );
 
   @override
   Offset getHandleAnchor(TextSelectionHandleType type, double textLineHeight) {
@@ -43,18 +51,26 @@ class CustomColorSelectionHandle extends TextSelectionControls {
 
   @override
   Widget buildToolbar(
-    BuildContext context, 
-    Rect globalEditableRegion, 
-    double textLineHeight, 
-    Offset selectionMidpoint, 
-    List<TextSelectionPoint> endpoints, 
-    TextSelectionDelegate delegate, 
-    ValueListenable<ClipboardStatus>? clipboardStatus, 
-    Offset? lastSecondaryTapDownPosition) {
-    return _controls.buildToolbar(context, globalEditableRegion, textLineHeight, selectionMidpoint, endpoints, delegate, clipboardStatus, lastSecondaryTapDownPosition);
+    BuildContext context,
+    Rect globalEditableRegion,
+    double textLineHeight,
+    Offset selectionMidpoint,
+    List<TextSelectionPoint> endpoints,
+    TextSelectionDelegate delegate,
+    ValueListenable<ClipboardStatus>? clipboardStatus,
+    Offset? lastSecondaryTapDownPosition,
+  ) {
+    return _controls.buildToolbar(
+      context,
+      globalEditableRegion,
+      textLineHeight,
+      selectionMidpoint,
+      endpoints,
+      delegate,
+      clipboardStatus,
+      lastSecondaryTapDownPosition,
+    );
   }
-
-
 
   // @override
   // Widget buildToolbar(

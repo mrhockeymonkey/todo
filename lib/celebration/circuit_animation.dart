@@ -143,8 +143,7 @@ class _CircuitAnimationState extends State<CircuitAnimation>
     final box = context.findRenderObject();
     final size =
         box is RenderBox && box.hasSize ? box.size : MediaQuery.sizeOf(context);
-    final contentTop = MediaQuery.paddingOf(context).top + kToolbarHeight;
-    // Keep the outermost follower clear of the app bar too.
+    // Widen the loop so the outermost follower still clears the leader's loop.
     final spread = _options.followers > 0 ? _options.followerOffset : 0.0;
     final widest =
         _options.thickness / 2 + spread * ((_options.followers + 1) ~/ 2);
@@ -153,7 +152,6 @@ class _CircuitAnimationState extends State<CircuitAnimation>
       start: Offset(source.right - 16, source.center.dy),
       endY: _endY!,
       width: size.width,
-      top: contentTop + 8 + widest,
       radius: CircuitAnimation.loopRadius + widest,
     );
     _cachedAt = _elapsed;
@@ -266,20 +264,18 @@ class CircuitMotion {
 
 /// The route: from [start] left to the middle of the screen, a 270° loop,
 /// then straight to [endY]. The loop goes up and over when the done item is
-/// below, and down and under when it is above, and is shrunk if needed to
-/// stay below [top].
+/// below, and down and under when it is above. The loop is always the full
+/// [radius], however close to the top of the screen the row is.
 Path circuitRoute({
   required Offset start,
   required double endY,
   required double width,
-  required double top,
   double radius = CircuitAnimation.loopRadius,
 }) {
   final mid = width / 2;
   final y = start.dy;
   final goingDown = endY >= y - radius;
-  // Keep an upward loop clear of the app bar.
-  final r = goingDown ? max(8.0, min(radius, (y - top) / 2)) : radius;
+  final r = radius;
   // The loop's centre sits so the line leaves it heading straight down (or
   // up) along the middle of the screen.
   final centre = Offset(mid - r, goingDown ? y - r : y + r);

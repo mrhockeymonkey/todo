@@ -30,7 +30,9 @@ class GaugeState extends State<AnimatedGauge>
     //begin = 0.0;
     //end = widget.percent;
     _controller = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1000));
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    );
     //_animation = Tween<double>(begin: begin, end: end).animate(_controller);
     //widget.driver.listen(on);
   }
@@ -63,38 +65,34 @@ class GaugeState extends State<AnimatedGauge>
     _controller.forward();
 
     return AnimatedBuilder(
-        animation: animation,
-        builder: (context, widget) {
-          return CustomPaint(
-            foregroundPainter: GaugePainter(percent: animation.value),
-            child: Container(
-                constraints: BoxConstraints.expand(
-                  height: diameter,
-                  width: diameter,
-                ),
-                child: end > 0.99
-                    ? Icon(
-                        Entypo.flag,
-                        color: Colors.red[700],
-                      )
-                    : const Icon(
-                        Entypo.hour_glass,
-                        color: Colors.grey,
-                      )
-                // Align(
-                //   alignment: Alignment.center,
-                //   child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.center,
-                //       children: <Widget>[
-                //         Text(
-                //           _readout,
-                //           //style: _style,
-                //         ),
-                //       ]),
-                // ),
-                ),
-          );
-        });
+      animation: animation,
+      builder: (context, widget) {
+        return CustomPaint(
+          foregroundPainter: GaugePainter(percent: animation.value),
+          child: Container(
+            constraints: BoxConstraints.expand(
+              height: diameter,
+              width: diameter,
+            ),
+            child:
+                end > 0.99
+                    ? Icon(Entypo.flag, color: Colors.red[700])
+                    : const Icon(Entypo.hour_glass, color: Colors.grey),
+            // Align(
+            //   alignment: Alignment.center,
+            //   child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: <Widget>[
+            //         Text(
+            //           _readout,
+            //           //style: _style,
+            //         ),
+            //       ]),
+            // ),
+          ),
+        );
+      },
+    );
   }
 
   @override

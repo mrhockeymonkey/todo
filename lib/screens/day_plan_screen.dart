@@ -18,9 +18,7 @@ class DailyScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _DailyScreenState();
 }
 
-class _DailyScreenState extends State<DailyScreen>
-    with WidgetsBindingObserver {
-
+class _DailyScreenState extends State<DailyScreen> with WidgetsBindingObserver {
   final GlobalKey targetKey = GlobalKey();
   final ScrollController _scrollController = ScrollController();
   Date? _draftDate;
@@ -73,33 +71,35 @@ class _DailyScreenState extends State<DailyScreen>
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Row(
-            children: [
-              const Icon(Entypo.list),
-              Container(width: 10),
-              const Text("Sennight"),
-            ],
-          ),
-          actions: [
-            PopupMenuButton<AppActions>(
-              onSelected: (AppActions value) =>
+    appBar: AppBar(
+      title: Row(
+        children: [
+          const Icon(Entypo.list),
+          Container(width: 10),
+          const Text("Sennight"),
+        ],
+      ),
+      actions: [
+        PopupMenuButton<AppActions>(
+          onSelected:
+              (AppActions value) =>
                   AppActionsHelper.handleAction(value, context),
-              itemBuilder: (context) => <PopupMenuEntry<AppActions>>[
+          itemBuilder:
+              (context) => <PopupMenuEntry<AppActions>>[
                 AppActionsHelper.buildAction(AppActions.routines),
                 AppActionsHelper.buildAction(AppActions.settings),
                 AppActionsHelper.buildAction(AppActions.kegels),
               ],
-            )
-          ],
         ),
-        // Lets swiped-done tasks play a celebration that lands on their done
-        // item.
-        body: ChangeNotifierProvider(
-          create: (_) => CelebrationController(),
-          child: _buildBody(),
-        ),
-      );
+      ],
+    ),
+    // Lets swiped-done tasks play a celebration that lands on their done
+    // item.
+    body: ChangeNotifierProvider(
+      create: (_) => CelebrationController(),
+      child: _buildBody(),
+    ),
+  );
 
   void _newTask(Date date) => setState(() => _draftDate = date);
 
@@ -111,22 +111,27 @@ class _DailyScreenState extends State<DailyScreen>
     for (var day in days) {
       var date = _today.addDays(day);
       var isToday = day == 0;
-      sections.add(SliverToBoxAdapter(
-        child: TextHeader(
-          key: isToday ? targetKey : null,
-          text: Jiffy.parseFromDateTime(date.dateTime).MMMMEEEEd.toString(),),
-      ));
+      sections.add(
+        SliverToBoxAdapter(
+          child: TextHeader(
+            key: isToday ? targetKey : null,
+            text: Jiffy.parseFromDateTime(date.dateTime).MMMMEEEEd.toString(),
+          ),
+        ),
+      );
 
       sections.add(DayPlanList(key: ValueKey(date), date: date));
 
       if (_draftDate == date) {
-        sections.add(SliverToBoxAdapter(
-          child: NewDayPlanTask(
-            key: ValueKey(date),
-            date: date,
-            onClose: () => setState(() => _draftDate = null),
+        sections.add(
+          SliverToBoxAdapter(
+            child: NewDayPlanTask(
+              key: ValueKey(date),
+              date: date,
+              onClose: () => setState(() => _draftDate = null),
+            ),
           ),
-        ));
+        );
       }
 
       sections.add(_buildAddButton(date));
@@ -137,23 +142,15 @@ class _DailyScreenState extends State<DailyScreen>
     }
 
     // Room for the last day's tasks to scroll clear of the routine card.
-    sections.add(const SliverToBoxAdapter(
-      child: SizedBox(height: _routineCardClearance),
-    ));
+    sections.add(
+      const SliverToBoxAdapter(child: SizedBox(height: _routineCardClearance)),
+    );
 
     return Stack(
       children: [
-        CustomScrollView(
-          controller: _scrollController,
-          slivers: sections,
-        ),
+        CustomScrollView(controller: _scrollController, slivers: sections),
         // Fixed above the bottom tab bar, outside the scrolling list.
-        const Positioned(
-          left: 8,
-          right: 8,
-          bottom: 8,
-          child: RoutinePeek(),
-        ),
+        const Positioned(left: 8, right: 8, bottom: 8, child: RoutinePeek()),
       ],
     );
   }
@@ -161,27 +158,27 @@ class _DailyScreenState extends State<DailyScreen>
   static const double _routineCardClearance = 96;
 
   Widget _buildAddButton(Date date) => SliverToBoxAdapter(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10.0),
-              child: FloatingActionButton.small(
-                onPressed: () => _newTask(date),
-                heroTag: date,
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.grey,
-                elevation: 0,
-                focusElevation: 0,
-                hoverElevation: 0,
-                highlightElevation: 0,
-                disabledElevation: 0,
-                child: const Icon(Icons.add),
-              ),
-            )
-          ],
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10.0),
+          child: FloatingActionButton.small(
+            onPressed: () => _newTask(date),
+            heroTag: date,
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.grey,
+            elevation: 0,
+            focusElevation: 0,
+            hoverElevation: 0,
+            highlightElevation: 0,
+            disabledElevation: 0,
+            child: const Icon(Icons.add),
+          ),
         ),
-      );
+      ],
+    ),
+  );
 
   void _scrollToToday() {
     final targetContext = targetKey.currentContext;
@@ -192,5 +189,4 @@ class _DailyScreenState extends State<DailyScreen>
       curve: Curves.easeInOut,
     );
   }
-
 }

@@ -16,8 +16,9 @@ class DayPlanActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => PopupMenuButton<void>(
-        onSelected: (_) => {},
-        itemBuilder: (context) => <PopupMenuEntry<void>>[
+    onSelected: (_) => {},
+    itemBuilder:
+        (context) => <PopupMenuEntry<void>>[
           PopupMenuItem<void>(
             child: ListTile(
               title: Row(
@@ -25,33 +26,36 @@ class DayPlanActions extends StatelessWidget {
                   handleFlag == null
                       ? Container()
                       : IconButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            handleFlag!(context);
-                          },
-                          icon: const Icon(Entypo.flag)),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          handleFlag!(context);
+                        },
+                        icon: const Icon(Entypo.flag),
+                      ),
                   handleSnooze == null
                       ? Container()
                       : IconButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            handleSnooze!(context);
-                          },
-                          icon: const Icon(Icons.snooze)),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          handleSnooze!(context);
+                        },
+                        icon: const Icon(Icons.snooze),
+                      ),
                   handleRemove == null
                       ? Container()
                       : IconButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            handleRemove!(context);
-                          },
-                          icon: const RemoveFromDayPlanIcon()),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          handleRemove!(context);
+                        },
+                        icon: const RemoveFromDayPlanIcon(),
+                      ),
                 ],
               ),
             ),
           ),
         ],
-      );
+  );
 
   static void doNothing() {}
 }

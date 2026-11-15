@@ -17,35 +17,38 @@ class TasksScreen extends StatefulWidget {
 class _TaskScreenState extends State<TasksScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Row(
-            children: [
-              const Icon(Entypo.pin),
-              Container(width: 10),
-              const Text("Tasks"),
-            ],
-          ),
-          actions: <Widget>[
-            PopupMenuButton<AppActions>(
-              onSelected: (AppActions value) =>
+    appBar: AppBar(
+      title: Row(
+        children: [
+          const Icon(Entypo.pin),
+          Container(width: 10),
+          const Text("Tasks"),
+        ],
+      ),
+      actions: <Widget>[
+        PopupMenuButton<AppActions>(
+          onSelected:
+              (AppActions value) =>
                   AppActionsHelper.handleAction(value, context),
-              itemBuilder: (BuildContext context) =>
-                  <PopupMenuEntry<AppActions>>[
+          itemBuilder:
+              (BuildContext context) => <PopupMenuEntry<AppActions>>[
                 AppActionsHelper.buildAction(AppActions.clearCompleted),
                 AppActionsHelper.buildAction(AppActions.routines),
                 AppActionsHelper.buildAction(AppActions.settings),
                 AppActionsHelper.buildAction(AppActions.kegels),
               ],
-            )
-          ],
         ),
-        body: _buildBody(),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () => Navigator.of(context)
-              .pushNamed(TaskDetailScreen.routeName, arguments: null),
-        ),
-      );
+      ],
+    ),
+    body: _buildBody(),
+    floatingActionButton: FloatingActionButton(
+      child: const Icon(Icons.add),
+      onPressed:
+          () => Navigator.of(
+            context,
+          ).pushNamed(TaskDetailScreen.routeName, arguments: null),
+    ),
+  );
 
   // Widget _buildBody() => CustomScrollView(
   //       slivers: [

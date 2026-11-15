@@ -43,8 +43,10 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
       var routineId = ModalRoute.of(context)?.settings.arguments;
 
       if (routineId is String) {
-        final routine = Provider.of<RoutineProvider>(context, listen: false)
-            .getItemById(routineId);
+        final routine = Provider.of<RoutineProvider>(
+          context,
+          listen: false,
+        ).getItemById(routineId);
         _routineId = routine.id;
         _routineTitle = routine.title;
         _schedule = routine.schedule;
@@ -65,17 +67,11 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
       appBar: AppBar(
         title: const Text("Routine"),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: _delete,
-          )
+          IconButton(icon: const Icon(Icons.delete), onPressed: _delete),
         ],
       ),
       body: Column(
-        children: <Widget>[
-          _buildTitleHeader(),
-          _buildOptionsList(),
-        ],
+        children: <Widget>[_buildTitleHeader(), _buildOptionsList()],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _save,
@@ -102,8 +98,10 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
       displayOnPinned: _displayOnPinned,
       lastCompletedDate: _lastCompletedDate,
     );
-    await Provider.of<RoutineProvider>(context, listen: false)
-        .addOrUpdate(routine);
+    await Provider.of<RoutineProvider>(
+      context,
+      listen: false,
+    ).addOrUpdate(routine);
 
     if (!mounted) return;
     Navigator.of(context).pop();
@@ -111,8 +109,10 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
 
   Future _delete() async {
     if (_routineId != null) {
-      await Provider.of<RoutineProvider>(context, listen: false)
-          .delete(_routineId!);
+      await Provider.of<RoutineProvider>(
+        context,
+        listen: false,
+      ).delete(_routineId!);
     }
 
     if (!mounted) return;
@@ -121,8 +121,9 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
 
   Future _selectSchedule() async {
     var answer = await showDialog(
-        context: context,
-        builder: (BuildContext context) => RepeatPicker(_schedule));
+      context: context,
+      builder: (BuildContext context) => RepeatPicker(_schedule),
+    );
 
     if (answer != null) {
       setState(() {
@@ -132,64 +133,50 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
   }
 
   Widget _buildTitleHeader() => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        height: 72,
-        color: AppColour.colorCustom,
-        child: Form(
-          key: _form,
-          child: TextFormField(
-            style: const TextStyle(color: Colors.white),
-            selectionControls: CustomColorSelectionHandle(Colors.white),
-            cursorColor: Colors.white,
-            textCapitalization: TextCapitalization.words,
-            initialValue: _routineTitle,
-            autofocus: _shouldFocusTitleField,
-            onSaved: (String? value) {
-              _routineTitle = value ?? "";
-            },
-            validator: (String? value) {
-              if (value == null || value.isEmpty) {
-                return 'Must enter a routine title';
-              }
-              return null;
-            },
-            decoration: const InputDecoration(
-              hintStyle: TextStyle(color: Colors.white30),
-              labelStyle: TextStyle(color: Colors.white),
-              hintText: 'Do Something',
-              labelText: 'Title',
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white)),
-            ),
+    padding: const EdgeInsets.symmetric(horizontal: 25),
+    height: 72,
+    color: AppColour.colorCustom,
+    child: Form(
+      key: _form,
+      child: TextFormField(
+        style: const TextStyle(color: Colors.white),
+        selectionControls: CustomColorSelectionHandle(Colors.white),
+        cursorColor: Colors.white,
+        textCapitalization: TextCapitalization.words,
+        initialValue: _routineTitle,
+        autofocus: _shouldFocusTitleField,
+        onSaved: (String? value) {
+          _routineTitle = value ?? "";
+        },
+        validator: (String? value) {
+          if (value == null || value.isEmpty) {
+            return 'Must enter a routine title';
+          }
+          return null;
+        },
+        decoration: const InputDecoration(
+          hintStyle: TextStyle(color: Colors.white30),
+          labelStyle: TextStyle(color: Colors.white),
+          hintText: 'Do Something',
+          labelText: 'Title',
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildOptionsList() {
     return ListView(
       shrinkWrap: true, // constrain listview within remaining column space
       children: [
         ListTile(
-          leading: const Icon(
-            Icons.repeat,
-            color: AppColour.colorCustom,
-          ),
+          leading: const Icon(Icons.repeat, color: AppColour.colorCustom),
           title: const Text("Repeats"),
           subtitle: Text(_schedule.displayName),
           onTap: _selectSchedule,
         ),
-        ListTile(
-            title: const Text("Scheduled"),
-            leading: const Icon(
-              Entypo.calendar,
-              color: AppColour.inactiveColor,
-            ),
-            subtitle: const Text("Coming Soon"),
-            onTap: () {
-              setState(() {
-                _displayOnPinned = !_displayOnPinned;
-              });
-            }),
         ListTile(
           title: TextFormField(
             initialValue: _notesValue,
@@ -211,9 +198,10 @@ class RoutineDetailScreenState extends State<RoutineDetailScreen> {
           leading: Icon(
             //Icons.subject,
             FontAwesome.sticky_note,
-            color: _notesValue != ""
-                ? AppColour.colorCustom
-                : AppColour.inactiveColor,
+            color:
+                _notesValue != ""
+                    ? AppColour.colorCustom
+                    : AppColour.inactiveColor,
           ),
         ),
       ],

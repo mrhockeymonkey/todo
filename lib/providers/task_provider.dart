@@ -5,9 +5,7 @@ import 'package:todo/providers/provider_base.dart';
 import '../date.dart';
 
 class TaskProvider extends ProviderBase<Task> {
-  TaskProvider({
-    required super.tableName,
-  });
+  TaskProvider({required super.tableName});
 
   @override
   Task parse(Map<String, dynamic> json) => Task.fromJson(json);
@@ -31,9 +29,7 @@ class TaskProvider extends ProviderBase<Task> {
   }
 
   Iterable<Task> getByDate(Date date, {includeOutstanding = false}) => items
-      .where(
-        (t) => t.dueDate != null,
-      )
+      .where((t) => t.dueDate != null)
       .where(
         (t) =>
             t.dueDate!.isAtSameMomentAs(date) ||

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/models/task.dart';
@@ -28,22 +27,21 @@ class TaskListState extends State<TaskList> {
     // }));
 
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          Task task = widget.tasks[index];
-          return Dismissible(
-            key: ObjectKey(task), // see DayPlanTaskPtr for why ObjectKey
-            direction: DismissDirection.startToEnd,
-            onDismissed: (direction) => _handleDismiss(direction, task),
-            child: TaskItem(task: task),
-          );
-        },
-        childCount: widget.tasks.length,
-      ),
+      delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
+        Task task = widget.tasks[index];
+        return Dismissible(
+          key: ObjectKey(task), // see DayPlanTaskPtr for why ObjectKey
+          direction: DismissDirection.startToEnd,
+          onDismissed: (direction) => _handleDismiss(direction, task),
+          child: TaskItem(task: task),
+        );
+      }, childCount: widget.tasks.length),
     );
   }
 
   void _handleDismiss(DismissDirection direction, Task task) =>
-      Provider.of<TaskProvider>(context, listen: false)
-          .addOrUpdate(task.copyWith(isDone: true));
+      Provider.of<TaskProvider>(
+        context,
+        listen: false,
+      ).addOrUpdate(task.copyWith(isDone: true));
 }

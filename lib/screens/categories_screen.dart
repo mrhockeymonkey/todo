@@ -23,15 +23,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Categories"),
-      ),
+      appBar: AppBar(title: const Text("Categories")),
       body: _buildCategoryList(context),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () => Navigator.of(context).pushNamed(
-          CategoryDetailScreen.routeName,
-        ),
+        onPressed:
+            () =>
+                Navigator.of(context).pushNamed(CategoryDetailScreen.routeName),
       ),
     );
   }
@@ -44,21 +42,20 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     builder(context, index) {
       var category = categories[index];
       return ListTile(
-          key: ValueKey(index),
-          title: Text(category.title),
-          //subtitle: Text("id: ${category.id}, index: $index"),
-          leading: Icon(
-            Category.icons[category.iconName],
-            color: category.color,
-          ),
-          onTap: () {
-            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              statusBarColor: category.color,
-            ));
-            Navigator.of(context).pushNamed(CategoryDetailScreen.routeName,
-                arguments: category.id);
-          },
-          trailing: const Icon(Icons.drag_indicator));
+        key: ValueKey(index),
+        title: Text(category.title),
+        //subtitle: Text("id: ${category.id}, index: $index"),
+        leading: Icon(Category.icons[category.iconName], color: category.color),
+        onTap: () {
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle(statusBarColor: category.color),
+          );
+          Navigator.of(
+            context,
+          ).pushNamed(CategoryDetailScreen.routeName, arguments: category.id);
+        },
+        trailing: const Icon(Icons.drag_indicator),
+      );
     }
 
     return ReorderableListView.builder(
@@ -71,14 +68,19 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           }
           final item = categories.removeAt(oldIndex);
           categories.insert(newIndex, item);
-          final reordered = categories
-              .asMap()
-              .map((index, category) =>
-                  MapEntry(index, category.copyWith(order: index)))
-              .values
-              .toList();
-          Provider.of<CategoryProvider>(context, listen: false)
-              .updateAll(reordered);
+          final reordered =
+              categories
+                  .asMap()
+                  .map(
+                    (index, category) =>
+                        MapEntry(index, category.copyWith(order: index)),
+                  )
+                  .values
+                  .toList();
+          Provider.of<CategoryProvider>(
+            context,
+            listen: false,
+          ).updateAll(reordered);
         });
       },
     );

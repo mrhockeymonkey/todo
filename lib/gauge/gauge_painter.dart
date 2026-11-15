@@ -10,15 +10,17 @@ class GaugePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Color color = Color.lerp(Colors.green, Colors.red, percent)!;
 
-    Paint circleBrush = Paint()
-      ..strokeWidth = 2.0
-      ..color = Colors.indigo[400]!.withOpacity(0.4)
-      ..style = PaintingStyle.stroke;
+    Paint circleBrush =
+        Paint()
+          ..strokeWidth = 2.0
+          ..color = Colors.indigo[400]!.withOpacity(0.4)
+          ..style = PaintingStyle.stroke;
 
-    Paint elapsedBrush = Paint()
-      ..strokeWidth = 2.0
-      ..color = color.withOpacity(0.8)
-      ..style = PaintingStyle.stroke;
+    Paint elapsedBrush =
+        Paint()
+          ..strokeWidth = 2.0
+          ..color = color.withOpacity(0.8)
+          ..style = PaintingStyle.stroke;
 
     Offset center = Offset(size.width / 2, size.height / 2);
     double radius = min(size.width / 2.2, size.height / 2.2);

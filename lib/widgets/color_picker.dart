@@ -25,18 +25,17 @@ class _ColorPickerState extends State<ColorPicker> {
   Widget build(BuildContext context) {
     return DropdownButton<Color>(
       value: currentColor,
-      items: colorChoice.map((Color col) {
-        return DropdownMenuItem<Color>(
-          value: col,
-          child: SizedBox(
-            height: 20,
-            width: 20,
-            child: Container(
-              color: col,
-            ),
-          ),
-        );
-      }).toList(),
+      items:
+          colorChoice.map((Color col) {
+            return DropdownMenuItem<Color>(
+              value: col,
+              child: SizedBox(
+                height: 20,
+                width: 20,
+                child: Container(color: col),
+              ),
+            );
+          }).toList(),
       onChanged: (Color? newValue) {
         setState(() {
           currentColor = newValue ?? currentColor;

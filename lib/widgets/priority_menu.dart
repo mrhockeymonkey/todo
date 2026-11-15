@@ -14,13 +14,14 @@ class PriorityMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => PopupMenuButton<Priority>(
-        tooltip: 'Set priority',
-        onSelected: onSelected,
-        itemBuilder: (context) => <PopupMenuEntry<Priority>>[
+    tooltip: 'Set priority',
+    onSelected: onSelected,
+    itemBuilder:
+        (context) => <PopupMenuEntry<Priority>>[
           for (var priority in Priority.values) _buildItem(priority),
         ],
-        child: child,
-      );
+    child: child,
+  );
 
   PopupMenuItem<Priority> _buildItem(Priority priority) =>
       PopupMenuItem<Priority>(

@@ -18,77 +18,84 @@ import 'day_plan_actions.dart';
 class DayPlanTaskPtr extends DayPlanBase {
   final Task task;
 
-  DayPlanTaskPtr({
-    required this.task,
-  });
+  DayPlanTaskPtr({required this.task});
 
   @override
   Widget build(BuildContext context) {
     var categoryId = task.categoryId;
-    var category = categoryId == null
-        ? Category.defaultCategory()
-        : Provider.of<CategoryProvider>(context).getItemById(categoryId);
+    var category =
+        categoryId == null
+            ? Category.defaultCategory()
+            : Provider.of<CategoryProvider>(context).getItemById(categoryId);
 
     // The Builder gives a context for this row, so the animation knows
     // where the row was when it was swiped.
     return Builder(
-      builder: (itemContext) => Dismissible(
-        // ObjectKey: the provider returns the same instance until the item is
-        // saved, and every save creates a new one, so a dismissed tile always
-        // comes back with fresh state (a stable id key would trip
-        // Dismissible's "dismissed widget is still part of the tree"
-        // assertion).
-        key: ObjectKey(task),
-        direction: DismissDirection.startToEnd,
-        // Start the animation as soon as the swipe is let go, while the row
-        // is still laid out where the user saw it.
-        confirmDismiss: (_) async {
-          _celebrate(itemContext);
-          return true;
-        },
-        onDismissed: (direction) => _handleDismiss(context, direction),
-        child: CelebrationTarget(
-          taskId: task.id,
-          enabled: task.isDone,
-          child: ListTile(
-            key: ValueKey(task.id),
-            title: Text(
-              task.title,
-              style: task.isDone
-                  ? const TextStyle(
-                      decoration: TextDecoration.lineThrough,
-                      color: Colors.grey,
-                    )
-                  : null,
+      builder:
+          (itemContext) => Dismissible(
+            // ObjectKey: the provider returns the same instance until the item is
+            // saved, and every save creates a new one, so a dismissed tile always
+            // comes back with fresh state (a stable id key would trip
+            // Dismissible's "dismissed widget is still part of the tree"
+            // assertion).
+            key: ObjectKey(task),
+            direction: DismissDirection.startToEnd,
+            // Start the animation as soon as the swipe is let go, while the row
+            // is still laid out where the user saw it.
+            confirmDismiss: (_) async {
+              _celebrate(itemContext);
+              return true;
+            },
+            onDismissed: (direction) => _handleDismiss(context, direction),
+            child: CelebrationTarget(
+              taskId: task.id,
+              enabled: task.isDone,
+              child: ListTile(
+                key: ValueKey(task.id),
+                title: Text(
+                  task.title,
+                  style:
+                      task.isDone
+                          ? const TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            color: Colors.grey,
+                          )
+                          : null,
+                ),
+                leading:
+                    task.isDone
+                        ? Icon(Icons.check, color: Colors.grey[350])
+                        : PriorityMenu(
+                          onSelected:
+                              (priority) => _handlePriority(context, priority),
+                          child: FlaggedIcon(
+                            icon: category.icon,
+                            color: task.priority.color,
+                            showFlag: task.isFlagged,
+                          ),
+                        ),
+                trailing: DayPlanActions(
+                  handleSnooze: _handleSnooze,
+                  handleFlag: _handleFlag,
+                  //handleRemove: _handleRemove,
+                ),
+                isThreeLine: false,
+                onTap:
+                    () => Navigator.of(
+                      context,
+                    ).pushNamed(TaskDetailScreen.routeName, arguments: task.id),
+              ),
             ),
-            leading: task.isDone
-                ? Icon(Icons.check, color: Colors.grey[350])
-                : PriorityMenu(
-                    onSelected: (priority) =>
-                        _handlePriority(context, priority),
-                    child: FlaggedIcon(
-                        icon: category.icon,
-                        color: task.priority.color,
-                        showFlag: task.isFlagged),
-                  ),
-            trailing: DayPlanActions(
-              handleSnooze: _handleSnooze,
-              handleFlag: _handleFlag,
-              //handleRemove: _handleRemove,
-            ),
-            isThreeLine: false,
-            onTap: () => Navigator.of(context)
-                .pushNamed(TaskDetailScreen.routeName, arguments: task.id),
           ),
-        ),
-      ),
     );
   }
 
   void _celebrate(BuildContext itemContext) {
     final id = task.id;
-    final controller =
-        Provider.of<CelebrationController?>(itemContext, listen: false);
+    final controller = Provider.of<CelebrationController?>(
+      itemContext,
+      listen: false,
+    );
     final box = itemContext.findRenderObject();
     if (task.isDone || id == null || controller == null) return;
     if (box is! RenderBox || !box.hasSize) return;
@@ -118,14 +125,17 @@ class DayPlanTaskPtr extends DayPlanBase {
     Provider.of<TaskProvider>(context, listen: false).addOrUpdate(snoozedTask);
   }
 
-  void _handleFlag(BuildContext context) =>
-      Provider.of<TaskProvider>(context, listen: false)
-          .addOrUpdate(task.copyWith(isFlagged: !task.isFlagged));
+  void _handleFlag(BuildContext context) => Provider.of<TaskProvider>(
+    context,
+    listen: false,
+  ).addOrUpdate(task.copyWith(isFlagged: !task.isFlagged));
 
   void _handlePriority(BuildContext context, Priority priority) =>
-      Provider.of<TaskProvider>(context, listen: false)
-          .addOrUpdate(task.copyWith(priority: priority));
-          
+      Provider.of<TaskProvider>(
+        context,
+        listen: false,
+      ).addOrUpdate(task.copyWith(priority: priority));
+
   @override
   bool get isDone => task.isDone;
 

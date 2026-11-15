@@ -7,20 +7,12 @@ import './screens/routines_screen.dart';
 import './screens/settings_screen.dart';
 import './tools/kegels/kegel_training_screen.dart';
 
-enum AppActions {
-  routines,
-  settings,
-  kegels,
-  clearCompleted,
-}
+enum AppActions { routines, settings, kegels, clearCompleted }
 
 class AppAction {
   final String friendlyName;
   final IconData iconData;
-  AppAction({
-    required this.friendlyName,
-    required this.iconData,
-  });
+  AppAction({required this.friendlyName, required this.iconData});
 }
 
 class AppActionsHelper {
@@ -28,23 +20,31 @@ class AppActionsHelper {
     switch (action) {
       case AppActions.routines:
         return AppAction(
-            friendlyName: "Routines", iconData: Entypo.circular_graph);
+          friendlyName: "Routines",
+          iconData: Entypo.circular_graph,
+        );
       case AppActions.settings:
         return AppAction(friendlyName: "Settings", iconData: Icons.settings);
       case AppActions.kegels:
         return AppAction(
-            friendlyName: "Kegels", iconData: Icons.fitness_center);
+          friendlyName: "Kegels",
+          iconData: Icons.fitness_center,
+        );
       case AppActions.clearCompleted:
         return AppAction(
-            friendlyName: "Clear Completed", iconData: Icons.delete);
+          friendlyName: "Clear Completed",
+          iconData: Icons.delete,
+        );
     }
   }
 
   static void handleAction(AppActions value, BuildContext context) async {
     switch (value) {
       case AppActions.clearCompleted:
-        await Provider.of<TaskProvider>(context, listen: false)
-            .clearCompletedTasks();
+        await Provider.of<TaskProvider>(
+          context,
+          listen: false,
+        ).clearCompletedTasks();
         break;
       case AppActions.routines:
         Navigator.of(context).pushNamed(RoutinesScreen.routeName);

@@ -13,9 +13,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Settings"),
-      ),
+      appBar: AppBar(title: const Text("Settings")),
       body: Column(
         children: [
           Expanded(
@@ -24,36 +22,39 @@ class SettingsScreen extends StatelessWidget {
                 _buildCategoriesTile(context),
                 _buildCelebrationTile(context),
                 _buildJsonExportTile(context),
-                _buildJsonImportTile(context)
+                _buildJsonImportTile(context),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
   Widget _buildCategoriesTile(BuildContext context) => ListTile(
-      leading: const Icon(Icons.category),
-      title: const Text("Categories"),
-      //subtitle: Text(""),
-      //isThreeLine: true,
-      onTap: () => Navigator.of(context).pushNamed(CategoriesScreen.routeName));
+    leading: const Icon(Icons.category),
+    title: const Text("Categories"),
+    //subtitle: Text(""),
+    //isThreeLine: true,
+    onTap: () => Navigator.of(context).pushNamed(CategoriesScreen.routeName),
+  );
 
   Widget _buildCelebrationTile(BuildContext context) => ListTile(
-      leading: const Icon(Icons.celebration),
-      title: const Text("Completion animation"),
-      subtitle: const Text("Tune the line that runs to completed tasks"),
-      onTap: () =>
-          Navigator.of(context).pushNamed(CelebrationScreen.routeName));
+    leading: const Icon(Icons.celebration),
+    title: const Text("Completion animation"),
+    subtitle: const Text("Tune the line that runs to completed tasks"),
+    onTap: () => Navigator.of(context).pushNamed(CelebrationScreen.routeName),
+  );
 
   Widget _buildJsonExportTile(BuildContext context) => ListTile(
-      leading: const Icon(Entypo.arrow_bold_up),
-      title: const Text("Export JSON"),
-      onTap: () => Navigator.of(context).pushNamed(ExportJsonPage.routeName));
+    leading: const Icon(Entypo.arrow_bold_up),
+    title: const Text("Export JSON"),
+    onTap: () => Navigator.of(context).pushNamed(ExportJsonPage.routeName),
+  );
 
   Widget _buildJsonImportTile(BuildContext context) => ListTile(
-      leading: const Icon(Entypo.arrow_bold_down),
-      title: const Text("Import JSON"),
-      onTap: () => Navigator.of(context).pushNamed(ImportJsonScreen.routeName));
+    leading: const Icon(Entypo.arrow_bold_down),
+    title: const Text("Import JSON"),
+    onTap: () => Navigator.of(context).pushNamed(ImportJsonScreen.routeName),
+  );
 }

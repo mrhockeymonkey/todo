@@ -167,7 +167,6 @@ void main() {
           start: const Offset(380, 300),
           endY: 500,
           width: 400,
-          top: 100,
           radius: 36,
         );
         final bounds = route.getBounds();
@@ -188,22 +187,27 @@ void main() {
         start: const Offset(380, 300),
         endY: 150,
         width: 400,
-        top: 100,
         radius: 36,
       );
       expect(endOf(route).dy, closeTo(150, 0.01));
       expect(route.getBounds().bottom, closeTo(300 + 72, 0.5));
     });
 
-    test('shrinks the loop to stay below the app bar', () {
-      final route = circuitRoute(
+    test('keeps the full loop size however near the top the row is', () {
+      final near = circuitRoute(
         start: const Offset(380, 140),
         endY: 400,
         width: 400,
-        top: 100,
         radius: 36,
       );
-      expect(route.getBounds().top, greaterThanOrEqualTo(100 - 0.5));
+      final far = circuitRoute(
+        start: const Offset(380, 600),
+        endY: 800,
+        width: 400,
+        radius: 36,
+      );
+      expect(near.getBounds().width, closeTo(far.getBounds().width, 0.01));
+      expect(near.getBounds().top, closeTo(140 - 72, 0.5));
     });
   });
 
@@ -239,7 +243,6 @@ void main() {
       start: const Offset(380, 300),
       endY: 600,
       width: 400,
-      top: 100,
       radius: 36,
     );
 

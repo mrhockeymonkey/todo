@@ -17,27 +17,26 @@ class ExportContainer {
   static const String _routinesProp = "routines";
   static const String _categoriesProp = "categories";
 
-  ExportContainer(
-    this.tasks,
-    this.routines,
-    this.categories,
-  );
+  ExportContainer(this.tasks, this.routines, this.categories);
 
   ExportContainer.fromJson(Map<String, dynamic> json)
-      : tasks = ((json[_tasksProp] ?? []) as List<dynamic>)
-            .map((e) => Task.fromJson(e))
-            .toList(),
-        routines = ((json[_routinesProp] ?? []) as List<dynamic>)
-            .map((e) => Routine.fromJson(e))
-            .toList(),
-        categories = ((json[_categoriesProp] ?? []) as List<dynamic>)
-            .map((e) => Category.fromJson(e))
-            .toList();
+    : tasks =
+          ((json[_tasksProp] ?? []) as List<dynamic>)
+              .map((e) => Task.fromJson(e))
+              .toList(),
+      routines =
+          ((json[_routinesProp] ?? []) as List<dynamic>)
+              .map((e) => Routine.fromJson(e))
+              .toList(),
+      categories =
+          ((json[_categoriesProp] ?? []) as List<dynamic>)
+              .map((e) => Category.fromJson(e))
+              .toList();
 
   Map<String, dynamic> toJson() => {
-        _versionProp: version,
-        _tasksProp: tasks,
-        _routinesProp: routines,
-        _categoriesProp: categories,
-      };
+    _versionProp: version,
+    _tasksProp: tasks,
+    _routinesProp: routines,
+    _categoriesProp: categories,
+  };
 }

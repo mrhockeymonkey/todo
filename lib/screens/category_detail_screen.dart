@@ -39,8 +39,10 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
       var categoryId = ModalRoute.of(context)?.settings.arguments;
 
       if (categoryId is String) {
-        final category = Provider.of<CategoryProvider>(context, listen: false)
-            .getItemById(categoryId);
+        final category = Provider.of<CategoryProvider>(
+          context,
+          listen: false,
+        ).getItemById(categoryId);
 
         _categoryId = category.id;
         _categoryTitle = category.title;
@@ -69,18 +71,12 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
         appBar: AppBar(
           title: const Text("Category"),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: _delete,
-            )
+            IconButton(icon: const Icon(Icons.delete), onPressed: _delete),
           ],
           backgroundColor: _categoryColor,
         ),
         body: Column(
-          children: <Widget>[
-            _buildTitleHeader(),
-            _buildOptionsList(),
-          ],
+          children: <Widget>[_buildTitleHeader(), _buildOptionsList()],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: _save,
@@ -109,8 +105,10 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
       order: _categoryOrder ?? 9999,
     );
 
-    await Provider.of<CategoryProvider>(context, listen: false)
-        .addOrUpdate(category);
+    await Provider.of<CategoryProvider>(
+      context,
+      listen: false,
+    ).addOrUpdate(category);
 
     if (!mounted) return;
 
@@ -120,8 +118,10 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
 
   Future _delete() async {
     if (_categoryId != null) {
-      await Provider.of<CategoryProvider>(context, listen: false)
-          .delete(_categoryId!);
+      await Provider.of<CategoryProvider>(
+        context,
+        listen: false,
+      ).delete(_categoryId!);
     }
 
     if (!mounted) return;
@@ -131,38 +131,39 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
   }
 
   Widget _buildTitleHeader() => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 25),
-        height: 72,
-        color: _categoryColor,
-        child: Form(
-          key: _form,
-          child: TextFormField(
-            style: const TextStyle(color: Colors.white),
-            selectionControls: CustomColorSelectionHandle(Colors.white),
-            cursorColor: Colors.white,
-            textCapitalization: TextCapitalization.words,
-            initialValue: _categoryTitle,
-            autofocus: _shouldFocusTitleField,
-            onSaved: (String? value) {
-              _categoryTitle = value;
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Must enter a Category title';
-              }
-              return null;
-            },
-            decoration: const InputDecoration(
-              hintStyle: TextStyle(color: Colors.white30),
-              labelStyle: TextStyle(color: Colors.white),
-              hintText: 'New Category',
-              labelText: 'Name',
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white)),
-            ),
+    padding: const EdgeInsets.symmetric(horizontal: 25),
+    height: 72,
+    color: _categoryColor,
+    child: Form(
+      key: _form,
+      child: TextFormField(
+        style: const TextStyle(color: Colors.white),
+        selectionControls: CustomColorSelectionHandle(Colors.white),
+        cursorColor: Colors.white,
+        textCapitalization: TextCapitalization.words,
+        initialValue: _categoryTitle,
+        autofocus: _shouldFocusTitleField,
+        onSaved: (String? value) {
+          _categoryTitle = value;
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Must enter a Category title';
+          }
+          return null;
+        },
+        decoration: const InputDecoration(
+          hintStyle: TextStyle(color: Colors.white30),
+          labelStyle: TextStyle(color: Colors.white),
+          hintText: 'New Category',
+          labelText: 'Name',
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _buildOptionsList() {
     return ListView(
@@ -178,10 +179,7 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
         ),
         ListTile(
           title: const Text("Colour"),
-          leading: CircleColor(
-            color: _categoryColor,
-            circleSize: 20.0,
-          ),
+          leading: CircleColor(color: _categoryColor, circleSize: 20.0),
           onTap: _selectColor,
         ),
       ],
@@ -190,13 +188,15 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
 
   Future _selectIcon() async {
     var iconChoice = await showDialog<String>(
-        context: context,
-        builder: (context) => IconPicker(
-              currentIcon: _categoryIconName ?? "pin",
-              color: _categoryColor,
-              circleSize: AppConstants.pickerCircleSize,
-              spacing: AppConstants.pickerCircleSpacing,
-            ));
+      context: context,
+      builder:
+          (context) => IconPicker(
+            currentIcon: _categoryIconName ?? "pin",
+            color: _categoryColor,
+            circleSize: AppConstants.pickerCircleSize,
+            spacing: AppConstants.pickerCircleSpacing,
+          ),
+    );
 
     if (iconChoice != null) {
       setState(() {
@@ -209,33 +209,34 @@ class CategoryDetailScreenState extends State<CategoryDetailScreen> {
     Color colorChoice = AppColour.colorCustom;
     await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Pick a color!'),
-        content: MaterialColorPicker(
-          allowShades: false,
-          onMainColorChange: (value) {
-            if (value != null) {
-              colorChoice = value[500] ?? AppColour.colorCustom;
-            }
-          },
-          selectedColor: _categoryColor,
-          elevation: 0.0,
-          circleSize: AppConstants.pickerCircleSize,
-          spacing: AppConstants.pickerCircleSpacing,
-        ),
-        actions: <Widget>[
-          ElevatedButton(
-            child: const Text('OK'),
-            onPressed: () {
-              setState(() {
-                _categoryColor = colorChoice;
-              });
-              AppColour.setStatusBarColor(_categoryColor);
-              Navigator.of(context).pop();
-            },
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Pick a color!'),
+            content: MaterialColorPicker(
+              allowShades: false,
+              onMainColorChange: (value) {
+                if (value != null) {
+                  colorChoice = value[500] ?? AppColour.colorCustom;
+                }
+              },
+              selectedColor: _categoryColor,
+              elevation: 0.0,
+              circleSize: AppConstants.pickerCircleSize,
+              spacing: AppConstants.pickerCircleSpacing,
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  setState(() {
+                    _categoryColor = colorChoice;
+                  });
+                  AppColour.setStatusBarColor(_categoryColor);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
           ),
-        ],
-      ),
     );
   }
 }

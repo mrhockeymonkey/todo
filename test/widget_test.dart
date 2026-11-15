@@ -10,7 +10,8 @@ void main() {
     // The home screen waits on the providers' storage fetch, which is real
     // IO, so let it complete outside the fake-async zone before pumping.
     await tester.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 500)));
+      () => Future<void>.delayed(const Duration(milliseconds: 500)),
+    );
     await tester.pump();
 
     expect(find.byType(BottomNavigationBar), findsOneWidget);
