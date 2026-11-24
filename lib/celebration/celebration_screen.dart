@@ -4,6 +4,7 @@ import 'package:todo/celebration/celebration_controller.dart';
 import 'package:todo/celebration/celebration_target.dart';
 import 'package:todo/celebration/circuit_animation.dart';
 import 'package:todo/celebration/circuit_settings.dart';
+import 'package:todo/celebration/routine_pop.dart';
 import 'package:todo/models/priority.dart';
 
 /// Tune the completion animation and try it out on a practice list.
@@ -25,6 +26,8 @@ class CelebrationScreen extends StatelessWidget {
             _CircuitControls(settings: settings),
             const Divider(),
             const _PracticeList(),
+            const Divider(),
+            const _RoutinePopPicker(),
           ],
         ),
       ),
@@ -206,6 +209,69 @@ class _PracticeListState extends State<_PracticeList> {
         colour: item.priority.color,
         source: box.localToGlobal(Offset.zero) & box.size,
       ),
+    );
+  }
+}
+
+/// Chooses and previews the animation for finishing every routine.
+class _RoutinePopPicker extends StatefulWidget {
+  const _RoutinePopPicker();
+
+  @override
+  State<_RoutinePopPicker> createState() => _RoutinePopPickerState();
+}
+
+class _RoutinePopPickerState extends State<_RoutinePopPicker> {
+  final _stage = GlobalKey<RoutinePopStageState>();
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = context.watch<RoutinePopSettings>();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const ListTile(
+          title: Text("All routines done"),
+          subtitle: Text("Plays on the routine card when the last one is done"),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: RoutinePopStage(
+            key: _stage,
+            child: Card(
+              elevation: 4,
+              child: ListTile(
+                leading: const Icon(Icons.check_circle, color: Colors.green),
+                title: const Text("All routines done"),
+                trailing: TextButton(
+                  onPressed: () => _stage.currentState?.play(),
+                  child: const Text("Play"),
+                ),
+              ),
+            ),
+          ),
+        ),
+        RadioGroup<RoutinePopStyle>(
+          groupValue: settings.style,
+          onChanged: (value) {
+            settings.style = value!;
+            // Let the card rebuild with the new style before replaying.
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => _stage.currentState?.play(),
+            );
+          },
+          child: Column(
+            children: [
+              for (final style in RoutinePopStyle.values)
+                RadioListTile<RoutinePopStyle>(
+                  value: style,
+                  title: Text(style.label),
+                  subtitle: Text(style.description),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

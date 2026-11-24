@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/celebration/routine_pop.dart';
 import 'package:todo/date.dart';
 import 'package:todo/models/repeat_schedule.dart';
 import 'package:todo/models/routine.dart';
@@ -41,8 +42,17 @@ void main() {
   ) async {
     final provider = _FakeRoutineProvider(routines);
     await tester.pumpWidget(
-      ChangeNotifierProvider<RoutineProvider>.value(
-        value: provider,
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<RoutineProvider>.value(value: provider),
+          ChangeNotifierProvider(
+            create:
+                (_) => RoutinePopSettings(
+                  style: RoutinePopStyle.bang,
+                  persist: false,
+                ),
+          ),
+        ],
         child: const MaterialApp(home: Scaffold(body: RoutinePeek())),
       ),
     );
@@ -125,12 +135,16 @@ void main() {
     expect(find.text('B'), findsOneWidget);
   });
 
-  testWidgets('hides once every routine is done', (tester) async {
+  testWidgets('hides after celebrating once every routine is done', (
+    tester,
+  ) async {
     await pump(tester, [due('A', 0)]);
 
     await tester.tap(find.byIcon(Icons.check));
-    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.byType(Card), findsOneWidget);
 
+    await tester.pumpAndSettle();
     expect(find.byType(Card), findsNothing);
   });
 
@@ -154,5 +168,26 @@ void main() {
     tester.view.resetViewInsets();
     await tester.pump();
     expect(find.byType(Card), findsOneWidget);
+  });
+
+  final effect = find.byKey(const ValueKey("routine-pop-effect"));
+
+  testWidgets('plays the pop when the last due routine is done', (
+    tester,
+  ) async {
+    await pump(tester, [due("a", 0)]);
+    await tester.tap(find.byIcon(Icons.check));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(effect, findsOneWidget);
+
+    await tester.pumpAndSettle();
+    expect(effect, findsNothing);
+  });
+
+  testWidgets('does not pop while routines are still due', (tester) async {
+    await pump(tester, [due("a", 0), due("b", 1)]);
+    await tester.tap(find.byIcon(Icons.check));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(effect, findsNothing);
   });
 }

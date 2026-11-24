@@ -7,6 +7,7 @@ import 'package:todo/celebration/celebration_controller.dart';
 import 'package:todo/celebration/celebration_screen.dart';
 import 'package:todo/celebration/circuit_animation.dart';
 import 'package:todo/celebration/circuit_settings.dart';
+import 'package:todo/celebration/routine_pop.dart';
 import 'package:todo/date.dart';
 import 'package:todo/models/priority.dart';
 import 'package:todo/models/task.dart';
@@ -214,8 +215,13 @@ void main() {
   testWidgets('circuit sliders change thickness and speed', (tester) async {
     final settings = CircuitSettings(persist: false);
     await tester.pumpWidget(
-      ChangeNotifierProvider.value(
-        value: settings,
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(value: settings),
+          ChangeNotifierProvider(
+            create: (_) => RoutinePopSettings(persist: false),
+          ),
+        ],
         child: const MaterialApp(home: CelebrationScreen()),
       ),
     );
