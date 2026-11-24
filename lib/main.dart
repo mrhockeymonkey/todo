@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/celebration/routine_pop.dart';
 import 'package:todo/celebration/celebration_screen.dart';
 import 'package:todo/celebration/circuit_settings.dart';
 import 'package:todo/journey/journey_provider.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (_) => JourneyProvider()),
         ChangeNotifierProvider(create: (_) => CircuitSettings()),
+        ChangeNotifierProvider(create: (_) => RoutinePopSettings()),
       ],
       child: MaterialApp(
         title: 'Sennight',

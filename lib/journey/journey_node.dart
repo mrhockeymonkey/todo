@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:todo/app_colour.dart';
+import 'package:todo/celebration/pop_scale.dart';
 
 enum JourneyNodeState { locked, current, done }
 
@@ -44,30 +45,6 @@ class _JourneyNodeState extends State<JourneyNode>
     with TickerProviderStateMixin {
   static const double _restingElevation = 6;
   static const double _pressedElevation = 1;
-
-  static final _bounceScale = TweenSequence<double>([
-    TweenSequenceItem(
-      tween: Tween(
-        begin: 1.0,
-        end: 0.8,
-      ).chain(CurveTween(curve: Curves.easeOut)),
-      weight: 12,
-    ),
-    TweenSequenceItem(
-      tween: Tween(
-        begin: 0.8,
-        end: 1.25,
-      ).chain(CurveTween(curve: Curves.easeOut)),
-      weight: 22,
-    ),
-    TweenSequenceItem(
-      tween: Tween(
-        begin: 1.25,
-        end: 1.0,
-      ).chain(CurveTween(curve: Curves.elasticOut)),
-      weight: 66,
-    ),
-  ]);
 
   late final AnimationController _bounce = AnimationController(
     vsync: this,
@@ -203,7 +180,7 @@ class _JourneyNodeState extends State<JourneyNode>
       animation: Listenable.merge([_bounce, _pulse, _hold, _shake]),
       builder: (context, _) {
         final scale =
-            _bounceScale.evaluate(_bounce) *
+            popScale.evaluate(_bounce) *
             (1 - 0.08 * Curves.easeOut.transform(_hold.value));
         final shakeDx = sin(_shake.value * pi * 6) * 8 * (1 - _shake.value);
         // Tremble as the hold nears completion to build anticipation.
