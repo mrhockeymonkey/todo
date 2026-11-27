@@ -150,12 +150,18 @@ class _DailyScreenState extends State<DailyScreen> with WidgetsBindingObserver {
       children: [
         CustomScrollView(controller: _scrollController, slivers: sections),
         // Fixed above the bottom tab bar, outside the scrolling list.
-        const Positioned(left: 8, right: 8, bottom: 8, child: RoutinePeek()),
+        const Positioned(
+          left: 8,
+          right: 8,
+          bottom: _routineCardGap,
+          child: RoutinePeek(bottomGap: _routineCardGap),
+        ),
       ],
     );
   }
 
   static const double _routineCardClearance = 96;
+  static const double _routineCardGap = 8;
 
   Widget _buildAddButton(Date date) => SliverToBoxAdapter(
     child: Row(

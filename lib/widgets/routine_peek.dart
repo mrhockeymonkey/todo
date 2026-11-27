@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/app_colour.dart';
-import 'package:todo/celebration/routine_pop.dart';
+import 'package:todo/celebration/swipe_away.dart';
 import 'package:todo/models/routine.dart';
 import 'package:todo/providers/routine_provider.dart';
 import 'package:todo/screens/routine_detail_screen.dart';
@@ -14,9 +14,14 @@ import 'package:todo/screens/routine_detail_screen.dart';
 /// a time, which can be marked done (check button or swipe) or swapped for the
 /// next due routine. The leading ring has a segment per routine, filled
 /// in as routines are done (not due). The card hides itself while the keyboard is open and once
-/// no routines are due, after celebrating the last one.
+/// no routines are due; finishing the last one swipes it away and runs the
+/// completion lines.
 class RoutinePeek extends StatefulWidget {
-  const RoutinePeek({super.key});
+  /// How far the card floats above the bottom of the screen, which is where
+  /// the completion lines end.
+  final double bottomGap;
+
+  const RoutinePeek({super.key, this.bottomGap = 0});
 
   @override
   State<StatefulWidget> createState() => RoutinePeekState();
@@ -25,9 +30,9 @@ class RoutinePeek extends StatefulWidget {
 class RoutinePeekState extends State<RoutinePeek> with WidgetsBindingObserver {
   int _focusIndex = 0;
   bool _keyboardVisible = false;
-  // Keeps the card up after the last routine is done, while the pop plays.
+  // Keeps the card up after the last routine is done, while it swipes away.
   bool _celebrating = false;
-  final _stage = GlobalKey<RoutinePopStageState>();
+  final _swipeAway = GlobalKey<SwipeAwayState>();
 
   @override
   void initState() {
@@ -61,8 +66,9 @@ class RoutinePeekState extends State<RoutinePeek> with WidgetsBindingObserver {
     final focused = due.isEmpty ? null : due[_focusIndex % due.length];
     final others = due.length - 1;
 
-    return RoutinePopStage(
-      key: _stage,
+    return SwipeAway(
+      key: _swipeAway,
+      gapBelow: widget.bottomGap,
       child: Card(
         elevation: 4,
         clipBehavior: Clip.antiAlias,
@@ -142,9 +148,12 @@ class RoutinePeekState extends State<RoutinePeek> with WidgetsBindingObserver {
     provider.addOrUpdate(routine.done());
     if (!last) return;
     // The card would vanish now that nothing is due, so it stays up until the
-    // celebration has played.
-    await _stage.currentState?.play();
-    if (mounted) setState(() => _celebrating = false);
+    // card has swiped away.
+    await _swipeAway.currentState?.play();
+    if (!mounted) return;
+    // In the same frame as the card is removed, so it doesn't flash back.
+    _swipeAway.currentState?.reset();
+    setState(() => _celebrating = false);
   }
 }
 

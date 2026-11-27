@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:todo/celebration/routine_pop.dart';
+import 'package:todo/celebration/circuit_animation.dart';
 import 'package:todo/date.dart';
 import 'package:todo/models/repeat_schedule.dart';
 import 'package:todo/models/routine.dart';
@@ -42,17 +42,8 @@ void main() {
   ) async {
     final provider = _FakeRoutineProvider(routines);
     await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<RoutineProvider>.value(value: provider),
-          ChangeNotifierProvider(
-            create:
-                (_) => RoutinePopSettings(
-                  style: RoutinePopStyle.bang,
-                  persist: false,
-                ),
-          ),
-        ],
+      ChangeNotifierProvider<RoutineProvider>.value(
+        value: provider,
         child: const MaterialApp(home: Scaffold(body: RoutinePeek())),
       ),
     );
@@ -135,17 +126,23 @@ void main() {
     expect(find.text('B'), findsOneWidget);
   });
 
-  testWidgets('hides after celebrating once every routine is done', (
+  testWidgets('swipes away then runs the lines once every routine is done', (
     tester,
   ) async {
     await pump(tester, [due('A', 0)]);
 
     await tester.tap(find.byIcon(Icons.check));
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump();
     expect(find.byType(Card), findsOneWidget);
+    expect(find.byType(CircuitAnimation), findsNothing);
+
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump();
+    expect(find.byType(Card), findsNothing);
+    expect(find.byType(CircuitAnimation), findsOneWidget);
 
     await tester.pumpAndSettle();
-    expect(find.byType(Card), findsNothing);
+    expect(find.byType(CircuitAnimation), findsNothing);
   });
 
   testWidgets('is hidden when no routines are due', (tester) async {
@@ -170,24 +167,14 @@ void main() {
     expect(find.byType(Card), findsOneWidget);
   });
 
-  final effect = find.byKey(const ValueKey("routine-pop-effect"));
-
-  testWidgets('plays the pop when the last due routine is done', (
+  testWidgets('does not run the lines while routines are still due', (
     tester,
   ) async {
-    await pump(tester, [due("a", 0)]);
+    await pump(tester, [due('a', 0), due('b', 1)]);
     await tester.tap(find.byIcon(Icons.check));
-    await tester.pump(const Duration(milliseconds: 100));
-    expect(effect, findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.pump();
 
-    await tester.pumpAndSettle();
-    expect(effect, findsNothing);
-  });
-
-  testWidgets('does not pop while routines are still due', (tester) async {
-    await pump(tester, [due("a", 0), due("b", 1)]);
-    await tester.tap(find.byIcon(Icons.check));
-    await tester.pump(const Duration(milliseconds: 100));
-    expect(effect, findsNothing);
+    expect(find.byType(CircuitAnimation), findsNothing);
   });
 }
